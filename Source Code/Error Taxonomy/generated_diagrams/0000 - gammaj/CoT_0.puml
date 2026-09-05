@@ -1,0 +1,285 @@
+@startuml
+|Customer (Web Browser)|
+start
+:Initiate HTTPS request to Web Store (SSL);
+
+|Web Server|
+:Parse request;
+:Submit request to Service;
+
+|Service|
+:Pick up request;
+:Run requested task;
+:Return results;
+
+|Web Server|
+:Check for completion;
+:Return results to Web Browser;
+
+|Customer (Web Browser)|
+:Display results;
+
+if (Customer action?) then (Account Management)
+  :Choose Register / Login / View/Edit Account / Logout;
+
+  if (Register?) then (yes)
+    :Enter profile, contact, address, payment info;
+    |Web Server|
+    :Parse request;
+    :Submit request to Service;
+    |Service|
+    :Create customer account (default role=Customer);
+    :Store profile/contact/address/payment info;
+    :Return results;
+    |Web Server|
+    :Return results;
+    |Customer (Web Browser)|
+    :Account created / confirmation shown;
+  else (no)
+    if (Login?) then (yes)
+      :Enter credentials;
+      |Web Server|
+      :Parse request;
+      :Submit request to Service;
+      |Service|
+      :Authenticate user;
+      :Return results;
+      |Web Server|
+      :Return results;
+      |Customer (Web Browser)|
+      if (Authenticated?) then (yes)
+        :Logged in;
+      else (no)
+        :Show login error;
+      endif
+    else (no)
+      if (View/Edit Account?) then (yes)
+        :Request profile / purchase history;
+        |Web Server|
+        :Parse request;
+        :Submit request to Service;
+        |Service|
+        :Retrieve/update account info and purchase history;
+        :Return results;
+        |Web Server|
+        :Return results;
+        |Customer (Web Browser)|
+        :View updated account / history;
+      else (no)
+        :Logout;
+        |Web Server|
+        :Parse request;
+        :Submit request to Service;
+        |Service|
+        :End session;
+        :Return results;
+        |Web Server|
+        :Return results;
+        |Customer (Web Browser)|
+        :Logged out;
+      endif
+    endif
+  endif
+
+elseif (Browse/Search Products)
+  :Browse multi-tier categories and products;
+  if (Search?) then (yes)
+    :Enter search criteria;
+    |Web Server|
+    :Parse request;
+    :Submit request to Service;
+    |Service|
+    :Find matching items in inventory database;
+    :Return search results;
+    |Web Server|
+    :Return results;
+    |Customer (Web Browser)|
+    :Display search results;
+  else (no)
+    :View category/product listings;
+  endif
+
+elseif (Shopping Cart)
+  :View cart (item count and total cost);
+  repeat
+    if (Add item?) then (yes)
+      :Select product to add;
+      |Web Server|
+      :Parse request;
+      :Submit request to Service;
+      |Service|
+      :Reserve item in virtual cart;
+      :Update cart totals;
+      :Return results;
+      |Web Server|
+      :Return results;
+      |Customer (Web Browser)|
+      :Cart updated;
+    else (no)
+      if (Remove item?) then (yes)
+        :Select product to remove;
+        |Web Server|
+        :Parse request;
+        :Submit request to Service;
+        |Service|
+        :Remove item from cart;
+        :Update cart totals;
+        :Return results;
+        |Web Server|
+        :Return results;
+        |Customer (Web Browser)|
+        :Cart updated;
+      else (no)
+        :No cart change;
+      endif
+    endif
+  repeat while (Continue modifying cart?) is (yes)
+  if (Proceed to checkout?) then (yes)
+    :Checkout;
+  else (no)
+    :Continue shopping;
+  endif
+
+elseif (Checkout / Payment / Order Confirmation)
+  :Proceed to checkout;
+
+  |Web Server|
+  :Parse request;
+  :Submit request to Service;
+
+  |Service|
+  :Prepare order from cart;
+  :Return results;
+
+  |Web Server|
+  :Return results;
+
+  |Customer (Web Browser)|
+  :Review order after checkout;
+
+  if (Order correct?) then (yes)
+    :Confirm order;
+
+    |Web Server|
+    :Parse request;
+    :Submit request to Service;
+
+    |Service|
+    :Approve and transfer payment (Purchasing & Payment);
+    if (Payment approved?) then (yes)
+      fork
+        :Confirm order in system;
+      fork again
+        :Send confirmation email with order details;
+      end fork
+      :Return confirmation results;
+    else (no)
+      :Return payment failure result;
+    endif
+
+    |Web Server|
+    :Return results;
+
+    |Customer (Web Browser)|
+    if (Payment approved?) then (yes)
+      :Display order confirmation;
+    else (no)
+      :Display payment failure; 
+      :Revise payment/order details;
+    endif
+
+  else (no)
+    :Revise and update order (cart contents);
+  endif
+
+elseif (Inventory / Product Management)
+  |Sales Personnel|
+  :Login to manage product line;
+  |Web Server|
+  :Parse request;
+  :Submit request to Service;
+  |Service|
+  :Authenticate sales personnel;
+  :Return results;
+  |Web Server|
+  :Return results;
+
+  |Sales Personnel|
+  if (Authenticated?) then (yes)
+    :Add/Delete/Update product descriptions, pictures, prices;
+    :Flag items ready for customers to buy;
+    |Web Server|
+    :Parse request;
+    :Submit request to Service;
+    |Service|
+    :Update inventory and product details in SQL database;
+    :Return results;
+    |Web Server|
+    :Return results;
+    |Sales Personnel|
+    :View update confirmation;
+  else (no)
+    :Access denied;
+  endif
+
+elseif (Admin Maintenance / Privileges / Categories)
+  |System Administrator|
+  :Login to administrator interface;
+  |Web Server|
+  :Parse request;
+  :Submit request to Service;
+  |Service|
+  :Authenticate administrator;
+  :Return results;
+  |Web Server|
+  :Return results;
+
+  |System Administrator|
+  if (Authenticated?) then (yes)
+    :Assign/upgrade account privileges (e.g., Customer -> Sales Personnel/Admin);
+    :Update categories, product placement, and product details;
+    |Web Server|
+    :Parse request;
+    :Submit request to Service;
+    |Service|
+    :Persist privilege and inventory/category updates in SQL database;
+    :Return results;
+    |Web Server|
+    :Return results;
+    |System Administrator|
+    :View maintenance confirmation;
+  else (no)
+    :Access denied;
+  endif
+
+else (Plug-in API Request)
+  |Customer (Web Browser)|
+  :Initiate HTTPS request to Plug-in API;
+
+  |Web Server|
+  :Parse request;
+  :Submit request to API Service;
+
+  |API Service|
+  :Pick up request;
+  :Submit request to Plug-in;
+
+  |Plug-in|
+  :Pick up request;
+  :Run tasks;
+  :Return results;
+
+  |API Service|
+  :Validate results;
+  :Return results to Web Server;
+
+  |Web Server|
+  :Check for completion;
+  :Return results to Web Browser;
+
+  |Customer (Web Browser)|
+  :Display results;
+endif
+
+stop
+@enduml

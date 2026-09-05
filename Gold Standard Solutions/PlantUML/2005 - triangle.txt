@@ -1,0 +1,78 @@
+@startuml
+title Triangulation Games - Activity Diagram
+|User|
+
+start
+:Start Triangulation Games Application;
+
+if (Game loaded correctly?) then (yes)
+|Triagulation Games Application|
+  :Display GUI;
+else (no)
+  :Display Game loading error;
+  stop
+endif
+
+|User|
+
+if (User type?) then (Player)
+  :Access game interface;
+  :Search external source for game definitions;
+
+
+  if (External game definitions found?) then (yes)
+
+|Triagulation Games Application|
+    :Load additional game definitions;
+  else (no)
+    :Load default 3 games\n(Constructing, Transforming, Marking);
+  endif
+
+  :Display all available games in GUI;
+
+|User|
+
+  if (Play mode artificial intelligence?) then (Yes)
+|Triagulation Games Application|
+
+    :Start game with artificial intelligence as players;
+|User|
+  else (No)
+    if(Play Mode?) then (solitaire)
+|Triagulation Games Application|
+      :Start solitaire game;
+    else (two-player)
+|Triagulation Games Application|
+    :Start two-player game;
+    endif
+|User|
+    :User interacts via Mouse or Keyboard;
+  endif
+  
+else (Developer)
+  :Access definition tools;
+  :Define new game externally;
+  :Place game definition in system;
+
+|Triagulation Games Application|
+
+  :Load new game into GUI;
+endif
+
+|User|
+
+if(Access Documentation?) then (Yes)
+|Triagulation Games Application|
+
+  fork
+    :Deliver User Manual;
+  fork again
+    :Deliver Maintenance Manual;
+  end fork
+else (No)
+endif
+|User|
+
+stop
+
+@enduml

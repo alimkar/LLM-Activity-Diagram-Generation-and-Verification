@@ -1,0 +1,39 @@
+@startuml
+|User|
+start
+|System|
+:Check torrent site database updates;
+|Internet|
+:Provide database updates;
+|System|
+:Update torrent site database;
+|User|
+:Enter query in shared search bar;
+:Toggle include torrent search;
+|System|
+if (Include torrent search?) then (yes)
+  :Query torrent sites;
+  :Retrieve seeds, peers, size, date, link;
+endif
+if (Results found?) then (yes)
+  :Display results;
+  |User|
+  repeat
+    if (Sort results?) then (yes)
+      :Click column header;
+      |System|
+      :Sort results by size/date/alphabetical;
+      |User|
+    endif
+    if (Navigate pages?) then (yes)
+      :Click page button;
+      |System|
+      :Display results page;
+      |User|
+    endif
+  repeat while (Continue viewing results?) is (yes)
+else (no)
+  :Display "No results were found for this search.";
+endif
+stop
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+|System|
+start
+
+fork
+  |System|
+  :Check for torrent site database updates via internet;
+  |Internet|
+  :Provide updated torrent site listings;
+  |System|
+  :Download updates;
+  :Update local torrent site database;
+fork again
+  |User|
+  :Enter search text in shared streaming/torrent search bar;
+  :Set "Include torrent searching" tick box (on/off);
+
+  |System|
+  :Validate search query;
+  :Search streaming sources;
+
+  if (Tick box ON?) then (yes)
+    :Search torrent sites database;
+    :For each torrent result retrieve:\n- seeds & peers\n- file size\n- date posted\n- webpage link;
+  endif
+
+  :Combine and prepare results;
+
+  if (Any results found?) then (no)
+    :Display message:\n"No results were found for this search.";
+  else (yes)
+    :Display results list with columns\n(size/date/name);
+
+    repeat
+      |User|
+      :Optionally click column header to sort\n(size/date/alphabetical);
+      |System|
+      :Reorder results accordingly;
+
+      |User|
+      :Optionally click page button to navigate results;
+      |System|
+      :Load and display selected results page;
+    repeat while (User continues sorting/paging?) is (yes)
+  endif
+end fork
+
+stop
+@enduml

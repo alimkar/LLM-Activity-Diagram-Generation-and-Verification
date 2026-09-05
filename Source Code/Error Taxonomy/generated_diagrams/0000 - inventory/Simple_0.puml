@@ -1,0 +1,125 @@
+@startuml
+|User|
+start
+:Enter username;
+:Enter password;
+:Authenticate user;
+
+if (Authenticated?) then (yes)
+  if (Use administration computer?) then (yes)
+    :Work on administration computer;
+  else (no)
+  endif
+
+  :Select function;
+
+  if (Transfer assets?) then (yes)
+    if (Within same department?) then (yes)
+      :Update database;
+    else (no)
+      if (Inter departments?) then (yes)
+        :Create transfer request;
+        if (From higher level group?) then (yes)
+          :Approve request (faculty group or higher level);
+        else (no)
+          fork
+            :Approve request (DA group member);
+          fork again
+            :Approve request (faculty group member);
+          end fork
+        endif
+      else (no)
+        if (Inter faculties transfer?) then (yes)
+          :Create transfer request;
+          :Approve request (faculty group or higher level);
+        else (no)
+          if (Transfer outside university?) then (yes)
+            :Create transfer request;
+            :Approve request (university group);
+          else (no)
+          endif
+        endif
+      endif
+    endif
+
+  else (no)
+    if (Edit asset?) then (yes)
+      :Edit asset (department/faculty/university scope);
+      if (Authorized to modify?) then (yes)
+        if (Use bulk entry file?) then (yes)
+          :Modify asset fields (except IDs);
+        else (no)
+          :Modify asset fields (except IDs);
+        endif
+      else (no)
+      endif
+
+    else (no)
+      if (Add inventory assets?) then (yes)
+        if (Use bulk entry?) then (yes)
+          :Add many assets;
+        else (no)
+          :Add inventory asset;
+        endif
+
+      else (no)
+        if (Create borrow/reserve request?) then (yes)
+          :Create request;
+          :Set request pending;
+
+        else (no)
+          if (Return asset?) then (yes)
+            :Check returned asset;
+            :Update inventory;
+
+          else (no)
+            if (Create new location?) then (yes)
+              :Receive exception request;
+              :Create new space;
+              :Modify floor structure;
+
+            else (no)
+              if (Approve requests?) then (yes)
+                :Display pending requests;
+                while (Pending requests exist?) is (yes)
+                  :Approve request;
+                  :Notify user by email;
+                  :Add to waiting for execution list;
+                  :Update inventory when user receives asset;
+                endwhile (no)
+
+              else (no)
+                if (Change permission?) then (yes)
+                  :Delegate authorized actions;
+                  :Assign inventory administrator role;
+
+                else (no)
+                  if (Output reports?) then (yes)
+                    if (Asset report by location?) then (yes)
+                      :Generate asset report by location;
+                    else (no)
+                      if (Request report?) then (yes)
+                        :Generate request report;
+                      else (no)
+                        if (User permission report?) then (yes)
+                          :Generate user permission report;
+                        else (no)
+                        endif
+                      endif
+                    endif
+                  else (no)
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+
+  stop
+else (no)
+  stop
+endif
+@enduml

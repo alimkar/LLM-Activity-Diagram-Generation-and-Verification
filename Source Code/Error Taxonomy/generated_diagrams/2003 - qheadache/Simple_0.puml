@@ -1,0 +1,184 @@
+@startuml
+|Player|
+start
+|Game|
+:Apply scale x (50..100);
+:Draw board (5x by 4x);
+:Draw blocks (yellow);
+:Set game state "Block selection";
+
+while (Main window visible?) is (yes)
+  |Player|
+  :Select menu item or use mouse;
+
+  |Game|
+  if (Menu selection?) then (yes)
+
+    if (Game menu item?) then (yes)
+
+      if (Select "Open game ... "?) then (yes)
+        :Open file dialog;
+        |Player|
+        :Choose game file;
+        |Game|
+        :Redraw board from file;
+        :Set player statistics from file;
+
+      else (no)
+        if (Select "Save Game ... "?) then (yes)
+          if (Game never saved?) then (yes)
+            :Open save-as dialog;
+            |Player|
+            :Choose save file;
+            |Game|
+            :Save game data to file;
+          else (no)
+            :Save game data to previous file;
+          endif
+
+        else (no)
+          if (Select "Save Game As ... "?) then (yes)
+            :Open save-as dialog;
+            |Player|
+            :Choose save file;
+            |Game|
+            :Save game data to file;
+
+          else (no)
+            if (Select "Exit"?) then (yes)
+              if (Game saved?) then (yes)
+                :Close main window;
+                break
+              else (no)
+                :Display save prompt (Yes/No);
+                |Player|
+                if (Select "Yes"?) then (yes)
+                  |Game|
+                  if (Game never saved?) then (yes)
+                    :Open save-as dialog;
+                    |Player|
+                    :Choose save file;
+                    |Game|
+                    :Save game data to file;
+                  else (no)
+                    :Save game data to previous file;
+                  endif
+                  :Close main window;
+                  break
+                else (no)
+                  |Game|
+                  :Close main window;
+                  break
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+
+    else (no)
+      if (Action menu item?) then (yes)
+
+        if (Select "Undo"?) then (yes)
+          if (Previous movement exists?) then (yes)
+            :Restore previous block positions;
+            :Update player statistics;
+          else (no)
+          endif
+
+        else (no)
+          if (Select "Redo"?) then (yes)
+            if (Previous action was "Undo"?) then (yes)
+              :Restore canceled block positions;
+              :Update player statistics;
+            else (no)
+            endif
+          endif
+        endif
+
+      else (no)
+        if (Statistics menu item?) then (yes)
+
+          if (Select "Display"?) then (yes)
+            :Display statistic window;
+
+          else (no)
+            if (Select "Erase"?) then (yes)
+              :Erase statistics file data;
+              if (File updated?) then (yes)
+              else (no)
+                :Display error message;
+              endif
+            endif
+          endif
+
+        else (no)
+          if (Help menu item?) then (yes)
+            if (Select "About"?) then (yes)
+              :Display about window;
+            endif
+          endif
+        endif
+      endif
+    endif
+
+  else (no)
+
+    if (Left-click down on block?) then (yes)
+      :Set game state "Block deplacement";
+
+      while (Mouse movement in "Block deplacement"?) is (yes)
+        :Move selected block;
+        :Prevent overlap and out-of-zone;
+        :Maintain 0.05x spacing;
+      endwhile (no)
+
+      |Player|
+      if (Left-click up on selected block?) then (yes)
+        |Game|
+        :Set game state "Block selection";
+        :Update player statistics;
+
+        if (Great square at bottom?) then (yes)
+          :Freeze player statistics;
+          :Compare movements to highest record;
+
+          if (Movements lower than highest?) then (yes)
+            :Display finish window with statistics;
+            |Player|
+            :Enter name (<=20 chars);
+            :Click OK;
+            |Game|
+            :Record player statistics to file;
+            if (File updated?) then (yes)
+            else (no)
+              :Display error message;
+            endif
+            :Close finish window;
+            :Display statistic window;
+            stop
+
+          else (no)
+            :Display simple finish window;
+            |Player|
+            :Click OK;
+            |Game|
+            :Close simple finish window;
+            :Display statistic window;
+            stop
+          endif
+
+        else (no)
+        endif
+
+      else (no)
+      endif
+
+    else (no)
+    endif
+
+  endif
+
+endwhile (no)
+stop
+@enduml

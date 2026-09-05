@@ -1,0 +1,169 @@
+@startuml
+|User|
+start
+if (Start with file path?) then (yes)
+  :Pass file path;
+  |KeePass|
+  :Open database at startup;
+else (no)
+  :Select database action;
+  if (Create new database?) then (yes)
+    :Create new database;
+    :Create master key;
+  else (no)
+    if (Open database?) then (yes)
+      :Open database;
+    else (no)
+      if (Import database?) then (yes)
+        :Import database;
+      else (no)
+        :Close database;
+        stop
+      endif
+    endif
+  endif
+endif
+
+|KeePass|
+if (Composite master key required?) then (yes)
+  |User|
+  :Provide password;
+  :Provide key file;
+  :Provide Windows account details;
+  |KeePass|
+  :Unlock database;
+else (no)
+  |User|
+  :Provide master key;
+  |KeePass|
+  :Unlock database;
+endif
+
+|User|
+repeat
+  :Select feature;
+  if (Manage groups?) then (yes)
+    :Select group scope;
+    if (Add group/subgroup?) then (yes)
+      :Add group/subgroup;
+    else (no)
+      if (Modify group/subgroup?) then (yes)
+        :Modify group/subgroup;
+      else (no)
+        if (Delete group/subgroup?) then (yes)
+          :Delete group/subgroup;
+        else (no)
+          :Find group/subgroup;
+        endif
+      endif
+    endif
+  else (no)
+    if (Manage entries?) then (yes)
+      :Select group/subgroup;
+      if (Add entry?) then (yes)
+        :Add entry;
+      else (no)
+        if (View/Edit entry?) then (yes)
+          :View/Edit entry;
+        else (no)
+          if (Duplicate entry?) then (yes)
+            :Duplicate entry;
+          else (no)
+            :Delete entry;
+          endif
+        endif
+      endif
+    else (no)
+      if (Search database?) then (yes)
+        :Enter keywords;
+        |KeePass|
+        :Search database;
+      else (no)
+        if (Search within group?) then (yes)
+          :Select group;
+          :Enter keywords;
+          |KeePass|
+          :Search group;
+        else (no)
+          if (Print data?) then (yes)
+            :Print data;
+          else (no)
+            if (Export data?) then (yes)
+              :Export data;
+            else (no)
+              if (Change language?) then (yes)
+                :Download translation;
+                :Apply language;
+              else (no)
+                if (Configure auto-type?) then (yes)
+                  :Select keypress sequence;
+                else (no)
+                  if (Use auto-type?) then (yes)
+                    :Trigger auto-type;
+                    |KeePass|
+                    :Send keypresses;
+                  else (no)
+                    if (Generate password?) then (yes)
+                      :Select generation method;
+                      if (Character set generation?) then (yes)
+                        |KeePass|
+                        :Generate random password;
+                      else (no)
+                        |KeePass|
+                        :Generate pattern password;
+                      endif
+                    else (no)
+                      if (Enable secure edit controls?) then (yes)
+                        :Enable secure edit controls;
+                      else (no)
+                        if (Use stored passwords?) then (yes)
+                          :Select usage method;
+                          if (Copy password?) then (yes)
+                            :Copy password;
+                          else (no)
+                            if (Drag and drop?) then (yes)
+                              :Drag and drop credentials;
+                            else (no)
+                              :Use context-sensitive list;
+                            endif
+                          endif
+                        else (no)
+                          if (Use TAN support?) then (yes)
+                            :Run TAN wizard;
+                            |KeePass|
+                            :Generate one-time password;
+                          else (no)
+                            if (Execute URL field?) then (yes)
+                              :Execute URL field;
+                            else (no)
+                              if (Lock workspace?) then (yes)
+                                :Lock workspace;
+                                |KeePass|
+                                :Lock database;
+                                |User|
+                                :Provide master key;
+                                |KeePass|
+                                :Unlock database;
+                              else (no)
+                                :Close database;
+                                stop
+                              endif
+                            endif
+                          endif
+                        endif
+                      endif
+                    endif
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+repeat while (Continue using KeePass?) is (yes)
+
+:Close database;
+stop
+@enduml

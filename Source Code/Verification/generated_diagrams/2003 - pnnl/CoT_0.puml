@@ -1,0 +1,34 @@
+@startuml
+|User|
+start
+:Initiate diagnostic run;
+
+|Automated Diagnostic Tool|
+:Obtain sensed data\n(temperatures, pressures,\nelectrical current, machine state, etc.);
+if (Sensed data available\nin real time?) then (yes)
+  :Acquire sensed data in real time\nfrom data acquisition hardware;
+else (no)
+  :Retrieve previously acquired sensed data\nfrom data acquisition hardware;
+endif
+
+:Obtain fixed data describing subsystem\n(specifications, design info,\noperating characteristics, set points);
+:Load fixed data from permanent storage;
+
+:Preprocess data:\nreduce, filter, prepare;
+:Perform statistical processing as needed\n(averaging, trending, etc.);
+
+:Run diagnostic algorithms\n(derived from expert practices);
+:Detect and identify faults\nin HVAC subsystems;
+
+fork
+  :Prepare results for display\n(graphical + textual);
+  |User|
+  :View diagnostic results;
+fork again
+  |Automated Diagnostic Tool|
+  :Record diagnostic results;
+  :Store results to permanent storage\nfor subsequent retrieval and analysis;
+end fork
+
+stop
+@enduml

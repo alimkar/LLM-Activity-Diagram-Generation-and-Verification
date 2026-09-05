@@ -1,0 +1,236 @@
+@startuml
+skinparam swimlaneWidth 220
+skinparam activityFontSize 10
+skinparam Padding 2
+scale 0.50
+|User|
+start
+
+|Game System|
+:Initialize game;
+:Compute scale unit x (50..100 px);
+:Render board (size 5x by 4x, black);
+:Render blocks (yellow) with margin 0.1x;
+note right
+Blocks:
+- 4 squares (x by x)
+- 4 rectangles (2x by x)
+- 1 rectangle (x by 2x)
+- 1 square (2x by 2x)
+end note
+:Set game state = "Block selection";
+
+repeat
+  |User|
+  :Choose next action
+  (block interaction or menu selection);
+
+  if (Block interaction?) then (yes)
+    :Left-click down on a block;
+
+    |Game System|
+    :Select block;
+    :Set game state = "Block deplacement";
+
+    |User|
+    :Move mouse (drag selected block);
+
+    |Game System|
+    :Move selected block with mouse;
+    note right
+Constraints during movement:
+- No overlap with other blocks
+- Must stay inside board zone
+- Keep at least 0.05x from other blocks
+end note
+
+    |User|
+    :Left-click up on selected block;
+
+    |Game System|
+    :Drop block;
+    :Set game state = "Block selection";
+    :Count this as a movement;
+    :Increment movement counter (+1);
+    :Record time delta since previous movement;
+
+    if (Great square at bottom?) then (yes)
+      :Freeze all player statistics;
+
+      |File System|
+      :Read statistic file (top scores);
+
+      |Game System|
+      if (Current movements < best recorded?) then (yes)
+        :Display "Finish Window with Statistics";
+        |User|
+        :Enter name (<= 20 chars);
+        :Click "OK";
+
+        |Game System|
+        :Prepare player statistics (name,\nmovement count, elapsed time);
+
+        |File System|
+        :Update statistic file;
+        if (File updated correctly?) then (yes)
+          |Game System|
+          :Close finish window;
+        else (no)
+          |Game System|
+          :Display error message\n(disk full / permissions / etc.);
+          :Close finish window;
+        endif
+
+      else (no)
+        :Display "Simple Finish Window";
+        |User|
+        :Click "OK";
+        |Game System|
+        :Close simple finish window;
+      endif
+
+      |File System|
+      :Read statistic file;
+
+      |Game System|
+      :Display Statistic Window (10 lines);
+      break
+    endif
+
+  else (no)
+    |User|
+    :Select menu item;
+
+    |Game System|
+    if (Game menu item?) then (yes)
+      if ("Open game ...") then (yes)
+        :Open file chooser dialog;
+        |User|
+        :Select saved game file;
+        |File System|
+        :Read saved game data;
+        |Game System|
+        :Redraw board from file data;
+        :Set player statistics from file data;
+
+      else (no)
+        if ("Save game ...") then (yes)
+          if (Game never saved before?) then (yes)
+            :Treat as "Save game as...";
+            :Open file chooser dialog;
+            |User|
+            :Choose destination file;
+            |File System|
+            :Write save data:\n- current block positions\n- previous positions (up to 10000)\n- movement count\n- elapsed time;
+          else (no)
+            |File System|
+            :Write save data to previous save file:\n- current block positions\n- previous positions (up to 10000)\n- movement count\n- elapsed time;
+          endif
+
+        else (no)
+          if ("Save game as ...") then (yes)
+            :Open file chooser dialog;
+            |User|
+            :Choose destination file;
+            |File System|
+            :Write save data:\n- current block positions\n- previous positions\n- movement count\n- elapsed time;
+
+          else (no)
+            if ("Exit") then (yes)
+              |Game System|
+              if (Game saved?) then (yes)
+                :Close main window;
+                break
+              else (no)
+                :Prompt "Save game?" (Yes/No);
+                |User|
+                if (Choose "Yes"?) then (yes)
+                  |Game System|
+                  if (Game never saved before?) then (yes)
+                    :Treat as "Save game as...";
+                    :Open file chooser dialog;
+                    |User|
+                    :Choose destination file;
+                    |File System|
+                    :Write save data;
+                  else (no)
+                    |File System|
+                    :Write save data to previous save file;
+                  endif
+                  |Game System|
+                  :Close main window;
+                  break
+                else (no)
+                  |Game System|
+                  :Close main window;
+                  break
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+
+    else (no)
+      if (Action menu item?) then (yes)
+        if ("Undo") then (yes)
+          if (Undo available?) then (yes)
+            :Restore block positions\n(before last movement);
+            :Count undo as a movement;
+            :Increment movement counter (+1);
+            :Record time delta since previous movement;
+          else (no)
+            :Undo menu item unavailable;
+          endif
+
+        else (no)
+          if ("Redo") then (yes)
+            if (Redo available\n(previous action was Undo)?) then (yes)
+              :Restore block positions\n(before last undo);
+              :Count redo as a movement;
+              :Increment movement counter (+1);
+              :Record time delta since previous movement;
+            else (no)
+              :Redo menu item unavailable;
+            endif
+          endif
+        endif
+
+      else (no)
+        if (Statistics menu item?) then (yes)
+          if ("Display") then (yes)
+            |File System|
+            :Read statistic file;
+            |Game System|
+            :Display Statistic Window (10 lines);
+
+          else (no)
+            if ("Erase") then (yes)
+              |File System|
+              :Erase statistic file data;
+              if (File updated correctly?) then (yes)
+                |Game System|
+                :No output;
+              else (no)
+                |Game System|
+                :Display error message\n(disk full / permissions / etc.);
+              endif
+            endif
+          endif
+
+        else (no)
+          if (Help menu item: "About") then (yes)
+            |Game System|
+            :Display About Window:\n"Qheadache 1.0 by Jean-Philippe Brossat\njp_brossat@yahoo.fr";
+          endif
+        endif
+      endif
+    endif
+  endif
+
+repeat while (Continue playing?) is (yes)
+
+|Game System|
+:End;
+stop
+@enduml

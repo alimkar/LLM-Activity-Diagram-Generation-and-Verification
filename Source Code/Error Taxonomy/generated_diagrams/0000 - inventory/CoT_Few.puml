@@ -1,0 +1,201 @@
+@startuml
+|Authorised User|
+start
+:Enter username & password;
+|System|
+:Authenticate user;
+if (Credentials valid?) then (yes)
+  :Load user roles & permissions;
+
+  |Authorised User|
+  :Select operation;
+
+  if (Transfer asset?) then (yes)
+    :Enter transfer details (source/target);
+    |System|
+    if (Within same department?) then (yes)
+      :Update asset ownership/location in DB directly;
+    else (no)
+      if (Inter-department transfer?) then (yes)
+        if (Request came from higher level group?) then (yes)
+          :Auto-approve transfer request;
+        else (no)
+          :Create transfer request (Pending);
+          |DA Group Member|
+          :Review pending transfer request;
+          if (Approve?) then (yes)
+            |Faculty Group Member|
+            :Review pending transfer request;
+            if (Approve?) then (yes)
+              |System|
+              :Mark request Approved;
+            else (no)
+              |System|
+              :Mark request Rejected;
+            endif
+          else (no)
+            |System|
+            :Mark request Rejected;
+          endif
+        endif
+      else (no)
+        if (Inter-faculty transfer?) then (yes)
+          |System|
+          :Create transfer request (Pending);
+          |Faculty Group Member|
+          :Review pending transfer request;
+          if (Approve?) then (yes)
+            |System|
+            :Mark request Approved;
+          else (no)
+            |System|
+            :Mark request Rejected;
+          endif
+        else (no)
+          :Create transfer-outside-university request (Pending);
+          |University Group Member|
+          :Review pending transfer request;
+          if (Approve?) then (yes)
+            |System|
+            :Mark request Approved;
+          else (no)
+            |System|
+            :Mark request Rejected;
+          endif
+        endif
+      endif
+    endif
+
+    |System|
+    if (Request treated (Approved/Rejected)?) then (yes)
+      :Notify requester by email;
+      if (Approved?) then (yes)
+        :Add request to "Waiting for execution" list;
+      endif
+    endif
+
+  else (no)
+    if (Edit/Modify asset?) then (yes)
+      |Authorised User|
+      :Select asset to edit;
+      |System|
+      if (User authorised for asset scope (dept/faculty/university)?) then (yes)
+        |Authorised User|
+        if (Bulk entry file used?) then (yes)
+          :Upload bulk modification file;
+          |System|
+          :Apply modifications (all fields except IDs);
+        else (no)
+          :Edit asset fields (excluding IDs);
+          |System|
+          :Save asset changes;
+        endif
+      else (no)
+        :Deny edit (insufficient permission);
+      endif
+
+    else (no)
+      if (Add inventory assets?) then (yes)
+        |Authorised User|
+        :Enter asset details / choose bulk entry;
+        |System|
+        if (User authorised to add for scope?) then (yes)
+          if (Bulk entry used?) then (yes)
+            :Import bulk assets;
+          else (no)
+            :Add single asset to inventory;
+          endif
+          :Set ownership scope (dept/faculty/university) per role;
+        else (no)
+          :Deny add (insufficient permission);
+        endif
+
+      else (no)
+        if (Create borrow asset / reserve location request?) then (yes)
+          |Authorised User|
+          :Create request (borrow/reserve);
+          |System|
+          :Set request status = Pending (await admin-level approval);
+
+        else (no)
+          if (Approve requests?) then (yes)
+            |Administrative Level User|
+            :Display pending requests for this level;
+            :Select request to treat;
+            if (Approve?) then (yes)
+              |System|
+              :Mark request Approved;
+              :Notify requester by email;
+              :Add request to "Waiting for execution" list;
+            else (no)
+              |System|
+              :Mark request Rejected;
+              :Notify requester by email;
+            endif
+
+          else (no)
+            if (Receive/Return asset?) then (yes)
+              |Inventory User|
+              :Check returned/received asset;
+              |System|
+              :Update inventory status/location;
+              if (Asset received for an approved request?) then (yes)
+                :Update inventory when user receives requested asset;
+              endif
+
+            else (no)
+              if (Create/modify location (IT)?) then (yes)
+                |Administrative Level User|
+                :Send exception request to IT;
+                |IT Group Member|
+                :Receive exception request;
+                :Create new space / modify floor structure;
+                |System|
+                :Update location/floor structure data;
+
+              else (no)
+                if (Change permission / delegate actions?) then (yes)
+                  |Administrative Level User|
+                  :Select user to delegate to;
+                  :Select actions to delegate (some/all);
+                  |System|
+                  :Grant delegated permissions;
+                  :Assign role = Inventory Administrator;
+
+                else (no)
+                  if (Output reports?) then (yes)
+                    |Authorised User|
+                    :Select report type;
+                    |System|
+                    if (Asset report by location?) then (yes)
+                      :Generate asset-by-location report;
+                    else (no)
+                      if (Request report?) then (yes)
+                        :Generate request report;
+                      else (no)
+                        :Generate user permission report;
+                      endif
+                    endif
+                  else (no)
+                    |System|
+                    :No operation selected / End session;
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+
+  |System|
+  :Log action & end session;
+  stop
+else (no)
+  :Reject login;
+  |Authorised User|
+  :Re-enter credentials or exit;
+  stop
+endif
+@enduml

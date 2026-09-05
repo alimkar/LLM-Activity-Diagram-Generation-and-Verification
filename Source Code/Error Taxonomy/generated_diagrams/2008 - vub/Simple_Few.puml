@@ -1,0 +1,195 @@
+@startuml
+|User|
+start
+
+if (Connected to VUB-Network?) then (yes)
+  |System|
+  :Recognize IP address;
+  :Grant PMS access;
+else (no)
+endif
+
+if (Select function?) then (Register account)
+  |User|
+  :Fill registration form;
+  |System|
+  :Send validation mail;
+  |User|
+  :Validate new account;
+  |System|
+  :Complete registration;
+elseif (Select function?) then (Log into PMS)
+  |User|
+  :Enter login credentials;
+  |System|
+  if (Valid account?) then (yes)
+    :Log in user;
+    if (User level?) then (Member)
+      |User|
+      :Select member function;
+      if (Change account details?) then (yes)
+        :Change account details;
+        if (Request account upgrade?) then (yes)
+          :Send upgrade request;
+        else (no)
+        endif
+      else (no)
+        if (Log off PMS?) then (yes)
+          :Log off;
+          |System|
+          if (Connected to VUB-Network?) then (yes)
+            :Redirect to search page;
+          else (no)
+            :Redirect to login page;
+          endif
+        else (no)
+        endif
+      endif
+    elseif (User level?) then (Publisher)
+      |User|
+      :Select publisher function;
+      if (Upload publication?) then (yes)
+        :Upload publication file;
+        |System|
+        if (Valid format (RIS/bibTEX)?) then (yes)
+          :Retrieve bibliographical info;
+          |User|
+          if (Info incorrect or insufficient?) then (yes)
+            :Correct bibliographical info;
+          else (no)
+          endif
+          if (Specify author equivalence?) then (yes)
+            :Specify author equivalence;
+          else (no)
+          endif
+          if (Specify institute equivalence?) then (yes)
+            :Specify institute equivalence;
+          else (no)
+          endif
+        else (no)
+        endif
+      else (no)
+        if (Edit own publication?) then (yes)
+          if (Publication uploaded?) then (yes)
+            :Edit own publication;
+          else (no)
+          endif
+        else (no)
+          if (Bulk upload publications?) then (yes)
+            :Upload bulk file;
+            |System|
+            if (Valid format (RIS/bibTEX)?) then (yes)
+            else (no)
+            endif
+          else (no)
+          endif
+        endif
+      endif
+    elseif (User level?) then (Moderator)
+      |User|
+      :Select moderator function;
+      if (Manage user levels?) then (yes)
+        if (Belongs to specified department?) then (yes)
+          :Upgrade member to publisher;
+          :Downgrade publisher to member;
+        else (no)
+        endif
+      else (no)
+        if (Manage group permissions?) then (yes)
+          if (Responsible for group?) then (yes)
+            :Change group permissions;
+          else (no)
+          endif
+        else (no)
+          if (Edit authors?) then (yes)
+            :Edit author information;
+          else (no)
+            if (Edit departmental publications?) then (yes)
+              if (Belongs to specified department?) then (yes)
+                :Edit departmental publication details;
+              else (no)
+              endif
+            else (no)
+            endif
+          endif
+        endif
+      endif
+    elseif (User level?) then (Administrator)
+      |User|
+      :Select administrator function;
+      if (Access control panel?) then (yes)
+        :Access control panel;
+        :Edit user accounts;
+      else (no)
+        if (Create/delete users?) then (yes)
+          :Create user;
+          :Delete user;
+        else (no)
+          if (Create/delete groups?) then (yes)
+            :Create group;
+            :Delete group;
+          else (no)
+            if (Manage user level?) then (yes)
+              :Change user level;
+            else (no)
+              if (Edit all publications?) then (yes)
+                :Edit publication details;
+              else (no)
+              endif
+            endif
+          endif
+        endif
+      endif
+    else (Other)
+    endif
+  else (no)
+  endif
+elseif (Select function?) then (Retrieve password)
+  |User|
+  :Request password retrieval;
+  |System|
+  if (Valid account?) then (yes)
+  else (no)
+  endif
+elseif (Select function?) then (Search publications)
+  |User|
+  if (Connected to VUB-Network?) then (yes)
+    :Fill search form;
+    |System|
+    if (Valid search query?) then (yes)
+      :Show search results;
+      |User|
+      :Select result function;
+      if (Order results?) then (yes)
+        :Order results;
+      else (no)
+        if (Export and download results?) then (yes)
+          :Select results to export;
+          :Select export format (html/pdf/ps);
+          |System|
+          :Export results;
+          :Download results;
+        else (no)
+          if (Search on similarity?) then (yes)
+            :Select similarity criteria;
+            |System|
+            :Show similar publications;
+          else (no)
+            if (Advanced search?) then (yes)
+              :Fill advanced search form;
+              |System|
+              :Show search results;
+            else (no)
+            endif
+          endif
+        endif
+      endif
+    else (no)
+    endif
+  else (no)
+  endif
+else (Other)
+endif
+
+stop
+@enduml

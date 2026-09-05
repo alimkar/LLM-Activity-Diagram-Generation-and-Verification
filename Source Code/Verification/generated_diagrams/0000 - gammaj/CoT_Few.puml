@@ -1,0 +1,169 @@
+@startuml
+|Customer|
+start
+:Access Web Store via web browser;
+:Initiate HTTPS (SSL) request;
+
+|Web Server|
+:Parse HTTPS request;
+:Submit request to Service;
+
+|Service|
+:Pick up request;
+:Run requested task;
+:Return results;
+
+|Web Server|
+:Check for completion;
+:Return results to browser;
+
+|Customer|
+:View unambiguous interface;
+:Browse categories and products;
+:Enter search criteria (optional);
+
+|Web Server|
+:Parse request;
+:Submit request to Service;
+
+|Service|
+if (Search requested?) then (yes)
+  :Execute search engine;
+  :Return search results;
+else (no)
+  :Retrieve categories/products for browsing;
+endif
+:Return results;
+
+|Customer|
+:View products and details;
+if (Has account?) then (yes)
+  :Log in;
+  |Web Server|
+  :Parse request;
+  :Submit request to Service;
+  |Service|
+  if (Credentials valid?) then (yes)
+    :Load customer profile (contact/address/payment info);
+  else (no)
+    :Return login failure;
+    |Customer|
+    :Retry login or continue browsing;
+  endif
+else (no)
+  :Register new account;
+  :Provide profile/contact/address/payment info;
+  |Web Server|
+  :Parse request;
+  :Submit request to Service;
+  |Service|
+  :Create customer account (default role = Customer);
+  :Store profile/contact/address/payment info;
+endif
+
+|Customer|
+repeat
+  :Select product;
+  :Add product to shopping cart;
+  |Web Server|
+  :Parse request;
+  :Submit request to Service;
+  |Service|
+  :Reserve item in virtual cart;
+  :Update cart totals (item count and total cost);
+  :Return updated cart;
+  |Customer|
+  :View cart (items, count, total cost);
+  if (Modify cart?) then (yes)
+    if (Remove item?) then (yes)
+      :Remove product from cart;
+      |Web Server|
+      :Parse request;
+      :Submit request to Service;
+      |Service|
+      :Update cart contents and totals;
+      :Return updated cart;
+      |Customer|
+      :View updated cart;
+    else (no)
+      :Continue shopping;
+    endif
+  else (no)
+    :Continue shopping;
+  endif
+repeat while (Checkout now?) is (no)
+
+:Proceed to checkout;
+
+|Web Server|
+:Parse request;
+:Submit request to Service;
+
+|Service|
+:Prepare order for review after checkout;
+:Return order summary;
+
+|Customer|
+:Review order;
+if (Order correct?) then (yes)
+  :Confirm order;
+  |Web Server|
+  :Parse request;
+  :Submit request to Service;
+  |Service|
+  :Approve and transfer payment (Purchasing & Payment);
+  if (Payment approved?) then (yes)
+    :Confirm order;
+    fork
+      :Send confirmation email with order details;
+    fork again
+      :Store purchase history in customer account;
+    end fork
+    :Return confirmation;
+    |Customer|
+    :View order confirmation;
+  else (no)
+    :Return payment failure;
+    |Customer|
+    :Revise payment info and retry checkout;
+  endif
+else (no)
+  :Revise and update order (cart changes);
+endif
+
+|System Administrator|
+:Maintain Web Store system;
+:Assign/upgrade account privileges via admin interface;
+
+|Sales Personnel|
+:Manage product line and inventory;
+:Add/delete products;
+:Change descriptions/pictures/prices;
+:Flag items as available for customers to buy;
+
+|Customer|
+if (Use plug-in?) then (yes)
+  :Invoke plug-in feature via web interface;
+  |Web Server|
+  :Parse HTTPS request;
+  :Submit request to API Service;
+  |API Service|
+  :Pick up request;
+  :Submit request to Plug-in;
+  |Plug-in|
+  :Pick up request;
+  :Run plug-in tasks;
+  :Return results;
+  |API Service|
+  :Validate plug-in results;
+  :Return results to Web Server;
+  |Web Server|
+  :Check for completion;
+  :Return results to browser;
+  |Customer|
+  :View plug-in results;
+else (no)
+endif
+
+stop
+@enduml

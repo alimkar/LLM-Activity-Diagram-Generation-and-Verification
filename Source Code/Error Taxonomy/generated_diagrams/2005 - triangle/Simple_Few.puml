@@ -1,0 +1,29 @@
+@startuml
+|Player|
+start
+:Launch application;
+|System|
+:Show graphical user interface;
+:Load built-in games;
+:Detect added games;
+:List selectable games;
+|Player|
+:Select game;
+if (Play mode?) then (alone)
+  :Play game;
+else (against another person)
+  :Play game;
+endif
+:Control game with mouse;
+:Control game with keyboard;
+stop
+
+|Game Developer|
+start
+:Read maintenance manual;
+:Define new game;
+|System|
+:Detect added games;
+:List selectable games;
+stop
+@enduml

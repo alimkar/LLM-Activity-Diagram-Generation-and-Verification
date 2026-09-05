@@ -1,0 +1,35 @@
+@startuml
+|User|
+start
+:Initiate HVAC subsystem diagnosis;
+
+|System|
+:Obtain sensed data\n(temperatures, pressures, current, machine state, etc.);
+if (Sensed data source?) then (Real-time)
+  :Acquire sensed data in real time\nfrom data acquisition hardware;
+else (Post-acquisition)
+  :Retrieve sensed data at arbitrary time\nafter acquisition from device storage;
+endif
+
+:Obtain fixed data\n(specifications, design info, operating characteristics, set points);
+:Load fixed data from permanent storage;
+
+:Preprocess data;
+:Reduce / filter / prepare data for diagnostics;
+:Perform averaging / trending /\nstatistical analysis as needed;
+
+:Run diagnostic component;
+:Detect and identify faults\nusing algorithms derived from expert practices;
+
+:Generate diagnostic results;
+
+:Display results in simple\ngraphical and textual format;
+:Record results to permanent storage;
+
+|User|
+:View diagnostic results;
+
+|System|
+:Store results for subsequent retrieval and analysis;
+stop
+@enduml

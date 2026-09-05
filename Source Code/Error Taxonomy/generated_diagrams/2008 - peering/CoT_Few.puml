@@ -1,0 +1,109 @@
+@startuml
+|Primary CDN Web Server (WS)|
+start
+:Monitor load / detect hotspot (flash crowd);
+if (Exceptional load spike?) then (yes)
+  :Initiate peering trigger request;
+  |Mediator (Primary CDN)|
+  :Receive initialization request;
+  :Assess expected & unexpected load increase;
+  :Generate service requirements\n(based on current circumstances and customer SLAs);
+
+  |Service Registry (SR)|
+  :Provide local resource/service/access information;
+
+  |Policy Repository (PR)|
+  :Provide SLAs and policies\n(visibility/privacy constraints, peering policies);
+
+  |Mediator (Primary CDN)|
+  :Create/Update negotiated relationship terms\n(legal/financial/technical SLA terms,\nregion preference, duration, penalties, preconditions);
+  :Identify roles/activities for coordination/cooperation;
+
+  |Peering Agent (PA - Primary CDN)|
+  :Receive service requirements from Mediator;
+  :Discover potential peer CDNs\n(predict performance; handle limited info sharing);
+
+  if (Preexisting long-term peering arrangement found?) then (yes)
+    :Return existing peering arrangement candidates;
+  else (no)
+    :Perform short-term negotiations with target peer PAs;
+  endif
+
+  if (Any peer CDN interested / resources offered?) then (yes)
+    |Mediator (Primary CDN)|
+    :Select peer(s) and confirm negotiated relationship;
+
+    fork
+      |Peering Agent (PA - Primary CDN)|
+      :Configure CDN peering protocols at conduit/gateway;
+      :Advertise configurations via inter-PA communication\n(topology, geo proximity, capability, performance);
+    fork again
+      |Policy Repository (PR)|
+      :Deploy/virtualize peering arrangement policies\n(P_WS, P_M, P_Peering and delegated policies);
+      :Provide rules for access control and administration;
+    end fork
+
+    |Mediator (Primary CDN)|
+    :Establish peering arrangement;
+    :Create/Update SR instance encapsulating\nlocal + delegated external resources;
+
+    |SLA Allocator (Primary CDN)|
+    :Provision/reserve WS resources\nfor local and delegated SLAs;
+    :Enforce SLA terms;
+
+    |Primary CDN Web Services Host / WSs|
+    :Serve end-users per negotiated policies;
+    :Perform on-demand caching/content selection/routing;
+
+    |Mediator (Primary CDN)|
+    :Control traffic redirection to peer WSs\n(what portion of requests, what content replicated,\nreplication decision and policies);
+    :Assist request assignment/redirection\n(DNS updates via PAs; gateway redirection; intra-cluster redirection);
+
+    fork
+      |CDN Gateways (M/PA/PR as conceptual gateway)|
+      :Measure and aggregate load information\n(periodic or threshold-based);
+      :Exchange aggregated load info with peer gateways;
+    fork again
+      |Participating CDNs|
+      :Cooperative pull-based content replication\n(subject to contributed resources);
+    fork again
+      |Participating CDNs|
+      :Exchange accounting information for billing\n(based on negotiated relationship);
+    end fork
+
+    |Mediator (Primary CDN)|
+    if (Need disband or re-arrange?) then (yes)
+      if (Circumstances no longer hold\nOR peering not beneficial\nOR need expansion for additional load\nOR contributions not met?) then (yes)
+        :Disband or re-arrange within negotiated relationship scope;
+        if (Re-arrangement requires more resources?) then (yes)
+          :Tune service requirements / negotiated terms;
+          -> :Identify roles/activities for coordination/cooperation;
+        else (no)
+          stop
+        endif
+      else (no)
+        stop
+      endif
+    else (no)
+      stop
+    endif
+
+  else (no)
+    |Mediator (Primary CDN)|
+    :No suitable peer found / no interest;
+    repeat
+      :Reconsider service requirements;
+      :Tune negotiated relationship terms/policies;
+      |Peering Agent (PA - Primary CDN)|
+      :Retry resource discovery / negotiations with peer PAs;
+    repeat while (Still no peer interested?) is (yes)
+    |Mediator (Primary CDN)|
+    :Proceed with established peer(s) after successful retry;
+    stop
+  endif
+
+else (no)
+  :Continue normal content delivery locally;
+  stop
+endif
+@enduml

@@ -1,0 +1,157 @@
+@startuml
+|User / Administrator|
+start
+:Select feature;
+if (Submit Job?) then (yes)
+  :Enter user information;
+  :Provide job information\n(+ any extra submission parameters);
+  :Submit job via SGE interface\n(or command-line);
+  |SGE (Cluster Mgmt Interface)|
+  :Receive job submission request;
+  :Check cluster submission open?;
+  if (Cluster accepting submissions?) then (yes)
+    :Verify user validity;
+    if (User verified?) then (yes)
+      :Accept submission into SGE\n(assign Job Id);
+      |Libra Scheduler|
+      :Initialize Job\n(retrieve job details + Job Id);
+      :Set job & cluster/queue state variables;
+      :Pass parsed parameters to scheduling module;
+
+      :Accept/Reject Job\n(budget, deadline, exec time\n+ current cluster status);
+      :Compute job priority/share requirement;
+      :Check if job can finish by deadline\n(given other pending jobs);
+      if (Job acceptable?) then (yes)
+        fork
+          :Calculate Scheduling Information\n(Stride Scheduling);
+          :Allocate tickets based on budget/deadline\n(and other jobs on host);
+          :Compute stride and initial pass;
+        fork again
+          :Determine Execution Host;
+          :Sort hosts by ascending load;
+          :Select least-loaded host;
+          :Select appropriate queue\n(sequential vs parallel, budget, etc.);
+        end fork
+
+        :Dispatch Job;
+        :Insert job into chosen host/queue\n(joins competition for resources);
+
+        fork
+          :Update Cluster Status (on schedule);
+          :Reserve required resources on node;
+          :Update host queue status;
+          |Master Information Store (Master Host)|
+          :Store updated load/queue/node status;
+        fork again
+          |Execution Hosts / Queues|
+          :Job waits in queue until dispatched\nfor CPU time;
+        end fork
+
+      else (no)
+        :Reject job;
+        |User / Administrator|
+        :Receive suggested deadline or cost\n(precondition for acceptance);
+        if (Resubmit with suggested changes?) then (yes)
+          :Adjust job parameters\n(budget/deadline);
+          :Resubmit job via SGE interface;
+          -> |SGE (Cluster Mgmt Interface)| :Receive job submission request;
+        else (no)
+          stop
+        endif
+      endif
+
+    else (no)
+      |User / Administrator|
+      :Submission denied\n(user not verified);
+      stop
+    endif
+
+  else (no)
+    |User / Administrator|
+    :Submission denied\n(cluster not accepting submissions);
+    stop
+  endif
+
+elseif (View Job Status?) then (yes)
+  :Enter User Id and Password;
+  |SGE (Cluster Mgmt Interface)|
+  :Authenticate credentials;
+  if (Authenticated?) then (yes)
+    :Show available job status options;
+    :Provide progress of job execution;
+    if (User selects an option?) then (yes)
+      :Process selected option\n(view different job aspects);
+    endif
+    |User / Administrator|
+    :View job options and progress details;
+    stop
+  else (no)
+    |User / Administrator|
+    :Access denied;
+    stop
+  endif
+
+elseif (Delete/Change Job?) then (yes)
+  :Enter User Id and Password;
+  |SGE (Cluster Mgmt Interface)|
+  :Authenticate credentials;
+  if (Authenticated?) then (yes)
+    |User / Administrator|
+    if (Delete job?) then (yes)
+      |SGE (Cluster Mgmt Interface)|
+      :Cancel job / remove from queue;
+      |Libra Scheduler|
+      :Update Cluster Status (on delete);
+      :Update cluster/queue/node load status;
+      |SGE (Cluster Mgmt Interface)|
+      :Revise scheduling/resource allocation\nfor pending jobs and new submissions;
+      |User / Administrator|
+      :Receive updated cluster information\nand revised scheduling decisions;
+      stop
+    else (Change job parameters)
+      :Request parameter change;
+      if (Change involves deadline/cost?) then (yes)
+        :Change denied\n(crucial parameters normally not changeable);
+        stop
+      else (no)
+        :Change permitted\n(e.g., output directory or delayed deadline);
+        |SGE (Cluster Mgmt Interface)|
+        :Apply permitted job parameter change;
+        |Libra Scheduler|
+        :Revise scheduling/resource allocation\nfor pending jobs and new submissions;
+        |User / Administrator|
+        :Receive updated cluster information\nand revised scheduling decisions;
+        stop
+      endif
+    endif
+  else (no)
+    |User / Administrator|
+    :Access denied;
+    stop
+  endif
+
+else (no)
+  :No feature selected;
+  stop
+endif
+
+' --- Ongoing execution on execution hosts (Stride Scheduling loop) ---
+|Execution Hosts / Queues|
+while (Jobs left to run on a queue?) is (yes)
+  |Libra Scheduler|
+  :Execute Job (Stride Scheduling loop);
+  :Select job with minimum pass value\n(tie-break: FIFO);
+  :Allot quantum to selected job;
+  :Advance selected job pass by its stride;
+  |Execution Hosts / Queues|
+  :Run selected job for quantum;
+endwhile (no)
+
+|Libra Scheduler|
+:Update Cluster Status (on job end);
+:Remove completed job from cluster state;
+:Update node/queue status and resource availability;
+|Master Information Store (Master Host)|
+:Store updated CPU load, node status,\nremaining time of pending jobs,\navailable memory;
+stop
+@enduml

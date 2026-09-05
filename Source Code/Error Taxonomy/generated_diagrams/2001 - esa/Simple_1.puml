@@ -1,0 +1,56 @@
+@startuml
+|ESOC|
+start
+:Provide ASPERA-3 telemetry;
+:Provide MEX orbit/attitude telemetry;
+
+|APAF System|
+:Acquire telemetry data;
+
+if (Acquisition error?) then (yes)
+  :Handle error;
+  stop
+else (no)
+endif
+
+if (Cleaned-up telemetry provided by ESOC?) then (yes)
+else (no)
+  :Generate cleaned-up telemetry intermediate files;
+  :Store intermediate files on local SwRI archive;
+endif
+
+:Store telemetry data on local SwRI archive;
+
+fork
+  :Process ASPERA-3 science data into IDFS data sets;
+fork again
+  :Process engineering and ancillary data into IDFS data sets;
+end fork
+
+if (Processing error?) then (yes)
+  :Handle error;
+  stop
+else (no)
+endif
+
+:Store IDFS data sets on local SwRI archive;
+
+fork
+  :Provide web displays of most current ASPERA-3 data;
+  |Public|
+  :View current-data web displays;
+fork again
+  :Provide team-defined web displays for science analysis;
+  |ASPERA-3 Team|
+  if (ASPERA-3 data made public?) then (yes)
+    :View analysis web displays;
+  else (no)
+    |APAF System|
+    :Password protect analysis web displays;
+    |ASPERA-3 Team|
+    :View analysis web displays;
+  endif
+end fork
+
+stop
+@enduml

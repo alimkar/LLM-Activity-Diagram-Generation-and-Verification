@@ -1,0 +1,168 @@
+@startuml
+|User|
+start
+
+if (Start with command line file path?) then (yes)
+  :Provide file path;
+  :Open database;
+else (no)
+  if (Create new database?) then (yes)
+    :Create new database;
+    :Create Master Key;
+  else (no)
+    :Open database;
+  endif
+endif
+
+if (Use composite Master Key?) then (yes)
+  :Enter password;
+  :Provide key file;
+  :Provide Windows account details;
+else (no)
+  :Enter Master Key;
+endif
+:Unlock database;
+
+repeat
+  if (Database operation?) then (yes)
+    if (New database?) then (yes)
+      :Create new database;
+      :Create Master Key;
+    else (no)
+      if (Save changes?) then (yes)
+        :Save database;
+      else (no)
+        if (Close database?) then (yes)
+          :Close database;
+        else (no)
+          if (Print data?) then (yes)
+            :Print data;
+          else (no)
+            if (Search database?) then (yes)
+              :Search database;
+            else (no)
+              if (Import database?) then (yes)
+                :Import data;
+              else (no)
+                if (Export database?) then (yes)
+                  :Export data;
+                else (no)
+                  :Open database;
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  else (no)
+    if (Group/Subgroup operation?) then (yes)
+      if (Add group/subgroup?) then (yes)
+        :Add group/subgroup;
+      else (no)
+        if (Modify group/subgroup?) then (yes)
+          :Modify group/subgroup;
+        else (no)
+          if (Delete group/subgroup?) then (yes)
+            :Delete group/subgroup;
+          else (no)
+            :Find group/subgroup;
+          endif
+        endif
+      endif
+    else (no)
+      if (Entry operation?) then (yes)
+        if (Add entry?) then (yes)
+          :Add entry;
+        else (no)
+          if (View/Edit entry?) then (yes)
+            :View/Edit entry;
+          else (no)
+            if (Duplicate entry?) then (yes)
+              :Duplicate entry;
+            else (no)
+              :Delete entry;
+            endif
+          endif
+        endif
+      else (no)
+        if (Change language?) then (yes)
+          :Download translation;
+          :Apply language;
+        else (no)
+          if (Configure auto-type?) then (yes)
+            :Select keypress sequence;
+            :Send keypress sequence;
+          else (no)
+            if (Generate password?) then (yes)
+              if (Use character sets?) then (yes)
+                :Generate random password;
+              else (no)
+                :Generate pattern password;
+              endif
+              :Configure auto-generate for new entries;
+            else (no)
+              if (Enable secure edit controls?) then (yes)
+                :Mask fields with asterisks;
+              else (no)
+                if (Use TAN support?) then (yes)
+                  :Run TAN wizard;
+                  :Add TANs;
+                  :Generate one-time password;
+                else (no)
+                  if (Execute URL field?) then (yes)
+                    if (Execute URL?) then (yes)
+                      :Execute URL;
+                    else (no)
+                      :Execute command line;
+                    endif
+                  else (no)
+                    if (Use stored passwords?) then (yes)
+                      if (Copy password?) then (yes)
+                        :Copy password;
+                      else (no)
+                        if (Drag and drop?) then (yes)
+                          :Drag and drop credentials;
+                        else (no)
+                          :Auto-type credentials;
+                        endif
+                      endif
+                    else (no)
+                      if (Lock workspace?) then (yes)
+                        if (Lock on minimize?) then (yes)
+                          :Minimize application;
+                          :Lock database;
+                        else (no)
+                          :Lock database;
+                        endif
+                        if (Unlock workspace?) then (yes)
+                          if (Use composite Master Key?) then (yes)
+                            :Enter password;
+                            :Provide key file;
+                            :Provide Windows account details;
+                          else (no)
+                            :Enter Master Key;
+                          endif
+                          :Unlock database;
+                        endif
+                      else (no)
+                        if (Restore main window?) then (yes)
+                          :Use global hot key;
+                        else (no)
+                          :Run single instance;
+                        endif
+                      endif
+                    endif
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+repeat while (Perform another action?) is (yes)
+
+stop
+@enduml

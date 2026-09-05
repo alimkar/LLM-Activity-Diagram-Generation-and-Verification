@@ -1,0 +1,31 @@
+@startuml
+|Trade client serve|
+start
+:Send instruction;
+
+|Central trading system (CTS)|
+:Receive instruction;
+:Analyze instruction;
+:Classify instruction;
+:Match instructions;
+:Produce new message;
+
+|Network message promulgating|
+:Receive message;
+
+|Trading system manage|
+if (Access CTS information?) then (yes)
+:Access CTS information;
+else (no)
+endif
+
+|Central trading system (CTS)|
+if (System crash?) then (yes)
+|Maintainer|
+:Find cause;
+:Fix cause;
+|Central trading system (CTS)|
+else (no)
+endif
+stop
+@enduml

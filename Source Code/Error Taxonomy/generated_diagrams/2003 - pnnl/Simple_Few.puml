@@ -1,0 +1,18 @@
+@startuml
+|System|
+start
+:Obtain sensed data;
+:Obtain fixed data;
+:Reduce data;
+:Filter data;
+:Prepare data;
+:Average data;
+:Trend data;
+:Perform statistical analysis;
+:Detect faults;
+:Identify faults;
+:Display diagnostic results;
+:Record diagnostic results;
+:Store results to permanent storage;
+stop
+@enduml

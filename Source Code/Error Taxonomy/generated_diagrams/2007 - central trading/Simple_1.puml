@@ -1,0 +1,20 @@
+@startuml
+|Trade Client Serve|
+start
+:Send Instructions;
+
+|Central Trading System|
+:Receive Instructions;
+:Analyze Instructions;
+:Classify Instructions;
+:Match Instructions;
+:Generate Messages;
+
+|Network Message Promulgating|
+:Receive Messages;
+
+|Trading System Manage|
+:Access CTS Information;
+
+stop
+@enduml

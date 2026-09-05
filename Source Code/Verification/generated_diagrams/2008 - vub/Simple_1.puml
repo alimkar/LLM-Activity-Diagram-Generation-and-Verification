@@ -1,0 +1,117 @@
+@startuml
+|User|
+start
+
+if (Connected to VUB-Network?) then (yes)
+  :Access PMS;
+else (no)
+  :Access PMS;
+endif
+
+if (Logged in?) then (yes)
+  if (User level?) then (Member/Publisher/Moderator/Administrator)
+    :Change account details;
+    if (Request upgrade?) then (yes)
+      :Send upgrade request;
+    else (no)
+    endif
+
+    if (Connected to VUB-Network?) then (yes)
+      :Search publications;
+      if (Use advanced search?) then (yes)
+        :Advanced search publications;
+      else (no)
+      endif
+
+      |System|
+      :Show search results;
+      |User|
+      :Order results;
+      :Export and download results;
+      :Search similar publications;
+    else (no)
+    endif
+
+    if (User level?) then (Publisher/Moderator/Administrator)
+      :Upload publication;
+      |System|
+      :Retrieve bibliographic info;
+      |User|
+      if (Info incorrect or insufficient?) then (yes)
+        :Correct bibliographic info;
+      else (no)
+      endif
+      :Specify author equivalence;
+      :Specify institute equivalence;
+
+      :Bulk upload publications;
+
+      :Edit own publication;
+
+      if (User level?) then (Moderator/Administrator)
+        :Manage user levels;
+        :Manage group permissions;
+        :Edit authors;
+        :Edit departmental publications;
+
+        if (User level?) then (Administrator)
+          :Access control panel;
+          :Create users;
+          :Delete users;
+          :Create groups;
+          :Delete groups;
+          :Manage user levels (extended);
+          :Edit all publications;
+        else (no)
+        endif
+      else (no)
+      endif
+    else (no)
+    endif
+
+    :Log off PMS;
+    if (Connected to VUB-Network?) then (yes)
+      |System|
+      :Redirect to search page;
+    else (no)
+      |System|
+      :Redirect to login page;
+    endif
+  else (no)
+  endif
+
+else (no)
+  if (Choose function?) then (Register account)
+    :Fill registration form;
+    |System|
+    :Send validation mail;
+    |User|
+    :Validate new account;
+  else (Log into PMS)
+    :Log into PMS;
+  endif
+
+  if (Retrieve password?) then (yes)
+    :Retrieve password;
+  else (no)
+  endif
+
+  if (Connected to VUB-Network?) then (yes)
+    :Search publications;
+    if (Use advanced search?) then (yes)
+      :Advanced search publications;
+    else (no)
+    endif
+
+    |System|
+    :Show search results;
+    |User|
+    :Order results;
+    :Export and download results;
+    :Search similar publications;
+  else (no)
+  endif
+endif
+
+stop
+@enduml

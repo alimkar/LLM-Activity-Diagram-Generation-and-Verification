@@ -1,0 +1,165 @@
+@startuml
+title qheadache - activity diagram
+|Player|
+start
+:Launch game;
+
+|Game System|
+:Display main window\n(board + menu bar);
+:Initialize board\n(blocks & positions);
+:Start timer &\naction counter;
+
+|Player|
+repeat
+  :Select menu action\nor interact with board;
+
+  |Game System|
+  if (Action type?) then (Block interaction)
+
+    |Player|
+    :Left-click down\non block;
+
+    |Game System|
+    :Set state to\n"Block displacement";
+
+    |Player|
+    :Move mouse;
+
+    |Game System|
+    :Move block\n(no overlap,\nno exit zone);
+    :Increment move\ncounter;
+    :Record time delta;
+    :Clear redo history;
+
+    |Player|
+    :Left-click up\non block;
+
+    |Game System|
+    :Set state to\n"Block selection";
+
+  elseif (Action type?) then (Undo)
+
+    |Game System|
+    if (Previous move\nexists?) then (yes)
+      :Restore previous\nblock positions;
+      :Increment move\ncounter;
+      :Record time delta;
+      :Redisplay board;
+    else (no)
+      :Undo unavailable;\nno action;
+    endif
+
+  elseif (Action type?) then (Redo)
+
+    |Game System|
+    if (Last action\nwas Undo?) then (yes)
+      :Restore next\nblock positions;
+      :Increment move\ncounter;
+      :Record time delta;
+      :Redisplay board;
+    else (no)
+      :Redo unavailable;\nno action;
+    endif
+
+  elseif (Action type?) then (Open game)
+
+    |Player|
+    :Select file\nfrom dialog;
+
+    |Game System|
+    :Load block positions,\nmove history,\ncounter & timer;
+    :Redisplay board;
+
+  elseif (Action type?) then (Save game)
+
+    |Game System|
+    if (Game previously\nsaved?) then (no)
+      :Open save-as\ndialog;
+      |Player|
+      :Choose file;
+      |Game System|
+    else (yes)
+    endif
+    :Save block positions,\nmove history,\ncounter & timer;
+
+  elseif (Action type?) then (Save game as)
+
+    |Player|
+    :Choose file\nfrom dialog;
+
+    |Game System|
+    :Save block positions,\nmove history,\ncounter & timer;
+
+  elseif (Action type?) then (Display statistics)
+
+    |Game System|
+    :Read stats\nfrom file;
+    :Display statistics\nwindow (top 10);
+
+  elseif (Action type?) then (Erase statistics)
+
+    |Game System|
+    :Erase all data\nfrom stats file;
+    if (File updated\nsuccessfully?) then (no)
+      :Display file\nerror message;
+    else (yes)
+    endif
+
+  elseif (Action type?) then (Help / About)
+
+    |Game System|
+    :Display About\nwindow;
+
+  else (Exit)
+
+    |Game System|
+    if (Game not\nsaved?) then (yes)
+      |Player|
+      :Choose Yes / No\nin save dialog;
+      |Game System|
+      if (Player chose\nSave?) then (yes)
+        :Save game;
+      else (no)
+      endif
+    else (no)
+    endif
+    :Close main window;
+    stop
+
+  endif
+
+  |Game System|
+  if (Great square at\nbottom of board?) then (yes)
+    :Freeze all\nplayer statistics;
+    if (Current moves <\nhighest recorded?) then (yes)
+      :Display Finish Window\nwith Statistics;
+      |Player|
+      :Enter name\n& click OK;
+      |Game System|
+      :Record player stats\n(name, moves, time)\nin stats file;
+      if (10 records\nalready exist?) then (yes)
+        :Erase record with\nhighest move count;
+      else (no)
+      endif
+      if (File updated\nsuccessfully?) then (no)
+        :Display file\nerror message;
+      else (yes)
+      endif
+    else (no)
+      :Display Simple\nFinish Window;
+      |Player|
+      :Click OK;
+    endif
+    |Game System|
+    :Read stats\nfrom file;
+    :Display statistics\nwindow (top 10);
+    stop
+  else (no)
+  endif
+
+|Player|
+repeat while (Game\ncontinues?) is (yes) not (no)
+
+stop
+
+@enduml

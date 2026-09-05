@@ -1,0 +1,25 @@
+@startuml
+|Automated diagnostic tool|
+start
+:Obtain sensed data;
+if (Sensed data timing?) then (Real time)
+  :Acquire sensed data in real time;
+else (After acquisition)
+  :Obtain sensed data after acquisition;
+endif
+:Obtain fixed data from permanent storage;
+:Reduce data;
+:Filter data;
+:Prepare data for diagnostic input;
+:Process data via averaging/trending/statistical analysis;
+:Detect faults;
+:Identify faults;
+:Enumerate faults;
+:Describe faults;
+fork
+  :Display diagnostic results;
+fork again
+  :Store diagnostic results to permanent storage;
+end fork
+stop
+@enduml

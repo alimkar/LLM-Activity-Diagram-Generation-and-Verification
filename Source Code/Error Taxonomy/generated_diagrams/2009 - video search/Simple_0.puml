@@ -1,0 +1,46 @@
+@startuml
+|User|
+start
+:Enter search query;
+:Select "Include torrent searching" tick box;
+
+|System|
+:Use shared search bar for streaming and torrent search;
+
+if (Include torrent searching?) then (yes)
+  :Update torrent sites database via internet;
+  :Query torrent sites;
+  :Retrieve seeds and peers;
+  :Retrieve file size;
+  :Retrieve date posted;
+  :Retrieve webpage link;
+
+  if (Results found?) then (yes)
+    :Display results;
+
+    |User|
+    repeat
+      if (Click column header?) then (yes)
+        :Click size/date/alphabetical column header;
+        |System|
+        :Arrange results by selected order;
+        |User|
+      else (no)
+      endif
+
+      if (Navigate pages?) then (yes)
+        :Click page button;
+        |System|
+        :Display selected results page;
+        |User|
+      else (no)
+      endif
+    repeat while (More sorting or paging?) is (yes)
+  else (no)
+    :Display "No results were found for this search.";
+  endif
+else (no)
+endif
+
+stop
+@enduml

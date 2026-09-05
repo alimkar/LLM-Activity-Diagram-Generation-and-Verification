@@ -1,0 +1,99 @@
+@startuml
+|APAF System|
+start
+:Request ASPERA-3 experiment telemetry\nand MEX Orbit/Attitude telemetry from ESOC;
+
+|ESOC|
+:Provide requested telemetry data;
+
+|APAF System|
+:Receive telemetry data;
+if (Acquisition error?) then (yes)
+  :Built-in error handling\n(log / alert / recover);
+  stop
+else (no)
+endif
+
+:Determine whether ESOC provided cleaned-up telemetry;
+if (Cleaned-up telemetry provided by ESOC?) then (yes)
+  :Use ESOC cleaned-up telemetry;
+else (no)
+  :Generate intermediate cleaned-up telemetry files;
+  if (Cleanup generation error?) then (yes)
+    :Built-in error handling\n(log / alert / recover);
+    stop
+  else (no)
+  endif
+
+  :Store intermediate cleaned-up telemetry files\non local SwRI archive;
+  |SwRI Archive|
+  :Archive intermediate cleaned-up telemetry files;
+  |APAF System|
+  if (Archive error?) then (yes)
+    :Built-in error handling\n(log / alert / recover);
+    stop
+  else (no)
+  endif
+endif
+
+:Store ASPERA-3 and MEX OA telemetry data\non local SwRI archive;
+|SwRI Archive|
+:Archive telemetry data;
+|APAF System|
+if (Archive error?) then (yes)
+  :Built-in error handling\n(log / alert / recover);
+  stop
+else (no)
+endif
+
+fork
+  :Process ASPERA-3 science data\ninto IDFS data sets;
+fork again
+  :Process engineering and ancillary information\nfor calibration and science validation\ninto IDFS data sets;
+end fork
+
+if (IDFS processing error?) then (yes)
+  :Built-in error handling\n(log / alert / recover);
+  stop
+else (no)
+endif
+
+:Store ASPERA-3 and MEX OA IDFS data sets\non local SwRI archive;
+|SwRI Archive|
+:Archive IDFS data sets;
+|APAF System|
+if (Archive error?) then (yes)
+  :Built-in error handling\n(log / alert / recover);
+  stop
+else (no)
+endif
+
+fork
+  :Provide web-based displays of the most current\nASPERA-3 data for public view;
+  |Public Viewer|
+  :View most current ASPERA-3 displays;
+fork again
+  |ASPERA-3 Team|
+  :Define web-based displays for science analysis;
+
+  |APAF System|
+  :Provide team-defined web-based science analysis displays\nusing any available ASPERA-3 data;
+
+  if (ASPERA-3 data made public?) then (yes)
+    |Science Analyst|
+    :Access science analysis displays (no password protection);
+  else (no)
+    |Science Analyst|
+    :Enter credentials to access science analysis displays;
+    |APAF System|
+    if (Credentials valid?) then (yes)
+      |Science Analyst|
+      :Use science analysis displays;
+    else (no)
+      :Deny access and log attempt;
+    endif
+  endif
+end fork
+
+stop
+@enduml

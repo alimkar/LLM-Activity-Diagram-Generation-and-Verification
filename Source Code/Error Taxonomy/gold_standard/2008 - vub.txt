@@ -1,0 +1,86 @@
+@startuml
+title PMS - Product Functions
+
+start
+
+:User accesses PMS;
+
+if (Connected to VUB-Network?) then (yes)
+  if (Logged in?) then (yes)
+    switch (User Role?)
+    case (Member)
+      :Search / Advanced Search;
+      :Order / Export / Download Results;
+      :Search Publications on Similarity;
+      :Change Account Details;
+      :Log off PMS;
+    case (Publisher)
+      :Search / Advanced Search;
+      :Order / Export / Download Results;
+      :Search Publications on Similarity;
+      :Change Account Details;
+      :Log off PMS;
+      :Upload Publication (pdf/ps);
+      if (Bibliographical info correct?) then (no)
+        :Manually correct info;
+      endif
+      :Edit own Publication;
+      :Bulk Upload Publications;
+    case (Moderator)
+      :Search / Advanced Search;
+      :Order / Export / Download Results;
+      :Search Publications on Similarity;
+      :Change Account Details;
+      :Log off PMS;
+      :Upload Publication;
+      :Edit own Publication;
+      :Bulk Upload Publications;
+      :Edit Departmental Publications;
+      :Manage User Levels\n(upgrade/downgrade Member/Publisher);
+      :Manage Group Permissions;
+      :Edit Author(s);
+    case (Administrator)
+      :Search / Advanced Search;
+      :Order / Export / Download Results;
+      :Search Publications on Similarity;
+      :Change Account Details;
+      :Log off PMS;
+      :Upload / Edit / Bulk Upload Publications;
+      :Edit Departmental Publications;
+      :Edit All Publications;
+      :Manage User Levels (all users);
+      :Manage Group Permissions;
+      :Edit Author(s);
+      :Access Control Panel;
+      :Create / Delete User(s);
+      :Create / Delete Group(s);
+    endswitch
+  else (no)
+    :Search / Advanced Search;
+    :Order / Export / Download Results;
+    :Search Publications on Similarity;
+    if (Has account?) then (yes)
+      :Log into PMS;
+    else (no)
+      :Register Account;
+      :Receive Validation Mail;
+      :Validate Account;
+    endif
+  endif
+else (no)
+  if (Has valid account?) then (yes)
+    if (Forgot password?) then (yes)
+      :Retrieve Password;
+    else (no)
+      :Log into PMS;
+    endif
+  else (no)
+    :Register Account;
+    :Receive Validation Mail;
+    :Validate Account;
+  endif
+endif
+
+stop
+
+@enduml

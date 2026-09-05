@@ -1,0 +1,146 @@
+@startuml
+|User|
+start
+|System|
+:Render board and blocks;
+
+while (Game ended?) is (no)
+  |User|
+  :Select action;
+  |System|
+  if (Movement action?) then (yes)
+    if (Left-click down on block?) then (yes)
+      :Set state "Block deplacement";
+      while (Mouse moving?) is (yes)
+        :Constrain block position;
+      endwhile (no)
+      |User|
+      :Left-click up on selected block;
+      |System|
+      :Set state "Block selection";
+    else (no)
+      if (Select Undo?) then (yes)
+        if (Previous movement exists?) then (yes)
+          :Restore previous positions;
+          :Display board;
+        else (no)
+        endif
+      else (no)
+        if (Select Redo?) then (yes)
+          if (Previous action was undo?) then (yes)
+            :Restore canceled positions;
+            :Display board;
+          else (no)
+          endif
+        else (no)
+        endif
+      endif
+    endif
+
+    if (Movement performed?) then (yes)
+      :Increment movement count;
+      :Record time delta;
+      if (Great square at bottom?) then (yes)
+        :Freeze player statistics;
+        if (Movement count lower than recorded highest?) then (yes)
+          :Display finish window with statistics;
+          |User|
+          :Enter player name;
+          :Click OK;
+          |System|
+          if (10 player statistics recorded?) then (yes)
+            :Erase greatest-movement statistic;
+          else (no)
+          endif
+          :Update statistic file;
+          if (File updated?) then (yes)
+          else (no)
+            :Display error message;
+          endif
+          :Close finish window;
+          :Display statistics window;
+        else (no)
+          :Display simple finish window;
+          |User|
+          :Click OK;
+          |System|
+          :Close finish window;
+          :Display statistics window;
+        endif
+        :Set game ended;
+      else (no)
+      endif
+    else (no)
+    endif
+
+  else (no)
+    if (Select Open game?) then (yes)
+      :Open file dialog;
+      |User|
+      :Choose game file;
+      |System|
+      :Redraw board from file;
+      :Set player statistics from file;
+    else (no)
+      if (Select Save game?) then (yes)
+        if (Game never saved?) then (yes)
+          :Open save-as dialog;
+          |User|
+          :Choose save file;
+          |System|
+          :Save game data to file;
+        else (no)
+          :Save game data to previous file;
+        endif
+      else (no)
+        if (Select Save game as?) then (yes)
+          :Open save-as dialog;
+          |User|
+          :Choose save file;
+          |System|
+          :Save game data to file;
+        else (no)
+          if (Select Display statistics?) then (yes)
+            :Display statistics window;
+          else (no)
+            if (Select Erase statistics?) then (yes)
+              :Erase statistic file data;
+              if (File updated?) then (yes)
+              else (no)
+                :Display error message;
+              endif
+            else (no)
+              if (Select About?) then (yes)
+                :Display about window;
+              else (no)
+                if (Select Exit?) then (yes)
+                  if (Game saved?) then (yes)
+                    :Close main window;
+                    break
+                  else (no)
+                    :Display save confirmation dialog;
+                    |User|
+                    if (Save before exit?) then (yes)
+                      |System|
+                      :Save game;
+                      :Close main window;
+                      break
+                    else (no)
+                      |System|
+                      :Close main window;
+                      break
+                    endif
+                  endif
+                else (no)
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+endwhile (yes)
+
+stop
+@enduml

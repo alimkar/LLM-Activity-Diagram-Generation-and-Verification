@@ -1,0 +1,97 @@
+@startuml
+|User/Admin|
+start
+:Select function;
+
+if (Submit job?) then (yes)
+  :Provide user information;
+  :Provide job information;
+  |SGE Interface|
+  :Submit job request;
+
+  |Cluster|
+  :Check submission open;
+  if (Cluster accepting submissions?) then (yes)
+    :Verify user;
+    if (User verified?) then (yes)
+      |SGE Interface|
+      :Accept job;
+      :Assign job id;
+
+      |Libra Scheduler|
+      :Retrieve job details;
+      :Set job state variables;
+      :Pass parameters to scheduler;
+
+      :Compute job priority;
+      :Check deadline feasibility;
+      if (Accept job?) then (yes)
+        :Allocate job tickets;
+        :Calculate stride and pass;
+
+        :Sort hosts by load;
+        :Select least-loaded host;
+        :Select execution queue;
+
+        :Dispatch job to queue;
+
+        :Reserve node resources;
+        :Update host queue status;
+        |Cluster|
+        :Store cluster load update;
+
+        |Libra Scheduler|
+        while (Jobs left on queue?) is (yes)
+          :Select min-pass job;
+          if (Tie on pass?) then (yes)
+            :Apply FIFO ordering;
+          else (no)
+          endif
+          :Allot quantum;
+          :Advance job pass;
+          :Update cluster information;
+        endwhile (no)
+
+        :Update status on job end;
+      else (no)
+        :Suggest deadline or cost;
+        |User/Admin|
+        :Receive acceptance decision;
+      endif
+
+    else (no)
+      |User/Admin|
+      :Receive verification status;
+    endif
+  else (no)
+    |User/Admin|
+    :Receive submission status;
+  endif
+
+elseif (View job status?) then (yes)
+  :Enter status credentials;
+  |SGE Interface|
+  :Show job options;
+  :Show job progress;
+  |User/Admin|
+  while (More options?) is (yes)
+    :Select status option;
+    |SGE Interface|
+    :Process selected option;
+    |User/Admin|
+  endwhile (no)
+
+else (no)
+  :Enter change credentials;
+  :Request delete/change;
+  |SGE Interface|
+  :Remove job from queue;
+  :Update cluster status;
+  :Revise resource allocation;
+  :Revise submission decisions;
+  |User/Admin|
+  :Receive updated cluster info;
+endif
+
+stop
+@enduml

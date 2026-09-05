@@ -1,0 +1,38 @@
+@startuml
+|Agent|
+start
+:Choose communication mode;
+
+if (Mode?) then (Unicast)
+  :Select recipient agent;
+elseif (Mode?) then (Multicast)
+  :Join multicast group;
+  :Select multicast address;
+elseif (Mode?) then (Broadcast)
+  :Select local network;
+endif
+
+:Choose encryption option;
+if (Encrypt message?) then (Yes)
+  :Encrypt message;
+else (No)
+endif
+
+if (Mode?) then (Unicast)
+  :Unicast message;
+elseif (Mode?) then (Multicast)
+  :Multicast message;
+elseif (Mode?) then (Broadcast)
+  :Broadcast message;
+endif
+
+if (Encrypt message?) then (Yes)
+  :Decrypt message;
+else (No)
+endif
+
+if (Mode?) then (Multicast)
+  :Leave multicast group;
+endif
+stop
+@enduml

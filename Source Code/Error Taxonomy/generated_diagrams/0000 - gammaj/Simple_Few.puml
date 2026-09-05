@@ -1,0 +1,153 @@
+@startuml
+|Web Browser|
+start
+:Send HTTPS request;
+
+|Web Server|
+:Parse request;
+:Submit request to service;
+
+|Service|
+:Pick up request;
+
+if (Account management?) then (yes)
+  |Customer|
+  if (Register?) then (yes)
+    |Service|
+    :Create account;
+    :Store profile;
+    :Store contact information;
+    :Store address information;
+    :Store payment information;
+  else (no)
+    if (Login?) then (yes)
+      |Service|
+      :Authenticate customer;
+    else (no)
+      if (Logout?) then (yes)
+        |Service|
+        :Log out customer;
+      else (no)
+        if (Edit account?) then (yes)
+          |Service|
+          :Update profile;
+          :Update contact information;
+          :Update address information;
+          :Update payment information;
+        else (no)
+          |Service|
+          :Retrieve purchase history;
+        endif
+      endif
+    endif
+  endif
+
+else (no)
+  if (Inventory management?) then (yes)
+    |System Administrator|
+    :Update categories;
+    :Update category products;
+    :Update product details;
+
+  else (no)
+    if (Product management?) then (yes)
+      |Sales Personnel|
+      :Add product;
+      :Delete product;
+      :Change product description;
+      :Change product picture;
+      :Change product price;
+      :Flag product for sale;
+
+    else (no)
+      if (Browse categories/products?) then (yes)
+        |Customer|
+        :Browse categories;
+        :Browse products;
+
+      else (no)
+        if (Search products?) then (yes)
+          |Customer|
+          :Enter search criteria;
+          |Service|
+          :Find matching products;
+          :Return search results;
+
+        else (no)
+          if (Shopping cart?) then (yes)
+            |Customer|
+            repeat
+              if (Add product to cart?) then (yes)
+                |Service|
+                :Reserve item in cart;
+              else (no)
+                |Service|
+                :Remove product from cart;
+              endif
+              |Service|
+              :Display item count;
+              :Display total cost;
+            repeat while (Modify cart?) is (yes)
+
+          else (no)
+            if (Checkout and confirm order?) then (yes)
+              |Customer|
+              :Checkout;
+              :Review order;
+
+              if (Order correct?) then (yes)
+                |Service|
+                :Approve payment;
+                :Transfer payment;
+                :Confirm order;
+                :Send confirmation email;
+              else (no)
+                |Customer|
+                :Revise order;
+                :Update order;
+                |Service|
+                :Confirm order;
+                :Send confirmation email;
+              endif
+
+            else (no)
+              if (Plug-in API request?) then (yes)
+                |Web Server|
+                :Submit request to API service;
+
+                |API Service|
+                :Pick up request;
+                :Submit request to plug-in;
+
+                |Plug-in|
+                :Pick up request;
+                :Run tasks;
+                :Return results;
+
+                |API Service|
+                :Validate results;
+                :Return results;
+
+              else (no)
+                |System Administrator|
+                :Assign account privileges;
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+endif
+
+|Service|
+:Return results;
+
+|Web Server|
+:Check completion;
+:Return results to web browser;
+
+|Web Browser|
+:Display results;
+stop
+@enduml

@@ -1,0 +1,68 @@
+@startuml
+|Web Server|
+start
+:Detect Web hotspot;
+:Send initialization request;
+
+|Mediator|
+:Receive initialization request;
+:Obtain resource and access info;
+
+|Service Registry|
+:Provide resource and access info;
+
+|Mediator|
+:Obtain SLAs and policies;
+
+|Policy Repository|
+:Provide SLAs and policies;
+
+|Mediator|
+:Generate service requirements;
+:Pass service requirements;
+
+|Peering Agent|
+:Discover external resources;
+if (Preexisting peering arrangements?) then (yes)
+  :Return preexisting arrangements;
+else (no)
+  :Negotiate with external PAs;
+endif
+
+|Mediator|
+:Configure peering protocols;
+:Advertise CDN configurations;
+:Exchange content availability info;
+:Support request redirection;
+
+if (Sufficient resources acquired?) then (yes)
+  :Deploy functional policies;
+  :Administer peering arrangement;
+  :Redirect portion of Web traffic;
+  :Control content replication;
+  :Exchange accounting information;
+else (no)
+  while (Any CDN interested in peering?) is (no)
+    :Tune negotiated relationships;
+    :Reconsider service requirements;
+    |Peering Agent|
+    :Negotiate with external PAs;
+    |Mediator|
+    if (Sufficient resources acquired?) then (yes)
+      break
+    endif
+  endwhile (yes)
+  :Deploy functional policies;
+  :Administer peering arrangement;
+  :Redirect portion of Web traffic;
+  :Control content replication;
+  :Exchange accounting information;
+endif
+
+if (Disband or re-arrange needed?) then (yes)
+  :Disband peering arrangement;
+else (no)
+  :Re-arrange peering arrangement;
+endif
+stop
+@enduml

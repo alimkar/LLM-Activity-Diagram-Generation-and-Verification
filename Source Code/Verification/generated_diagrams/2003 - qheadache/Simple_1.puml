@@ -1,0 +1,194 @@
+@startuml
+|User|
+start
+|System|
+:Render board;
+:Render blocks;
+:Set state "Block selection";
+
+while (Game over?) is (no)
+  |User|
+  :Select action;
+
+  if (Block interaction?) then (yes)
+    if (Left-click down on block?) then (yes)
+      |System|
+      :Set state "Block movement";
+
+      while (Mouse moving?) is (yes)
+        |User|
+        :Move mouse;
+        |System|
+        :Move selected block;
+      endwhile (no)
+
+      |User|
+      if (Left-click up on selected block?) then (yes)
+        |System|
+        :Set state "Block selection";
+        :Update movement stats;
+      else (no)
+      endif
+
+      |System|
+      if (Great square at bottom?) then (yes)
+        :Freeze player statistics;
+        if (Movements lower than highest recorded?) then (yes)
+          :Display finish window with statistics;
+          |User|
+          :Enter name;
+          :Click OK;
+          |System|
+          :Record player statistics;
+          if (10 player statistics already recorded?) then (yes)
+            :Erase greatest-movement statistic;
+          else (no)
+          endif
+          if (File updated?) then (yes)
+          else (no)
+            :Display error message;
+          endif
+          :Close finish window;
+          :Display statistics window;
+          stop
+        else (no)
+          :Display simple finish window;
+          |User|
+          :Click OK;
+          |System|
+          :Close finish window;
+          :Display statistics window;
+          stop
+        endif
+      else (no)
+      endif
+
+    else (no)
+    endif
+
+  else (no)
+    if (Game menu?) then (yes)
+      if (Select "Open game"?) then (yes)
+        |System|
+        :Open file dialog;
+        |User|
+        :Choose game file;
+        |System|
+        :Redraw board from file;
+        :Set player statistics from file;
+
+      else (no)
+        if (Select "Save game"?) then (yes)
+          |System|
+          if (Game never saved?) then (yes)
+            :Open file dialog;
+            |User|
+            :Choose save file;
+            |System|
+            :Save game data to file;
+          else (no)
+            :Save game data to previous file;
+          endif
+
+        else (no)
+          if (Select "Save game as"?) then (yes)
+            |System|
+            :Open file dialog;
+            |User|
+            :Choose save file;
+            |System|
+            :Save game data to file;
+
+          else (no)
+            if (Select "Exit"?) then (yes)
+              |System|
+              if (Game saved?) then (yes)
+                :Close main window;
+                stop
+              else (no)
+                :Display save prompt;
+                |User|
+                if (Choose "Yes"?) then (yes)
+                  |System|
+                  if (Game never saved?) then (yes)
+                    :Open file dialog;
+                    |User|
+                    :Choose save file;
+                    |System|
+                    :Save game data to file;
+                  else (no)
+                    :Save game data to previous file;
+                  endif
+                  :Close main window;
+                  stop
+                else (no)
+                  |System|
+                  :Close main window;
+                  stop
+                endif
+              endif
+            else (no)
+            endif
+          endif
+        endif
+      endif
+
+    else (no)
+      if (Action menu?) then (yes)
+        if (Select "Undo"?) then (yes)
+          |System|
+          if (Previous movement exists?) then (yes)
+            :Restore previous block positions;
+            :Update movement stats;
+            :Redraw board;
+          else (no)
+          endif
+
+        else (no)
+          if (Select "Redo"?) then (yes)
+            |System|
+            if (Previous action was undo?) then (yes)
+              :Restore canceled block positions;
+              :Update movement stats;
+              :Redraw board;
+            else (no)
+            endif
+          else (no)
+          endif
+        endif
+
+      else (no)
+        if (Statistics menu?) then (yes)
+          if (Select "Display"?) then (yes)
+            |System|
+            :Display statistics window;
+
+          else (no)
+            if (Select "Erase"?) then (yes)
+              |System|
+              :Erase statistics file;
+              if (File updated?) then (yes)
+              else (no)
+                :Display error message;
+              endif
+            else (no)
+            endif
+          endif
+
+        else (no)
+          if (Help menu?) then (yes)
+            if (Select "About"?) then (yes)
+              |System|
+              :Display about window;
+            else (no)
+            endif
+          else (no)
+          endif
+        endif
+      endif
+    endif
+  endif
+endwhile (yes)
+
+stop
+@enduml

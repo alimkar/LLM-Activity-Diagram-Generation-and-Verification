@@ -1,0 +1,23 @@
+@startuml
+|Player|
+start
+:Launch application;
+:System shows GUI;
+:Control GUI with mouse or keyboard;
+:Select game;
+
+if (Play mode?) then (Alone)
+  :Play game;
+else (Against another person)
+  :Play game;
+end if
+
+|Game Developer|
+if (Add new game?) then (Yes)
+  :Define new game;
+  :New game becomes selectable in GUI;
+else (No)
+endif
+
+stop
+@enduml

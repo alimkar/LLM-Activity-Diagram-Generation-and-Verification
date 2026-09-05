@@ -1,0 +1,227 @@
+@startuml
+
+title KeePass Password Safe
+
+|User|
+start
+
+:Launch KeePass;
+
+if (Create a new database?) then (yes)
+  :Select New Database;
+  if (Master Key provided?) then (no)
+    :Prompt: Enter a password\nor select a Key File;
+    stop
+  else (yes)
+    :Enter Master Password\nand/or select Key File;
+    :Confirm Master Password;
+    :New encrypted database created\nand main window opens;
+  endif
+else (no - open existing)
+  :Select Open Database;
+  :Navigate folders to find .kdb file;
+  if (Valid .kdb file selected?) then (no)
+    :Show "File not found" error;
+    :User selects another folder;
+  else (yes)
+  endif
+  :Enter Master Key\n(Password and/or Key File);
+  if (Master Key valid?) then (no)
+    :Show "Invalid/Wrong Key" error;
+    stop
+  else (yes)
+    :Database unlocked;\nMain window opens;
+  endif
+endif
+
+|User|
+:Select a database-level action;
+
+if (Action is Save?) then (yes)
+  if (Save As selected?) then (yes)
+    :Enter new database name;
+    :Save as new database with same Master Password;
+  else (no)
+    :Save changes to current database;
+  endif
+elseif (Action is Print?) then (yes)
+  :Select fields to print\n(title, username, password,\nURL, notes, groups, etc.);
+  if (User confirms print?) then (yes)
+    :Print selected data;
+  else (no - Cancel)
+    :Return to main window;
+  endif
+elseif (Action is Search?) then (yes)
+  :Type keyword in search field;
+  if (Keyword is valid and non-empty?) then (yes)
+    :Display all matching entries\nfrom database;
+  else (no)
+    :Nothing appears in main window;
+  endif
+elseif (Action is Import?) then (yes)
+  :Select source format\n(CSV, Code Wallet,\nPassword Safe, Password Vault);
+  :Import data into database;
+elseif (Action is Export?) then (yes)
+  :Select export format\n(CSV or XML);
+  :Export database data to file;
+elseif (Action is Close?) then (yes)
+  if (Unsaved changes exist?) then (yes)
+    :Prompt for Save changes before closing;
+    if (User saves?) then (yes)
+      :Save database;
+    else (no)
+      :Discard changes;
+    endif
+  else (no)
+  endif
+  :Close database;
+else (no database-level action)
+  :Continue to group/entry management;
+endif
+
+|User|
+:Select a Group or Subgroup action;
+
+if (Action is Add Group/Subgroup?) then (yes)
+  :Enter group name\nand optionally select icon;
+  if (Name field is empty?) then (yes)
+    :Show prompt:\n"Add a name for the group/subgroup";
+  else (no)
+    :Group/Subgroup created\nand main window returns;
+  endif
+elseif (Action is Modify Group/Subgroup?) then (yes)
+  :Select existing group/subgroup;
+  :Enter new name\nand optionally change icon;
+  if (Name field is empty?) then (yes)
+    :Show prompt:\n"Add a name for the group/subgroup";
+  else (no)
+    :Group/Subgroup renamed\nand main window returns;
+  endif
+elseif (Action is Delete Group/Subgroup?) then (yes)
+  :Select group/subgroup to delete;
+  :Show confirmation dialog;
+  if (User confirms deletion?) then (yes)
+    :Group/Subgroup permanently deleted;
+  else (no)
+    :Deletion cancelled;\nReturn to main window;
+  endif
+elseif (Action is Find in Group/Subgroup?) then (yes)
+  :Select a group/subgroup;
+  :Enter search keyword\n(1 to 200+ characters);
+  :Select fields to search\n(title, username, password,\nURL, notes, group name);
+  if (Search fields selected and keyword entered?) then (yes)
+    :Display matching results\nin main window;
+  else (no)
+    :Nothing appears or\nall group data shown;
+  endif
+else (no group action)
+  :Continue to entry management;
+endif
+
+|User|
+:Select an Entry action;
+
+if (Action is Add Entry?) then (yes)
+  :Open add entry form;
+  :Fill in desired fields\n(title, username, password,\nURL, notes, expiry, attachment);
+  if (Password field filled?) then (yes)
+    if (Repeat password matches?) then (no)
+      :Show error:\n"Repeated password must be identical";
+    else (yes)
+      :Entry saved to selected group;
+    endif
+  else (no password field)
+    :Entry saved with filled fields\n(empty entry allowed);
+  endif
+elseif (Action is View/Edit Entry?) then (yes)
+  :Select an existing entry;
+  :Open entry form with current data;
+  :Modify desired fields;
+  if (Password changed?) then (yes)
+    if (Repeat password matches?) then (no)
+      :Show error:\n"Repeated password must be identical";
+    else (yes)
+      :Modified entry saved;
+    endif
+  else (no password change)
+    :Modified entry saved;
+  endif
+elseif (Action is Duplicate Entry?) then (yes)
+  :Select an existing entry;
+  :Exact copy created\nbelow original in same group;
+elseif (Action is Delete Entry?) then (yes)
+  :Select one or more entries;
+  :Show confirmation:\n"Are you sure you want to delete?";
+  if (User confirms?) then (yes)
+    :Entry permanently removed\nfrom database;
+  else (no)
+    :No entry deleted;\nReturn to main window;
+  endif
+else (no entry action)
+  :Continue to additional features;
+endif
+
+|User|
+:Select an additional feature;
+
+if (Feature is Auto-Type?) then (yes)
+  :Define keystroke sequence in\nentry notes field\n(prefix: "Auto-Type:", max 59 chars);
+  :KeePass sends sequence\nto target window or browser;
+elseif (Feature is Use Stored Password?) then (yes)
+  :Copy password from database\nto clipboard;
+  :Paste into website or application\nvia Drag-Drop, Auto-Type,\nKeeForm or Context Menu;
+elseif (Feature is URL Field?) then (yes)
+  :Execute URL or command line\nfrom entry URL field;
+  :Placeholders auto-replaced\nbefore execution;
+elseif (Feature is Change Language?) then (yes)
+  if (Language pack already downloaded?) then (yes)
+    :Select language from list;
+    if (Restart now?) then (yes)
+      :Save any pending changes;
+      :Restart KeePass;
+      :Unlock database with Master Key;
+      :Database displayed in new language;
+    else (no - restart later)
+      :Changes apply on next restart;
+    endif
+  else (no)
+    :Open KeePass website\nto download language pack;
+    :Download and install language file;
+    :Language appears in list\nfor future selection;
+  endif
+elseif (Feature is Command Line?) then (yes)
+  :Pass database file path\nas command line argument;
+  :KeePass opens that file\nat startup automatically;
+elseif (Feature is Lock Workspace?) then (yes)
+  if (Manually locked or minimized?) then (yes)
+    :Database locked;
+    :Require Master Key\nto unlock again;
+  else (no)
+    :Continue working normally;
+  endif
+elseif (Feature is Password Generator?) then (yes)
+  :Generate random password\n(by charset, pattern, or rules);
+  if (User keeps generated password?) then (yes)
+    :Use generated password in entry;
+  else (no)
+    :User enters own password manually;
+  endif
+elseif (Feature is TAN Support?) then (yes)
+  :Add TAN via TAN Wizard\n(one-time use, letters and numbers);
+  :TAN entry tagged with title "<TAN>";
+  :Notes can be added but\ntitle, username, URL cannot be changed;
+  :On first use, TAN expires\nautomatically and cannot be reused;
+elseif (Feature is Integration - Global Hot Key?) then (yes)
+  :Press Ctrl+Alt+K;
+  :KeePass main window restored\n(first opened instance);
+elseif (Feature is Secure Edit Controls?) then (yes)
+  :Enable asterisk masking\nfor passwords and data;
+  :Enhanced controls prevent\nthird-party data access;
+else (no additional feature)
+  :Continue working or exit;
+endif
+
+:Exit KeePass or\ncontinue with another action;
+stop
+
+@enduml

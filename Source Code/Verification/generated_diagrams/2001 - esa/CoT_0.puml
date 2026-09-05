@@ -1,0 +1,84 @@
+@startuml
+|APAF System|
+start
+
+repeat
+  |ESOC|
+  :Provide ASPERA-3 telemetry data;
+  :Provide Mars Express Orbit/Attitude (MEX OA) telemetry data;
+
+  |APAF System|
+  :Acquire telemetry data from ESOC\n(ASPERA-3 + MEX OA) [APAF-FR-01];
+
+  if (Acquisition error?) then (yes)
+    :Built-in error handling:\nlog/flag error and attempt recovery [APAF-FR-09];
+  endif
+repeat while (Acquisition error?) is (yes)
+
+if (Cleaned-up telemetry provided by ESOC?) then (yes)
+  :Use ESOC cleaned-up telemetry;
+else (no)
+  :Generate intermediate cleaned-up telemetry files\n(ASPERA-3 + MEX OA) [APAF-FR-04];
+  if (Intermediate generation error?) then (yes)
+    :Built-in error handling:\nlog/flag error and attempt recovery [APAF-FR-09];
+    stop
+  endif
+endif
+
+|SwRI Local Archive|
+:Store ASPERA-3 + MEX OA telemetry\non local SwRI archive [APAF-FR-05];
+
+if (Intermediate cleaned-up telemetry files exist?) then (yes)
+  :Store intermediate cleaned-up telemetry files\non local SwRI archive [APAF-FR-06a];
+endif
+
+|APAF System|
+:Process ASPERA-3 science data into IDFS data sets [APAF-FR-02];
+if (Science processing error?) then (yes)
+  :Built-in error handling:\nlog/flag error and attempt recovery [APAF-FR-09];
+  stop
+endif
+
+:Process engineering + ancillary information\nfor calibration/science validation into IDFS data sets [APAF-FR-03];
+if (Eng/ancillary processing error?) then (yes)
+  :Built-in error handling:\nlog/flag error and attempt recovery [APAF-FR-09];
+  stop
+endif
+
+|SwRI Local Archive|
+:Store ASPERA-3 + MEX OA IDFS data sets\non local SwRI archive [APAF-FR-06];
+
+fork
+  |Public|
+  :Access web-based display of most current ASPERA-3 data [APAF-FR-07];
+  |APAF System|
+  if (Display/data access error?) then (yes)
+    :Built-in error handling:\nlog/flag error and attempt recovery [APAF-FR-09];
+  endif
+fork again
+  |ASPERA-3 Team|
+  :Open team-defined web-based displays\nfor science analysis (any available data) [APAF-FR-08];
+
+  |APAF System|
+  if (ASPERA-3 data made public?) then (yes)
+    :Allow access without password [APAF-FR-08a];
+  else (no)
+    :Enforce password protection [APAF-FR-08a];
+    |ASPERA-3 Team|
+    :Enter credentials;
+    |APAF System|
+    if (Credentials valid?) then (yes)
+      :Grant access to analysis displays [APAF-FR-08];
+    else (no)
+      :Deny access;
+    endif
+  endif
+
+  if (Display/auth error?) then (yes)
+    :Built-in error handling:\nlog/flag error and attempt recovery [APAF-FR-09];
+  endif
+end fork
+
+|APAF System|
+stop
+@enduml

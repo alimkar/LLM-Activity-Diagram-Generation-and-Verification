@@ -1,0 +1,61 @@
+@startuml
+|User|
+start
+
+repeat
+:Enter search text in shared search bar (streaming + torrent);
+:Set "Include torrent search" tick box (optional);
+
+|System|
+:Receive search request;
+
+fork
+  :Perform streaming search (using same query);
+fork again
+  if (Include torrent search ticked?) then (yes)
+    if (Torrent sites database outdated?) then (yes)
+      :Update torrent sites database via internet;
+    else (no)
+      :Use existing torrent sites database;
+    endif
+
+    :Query torrent sites using search text;
+    :Retrieve result details:\n- seeds & peers\n- file size\n- date posted\n- webpage link;
+  else (no)
+    :Skip torrent searching;
+  endif
+end fork
+
+:Aggregate available results (streaming and/or torrent);
+
+if (Any results found?) then (yes)
+  |User|
+  :View results list;
+  repeat
+    if (Click column header?) then (yes)
+      |System|
+      :Sort results by selected column\n(size/date/alphabetical);
+      |User|
+      :View sorted results;
+    else (no)
+      if (Click page navigation button?) then (yes)
+        |System|
+        :Load selected results page;
+        |User|
+        :View next/previous page of results;
+      else (no)
+        |User|
+        :No sorting or paging action;
+      endif
+    endif
+  repeat while (Continue interacting with results?) is (yes)
+else (no)
+  |System|
+  :Display message:\n"No results were found for this search.";
+endif
+
+|User|
+repeat while (Perform another search?) is (yes)
+
+stop
+@enduml

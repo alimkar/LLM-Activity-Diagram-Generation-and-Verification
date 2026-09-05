@@ -1,0 +1,50 @@
+@startuml
+|Trade Client Serve|
+start
+:Send trading instruction to CTS;
+
+|Central Trading System (CTS)|
+:Receive instruction;
+:Analyze instruction;
+:Classify into instruction types;
+
+if (Instruction type?) then (Fetch)
+  :Fetch requested information;
+elseif (Instruction type?) then (Deal with)
+  :Apply matching prescripts;
+  :Match instructions;
+  :Generate deal result message;
+elseif (Instruction type?) then (Repeal)
+  :Process repeal/cancel instruction;
+  :Generate repeal result message;
+else (Other)
+  :Handle other instruction type;
+  :Generate corresponding result message;
+endif
+
+:Produce new message(s) for other modules;
+
+fork
+  |Network Message Promulgating|
+  :Receive message(s) from CTS;
+  :Promulgate network message(s);
+fork again
+  |Trading System Manage (System Manager)|
+  :Access CTS information (authorized);
+end fork
+
+|Central Trading System (CTS)|
+if (System crash?) then (yes)
+  |Maintainer|
+  :Diagnose crash cause;
+  :Fix the system;
+  if (New requirements to support?) then (yes)
+    :Modify program to fit new requirements;
+  endif
+  :Apply strategies to prevent overload crashes;
+  |Central Trading System (CTS)|
+  :Resume processing instructions;
+endif
+
+stop
+@enduml

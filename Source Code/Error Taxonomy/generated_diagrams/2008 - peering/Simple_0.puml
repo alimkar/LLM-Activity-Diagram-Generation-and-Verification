@@ -1,0 +1,79 @@
+@startuml
+|Web Server|
+start
+:Detect load spike;
+if (Cannot handle workload?) then (yes)
+:Send initialization request;
+|Mediator|
+:Receive initialization request;
+:Obtain resource and access info;
+|Service Registry|
+:Provide resource and service info;
+|Mediator|
+:Obtain SLA and policies;
+|Policy Repository|
+:Provide SLA and policies;
+|Mediator|
+:Generate service requirements;
+:Pass service requirements;
+|Peering Agent|
+:Discover external resources;
+if (Preexisting peering arrangements?) then (yes)
+:Return existing arrangements;
+else (no)
+:Negotiate short-term peering;
+endif
+
+|Mediator|
+if (Sufficient peer resources acquired?) then (yes)
+:Configure peering protocols;
+|Peering Agent|
+:Advertise CDN configurations;
+:Exchange content availability info;
+|Mediator|
+:Deploy functional policies;
+:Administer peering arrangement;
+
+fork
+:Redirect portion of web traffic;
+fork again
+:Control content replication;
+fork again
+:Exchange accounting information;
+end fork
+
+while (Changing circumstances?) is (yes)
+if (Need disband or re-arrange?) then (yes)
+if (Circumstances no longer hold?) then (yes)
+:Disband arrangement;
+else (no)
+if (Peering no longer beneficial?) then (yes)
+:Disband arrangement;
+else (no)
+if (Need expand for additional load?) then (yes)
+:Re-arrange arrangement;
+else (no)
+if (Contributions not met?) then (yes)
+:Re-arrange arrangement;
+else (no)
+endif
+endif
+endif
+endif
+endif
+endif
+endwhile (no)
+
+stop
+else (no)
+:Reconsider service requirements;
+:Tune negotiated relationships;
+:Resume peering creation;
+stop
+endif
+
+else (no)
+:Serve requests locally;
+stop
+endif
+@enduml

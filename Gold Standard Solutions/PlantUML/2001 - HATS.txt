@@ -1,0 +1,377 @@
+@startuml
+title HATS-GUI - Activity Diagram
+skinparam swimlaneWidth 220
+skinparam activityFontSize 10
+scale 0.50
+|User|
+start
+
+:Launch HATS-GUI;
+
+switch (Select Operation)
+
+case (Manage Application)
+
+  switch (Select Management Action)
+
+  case (Create Application)
+    :Enter Application Name & Location;
+    if (Application Already Exists?) then (yes)
+      :Display Error:\nApplication Already Exists;
+      stop
+    else (no)
+      :Request Host OS to\nCreate Application Directory;
+      if (Directory Created Successfully?) then (yes)
+        :Create Lexical Spec File (.spec)\nGrammar File (.grm)\nUser-Defined Functions File (.sml)\nConfiguration File;
+        :Store All Files in\nSame Application Directory;
+        :Inform User:\nApplication Created;
+      else (no)
+        :Display File System Error;
+        stop
+      endif
+    endif
+
+  case (Open / Select Application)
+    :Request Host OS for\nList of Directories;
+    if (Applications Exist?) then (yes)
+      :Display List of Applications;
+      :User Selects Application;
+      :Set as Current Application;
+      :Load Application Configuration;
+    else (no)
+      :Display Message:\nNo Applications Found;
+      stop
+    endif
+
+  case (Save Application)
+    :Request Host OS to\nSave Configuration File;
+    if (Save Successful?) then (yes)
+      :Inform User:\nApplication Saved;
+    else (no)
+      :Inform User:\nApplication Not Saved;
+      stop
+    endif
+
+  case (Save Application As)
+    :Prompt User for New\nApplication Name;
+    if (User Cancels?) then (yes)
+      stop
+    else (no)
+      if (Application Name Already Exists?) then (yes)
+        :Display Error:\nApplication Already Exists;
+        stop
+      else (no)
+        :Request Host OS to\nCreate New Directory;
+        :Copy Core Files, Config Files\n& TLP Files to New Directory;
+        :Set New Directory as\nCurrent Application;
+        :Inform User:\nApplication Saved As New Name;
+      endif
+    endif
+
+  case (Close Application)
+    :User Selects Close Application;
+    if (Unsaved Configuration Changes?) then (yes)
+      :Prompt User to Save Changes;
+      if (User Agrees to Save?) then (yes)
+        :Save Application Configuration;
+      else (no)
+        :Discard Changes;
+      endif
+    else (no)
+    endif
+    :Set Current Application = None;
+
+  case (Delete Application)
+    :Prompt User to Confirm Deletion;
+    if (User Confirms?) then (yes)
+      if (Application Contains Subdirectory?) then (yes)
+        :Prompt User to Confirm\nSubdirectory Deletion;
+        if (User Confirms Subdirectory Deletion?) then (yes)
+          :Delete All Files &\nApplication Directory;
+          :Set Current Application = None;
+        else (no)
+          :Cancel Deletion;
+          stop
+        endif
+      else (no)
+        :Delete All Files &\nApplication Directory;
+        :Set Current Application = None;
+      endif
+    else (no)
+      :Cancel Deletion;
+      stop
+    endif
+
+  case (Edit File in Application)
+    :User Selects File to Edit;
+    if (Editor Associated with File?) then (yes)
+      :Request Host OS to Launch\nAssociated Editor with File;
+    else (no)
+      :Prompt User to Select\nConfigured Editor;
+      :Prompt User to Associate Editor\nwith File or File Type;
+      :Update Application Configuration\nwith Editor Association;
+      :Request Host OS to Launch\nSelected Editor with File;
+    endif
+
+  case (Manage File Associations)
+    :Display Current\nFile Associations;
+    :User Selects Association to Modify;
+    :Update File Association\nin Application Configuration;
+    :Save Updated Configuration;
+
+  endswitch
+
+case (Parse Transformation Language\nProgram or Target File)
+
+  :Verify Application is Selected;
+  if (Application Selected?) then (no)
+    :Prompt User to\nSelect Application;
+  else (yes)
+  endif
+
+  :User Selects File to Parse\n(.tlp or .tgt);
+
+  :Check Parser File Timestamp\nvs Lexer Spec & Grammar Files;
+  if (Parser File Exists and\nIs Up to Date?) then (no)
+    :Request Host OS to Start\nMakeParser Program;
+    |Host OS|
+    :Start MakeParser with\nLexer Spec & Grammar Files;
+    |HATS-SML|
+    if (Parser File Created\nSuccessfully?) then (no)
+      |User|
+      :Display Error in\nError Window;
+      stop
+    else (yes)
+      |User|
+    endif
+  else (yes)
+  endif
+
+  :Request Host OS to Start\nParseTarget or ParseTLP Program;
+  |Host OS|
+  :Start Parse Program with\nInput File & Parser File;
+  |HATS-SML|
+  :Parse Input File &\nWrite SDT Output File;
+  if (Parse Successful?) then (yes)
+    |User|
+    :Save Parsed Output (.parsed)\nto Application Directory;
+    :Associate Parsed File\nwith Application;
+  else (no)
+    |User|
+    :Display Parse Error\nin Error Window;
+  endif
+  stop
+  
+case (Execute Transformation\nLanguage Program)
+
+  |User|
+  :Verify Application is Selected;
+  if (Application Selected?) then (no)
+    :Prompt User to Select Application;
+  else (yes)
+  endif
+
+  :User Selects Transformation\nLanguage Program (.tlp);
+
+  :Verify TLP File Exists;
+  if (TLP File Exists?) then (no)
+    :Display Error:\nProgram Not Found;
+    stop
+  else (yes)
+  endif
+
+  :Check Parser File is Younger\nthan Grammar & Lexer Spec Files;
+  if (Parser Up to Date?) then (no)
+    :Generate New Parser File\n(Refer to Parse Use Case);
+  else (yes)
+  endif
+
+  :Check Parsed TLP File Exists\n& is Younger than TLP & Parser;
+  if (Parsed TLP Up to Date?) then (no)
+    :Generate New Parsed TLP File\n(Refer to Parse Use Case);
+  else (yes)
+  endif
+
+  :Run FindTargets Program to\nIdentify Target Files in TLP;
+
+  :For Each Target File:;
+  :Check Parsed Target File Exists\n& is Younger than Target & Parser;
+  if (Parsed Target Up to Date?) then (no)
+    :Generate New Parsed Target File\n(Refer to Parse Use Case);
+  else (yes)
+  endif
+
+  :Clear Standard Output &\nStandard Error Display;
+
+  :Request Host OS to Start\nApplyTransformations Program;
+  |Host OS|
+  :Start ApplyTransformations with\nParsed TLP & User-Defined Library;
+  |HATS-SML|
+  :Execute Transformation Program\n& Write Output SDTs to Files;
+  :Write Debug Info to\nStandard Output Stream;
+  :Write Errors to\nStandard Error Stream;
+
+  |User|
+  :Capture Standard Output &\nStandard Error Streams;
+  :Make Output SDTs Available\nin Application;
+
+  if (Execution Successful?\n(Exit Code = 0)) then (yes)
+    :Associate Output SDT Files\nwith Application;
+    :Inform User:\nTransformation Complete;
+  else (no)
+    :Display Error Messages\nfrom Standard Error Stream;
+  endif
+
+case (Examine SDT &\nPretty-Printed Output)
+
+  |User|
+  switch (Select Output Type)
+
+  case (View SDT Output)
+    :User Selects SDT File\nfrom Application;
+    :Display SDT as Directed\nAcyclic Graph in Work Area;
+    :Display Leaf Node Text\nin Text Window;
+    if (SDT Too Large for Window?) then (yes)
+      :Display Navigation Window\nwith Compressed SDT View;
+      :Show Locator Box for\nCurrently Viewed Portion;
+    else (no)
+    endif
+
+    switch (SDT Manipulation Action)
+
+    case (Expand Node)
+      :User Clicks Node;
+      :Expand Node Descendants\nper Configuration Level;
+      :Update Node Shape & Color\nto Expanded State;
+
+    case (Collapse Node)
+      :User Clicks Expanded Node;
+      :Remove All Descendants\nfrom Displayed Graph;
+      :Update Node Shape & Color\nto Collapsed State;
+
+    case (Select Nodes)
+      :User Selects One or\nMore Displayed Nodes;
+      :Highlight Smallest\nWell-Formed Sub-Tree;
+      :Highlight Corresponding\nLeaf Text;
+      if (Pretty-Printed Text\nAlso Displayed?) then (yes)
+        :Highlight Corresponding\nPretty-Printed Text;
+      else (no)
+      endif
+
+    case (Hide Nodes)
+      :User Selects Nodes to Hide;
+      :Remove Selected Nodes\nfrom Displayed Graph;
+      :Update Parent & Descendant\nNode Types to Reflect Hidden Nodes;
+
+    case (Search SDT)
+      :User Enters Search Criteria\n(Sub-tree Pattern);
+      :Search SDT Top-to-Bottom\nLeft-to-Right from Cursor;
+      if (Match Found?) then (yes)
+        :Highlight Matching Sub-Tree\nin Displayed Graph;
+        :Center Display on\nMatching Node;
+        if (Pretty-Printed Text\nAlso Displayed?) then (yes)
+          :Highlight Corresponding\nPretty-Printed Text;
+        else (no)
+        endif
+      else (no)
+        :Display Message:\nNo Match Found;
+      endif
+
+    case (Navigate via\nNavigation Window)
+      :User Clicks in\nNavigation Window;
+      :Redraw Main Display\nCentered on Selected Node;
+      :Update Locator Box\nin Navigation Window;
+
+    case (Refresh Display)
+      :Dispose Current SDT Display;
+      :Re-read SDT File from Disk;
+      :Redisplay SDT with\nSame Number of Nodes;
+
+    case (Copy Leaf Text)
+      :User Selects Text\nin Text Window;
+      :Highlight Selected Text;
+      :Copy Text to\nHost OS Clipboard;
+
+    endswitch
+
+  case (View Pretty-Printed\nText Output)
+    :User Selects Pretty-Printed\nText File (.txt) from Application;
+    :Display Pretty-Printed Text\nin Work Window;
+    if (Text Too Large for Window?) then (yes)
+      :Display Scroll Bars;
+    else (no)
+    endif
+
+    switch (Text Manipulation Action)
+
+    case (Select Text)
+      :User Selects Portion\nof Pretty-Printed Text;
+      :Highlight Selected Text;
+      if (SDT Also Displayed?) then (yes)
+        :Highlight Corresponding\nSDT Displayed Nodes;
+      else (no)
+      endif
+
+    case (Search Text)
+      :User Enters Text\nSearch Criteria;
+      :Search Text Left-to-Right\nTop-to-Bottom from Cursor;
+      if (Match Found?) then (yes)
+        :Highlight Matching Text\nin Text Window;
+        :Center Display on Match;
+        if (SDT Also Displayed?) then (yes)
+          :Highlight Corresponding\nSDT Nodes;
+        else (no)
+        endif
+      else (no)
+        :Display Message:\nNo Match Found;
+      endif
+
+    endswitch
+
+  case (Generate Pretty-Printed\nOutput)
+    :User Selects Target SDT File;
+    if (Pretty-Print Style File\nAssociated?) then (no)
+      :Prompt User to Select\nPretty-Print Style File (.sty);
+      if (User Cancels?) then (yes)
+        stop
+      else (no)
+      endif
+    else (yes)
+    endif
+    :Generate Output Filename\n(SDT Root Name + .txt);
+    if (Output File Already Exists?) then (yes)
+      :Prompt User to Confirm\nOverwrite or Enter New Name;
+      if (User Cancels?) then (yes)
+        stop
+      else (no)
+      endif
+    else (no)
+    endif
+    :Request Host OS to Start\nPrettyPrint Program;
+    |Host OS|
+    :Start PrettyPrint with\nSDT File, Style File & Output File;
+    |HATS-SML|
+    :Apply Style to SDT &\nWrite Formatted Text Output;
+    if (PrettyPrint Successful?) then (yes)
+      |User|
+      :Associate Output Text File\nwith Application;
+    else (no)
+      |User|
+      :Display PrettyPrint\nError Message;
+    endif
+    stop
+  case (View Error Output)
+    :Display Standard Error Window\nwith All Collected Error Messages;
+    :User May Clear\nError Window;
+
+  case (View Standard Output)
+    :Display Standard Output Window\nwith Debug Information;
+
+  endswitch
+
+endswitch
+
+|User|
+stop
+
+@enduml

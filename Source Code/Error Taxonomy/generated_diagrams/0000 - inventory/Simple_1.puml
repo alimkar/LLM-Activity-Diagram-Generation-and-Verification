@@ -1,0 +1,154 @@
+@startuml
+|User|
+start
+:Enter username;
+:Enter password;
+|System|
+:Authenticate user;
+
+if (Authenticated?) then (yes)
+  |User|
+  if (Transfer assets?) then (yes)
+    if (Within same department?) then (yes)
+      |System|
+      :Update asset database;
+    else (no)
+      if (Inter departments?) then (yes)
+        |User|
+        :Create transfer request;
+        |System|
+        if (From higher level group?) then (yes)
+          :Approve request;
+        else (no)
+          |DA Group Member|
+          :Approve request;
+          |Faculty Group Member|
+          :Approve request;
+          |System|
+          :Approve request;
+        endif
+      else (no)
+        if (Inter faculties?) then (yes)
+          |User|
+          :Create transfer request;
+          |Faculty Group Member|
+          :Approve request;
+          |System|
+          :Approve request;
+        else (no)
+          if (Outside university?) then (yes)
+            |User|
+            :Create transfer request;
+            |University Group Member|
+            :Approve request;
+            |System|
+            :Approve request;
+          endif
+        endif
+      endif
+    endif
+  else (no)
+    if (Edit asset?) then (yes)
+      |User|
+      :Edit asset;
+      |System|
+      if (Authorized to edit?) then (yes)
+        :Allow edit;
+        |User|
+        if (Use bulk entry file?) then (yes)
+          :Upload bulk entry file;
+        else (no)
+          :Modify asset fields;
+        endif
+        |System|
+        :Reject ID changes;
+        :Save asset changes;
+      else (no)
+        :Deny edit;
+      endif
+    else (no)
+      if (Add inventory assets?) then (yes)
+        |User|
+        if (Use bulk entry?) then (yes)
+          :Upload bulk entry;
+        else (no)
+          :Add inventory asset;
+        endif
+        |System|
+        if (DA member or authorized inventory member?) then (yes)
+          :Assign asset to department;
+        else (no)
+          if (Faculty member?) then (yes)
+            :Add assets for related departments;
+          else (no)
+            if (University group member?) then (yes)
+              :Add assets to inventory;
+            endif
+          endif
+        endif
+      else (no)
+        if (Create borrow/reserve request?) then (yes)
+          |User|
+          :Create request;
+          |System|
+          :Set request pending;
+        else (no)
+          if (Return asset?) then (yes)
+            |Inventory User|
+            :Check returned asset;
+            |System|
+            :Update inventory;
+          else (no)
+            if (Create new location?) then (yes)
+              |Administrative Level User|
+              :Send exception request;
+              |IT Group Member|
+              :Create new space;
+              :Modify floor structure;
+            else (no)
+              if (Approve requests?) then (yes)
+                |Administrative Level User|
+                :Display pending requests;
+                :Approve requests;
+                |System|
+                :Notify user by email;
+                :Add to waiting for execution list;
+                if (User receives requested asset?) then (yes)
+                  :Update inventory;
+                endif
+              else (no)
+                if (Change permission?) then (yes)
+                  |Administrative Level User|
+                  :Delegate authorized actions;
+                  |System|
+                  :Assign inventory administrator role;
+                else (no)
+                  if (Output reports?) then (yes)
+                    |User|
+                    if (Asset report by location?) then (yes)
+                      |System|
+                      :Generate asset report by location;
+                    else (no)
+                      if (Request report?) then (yes)
+                        :Generate request report;
+                      else (no)
+                        if (User permission report?) then (yes)
+                          :Generate user permission report;
+                        endif
+                      endif
+                    endif
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+else (no)
+  :Reject login;
+endif
+
+stop
+@enduml

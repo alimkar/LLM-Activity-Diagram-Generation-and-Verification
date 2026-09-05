@@ -1,0 +1,84 @@
+@startuml
+|Primary CDN Web Server (WS)|
+start
+:Monitor load / detect hotspot (flash crowd);
+if (Exceptional circumstances\nand cannot handle workload?) then (yes)
+:Initiate peering trigger request;
+
+|Mediator (Primary CDN)|
+:Receive initialization request;
+:Obtain resource & access info from Service Registry (SR);
+:Obtain SLAs/policies from Policy Repository (PR);
+:Generate service requirements\n(based on current circumstance and customer SLA);
+:Apply visibility/privacy constraints\n(divergent policies);
+
+|Peering Agent (PA - Primary CDN)|
+:Receive service requirements from Mediator;
+:Discover potential peer CDNs\n(predict performance; handle limited info sharing);
+if (Preexisting peering arrangements exist?) then (yes)
+:Return preexisting peering arrangements;
+else (no)
+:Perform short-term negotiations\nwith external peer PAs;
+endif
+
+|External Peer CDN(s) PA|
+:Exchange policy/resource info\nand service requirements with Primary PA;
+:Respond with offered resources / terms;
+
+|Peering Agent (PA - Primary CDN)|
+:Collect peer offers / candidate peers;
+if (Any CDN interested / acceptable offer?) then (yes)
+:Select peer CDN(s) to establish peering;
+
+|Mediator (Primary CDN)|
+:Configure CDN peering protocols\nat conduits of respective CDNs;
+:Advertise configurations via inter-PA communication\n(topology, proximity, capability, performance);
+:Enable exchange of content availability info;
+:Define request-routing/redirection policies\nper peering protocols;
+
+|Primary CDN Web Server (WS)|
+:Ensure delivery of content to end-users\nbased on negotiated policies;
+
+fork
+|SLA Allocator (Primary CDN)|
+:Provision & reserve WS resources\n(CPU/bandwidth/storage) for local and delegated SLAs;
+:Enforce SLA terms;
+fork again
+|Primary CDN Web Server (WS)|
+:Perform on-demand caching,\ncontent selection, and routing;
+fork again
+|Mediator (Primary CDN)|
+:Control portion of web traffic redirected to peers;
+:Control which content is replicated at peers\nand replication policies used;
+end fork
+
+|Operational Management (Participating CDNs)|
+:Deploy and administer functional policies;
+:Cooperate to execute common goals;
+:Exchange accounting information for billing\nbased on negotiated relationships;
+
+|Mediator (Primary CDN)|
+if (Sufficient resources acquired\nto meet customer SLA?) then (yes)
+:Peering arrangement becomes operational;
+else (no)
+:Re-negotiate by tuning negotiated relationships\nand reconsidering service requirements;
+-> :Receive service requirements from Mediator;
+endif
+
+|Operational Management (Participating CDNs)|
+if (Need disband or re-arrangement?) then (yes)
+:Evaluate conditions:\n(a) circumstances no longer hold\n(b) no longer beneficial\n(c) need expansion for additional load\n(d) contributions not met;
+if (Re-arrange within negotiated relationship?) then (yes)
+:Re-arrange peering arrangement\n(e.g., expand resources / adjust contributions);
+else (no)
+:Disband peering arrangement;
+endif
+endif
+
+stop
+
+else (no)
+:Continue normal content delivery locally;
+stop
+endif
+@enduml

@@ -1,0 +1,209 @@
+@startuml
+|Game System|
+start
+:Initialize application;
+:Compute board unit x;
+if (50px <= x <= 100px ?) then (yes)
+  :Draw black board (5x by 4x)\nand yellow blocks with 0.1x margins;
+  :Initialize game state = "Block selection";
+  :Initialize player stats\n(moves=0, start time);
+else (no)
+  :Reject invalid x\n(cannot be <50px or >100px);
+  stop
+endif
+
+while (Main window visible?) is (yes)
+  |Player|
+  :Perform user action\n(mouse or menu selection);
+
+  |Game System|
+  if (Mouse: left-click down on a block?) then (yes)
+    :Select clicked block;
+    :Set game state = "Block deplacement";
+  else (no)
+    if (Mouse: left-click up on selected block?) then (yes)
+      :Deselect block;
+      :Set game state = "Block selection";
+    else (no)
+      if (Mouse move during "Block deplacement"?) then (yes)
+        :Compute candidate block position\nfollowing mouse;
+        if (Candidate position valid?\n- no overlap\n- inside board\n- >= 0.05x from other blocks) then (yes)
+          :Update block position on board;
+          :Treat as a movement;
+          :Increment movement counter (+1);
+          :Record time delta since\nprevious recorded time;
+          if (Great square at bottom of board?) then (yes)
+            :Freeze all player statistics;
+
+            if (Current move count lower than\nhighest move count recorded\nin statistic file?) then (yes)
+              |Game System|
+              :Display "Finish Window with Statistics"\n("You win! Enter your name:",\n20-char edit box, OK);
+
+              |Player|
+              :Enter name (<=20 chars);
+              :Click OK;
+
+              |Game System|
+              |File System|
+              :Update statistic file with\n(name, moves, time);
+              if (Already 10 player statistics?) then (yes)
+                :Erase the statistic entry\nwith greatest movement count;
+              endif
+              if (File correctly updated?) then (yes)
+                |Game System|
+                :Close finish window;
+              else (no)
+                |Game System|
+                :Display error message\n(e.g., wrong permissions, disk full);
+                :Close finish window;
+              endif
+
+            else (no)
+              |Game System|
+              :Display "Simple Finish Window"\n("You win!", OK);
+
+              |Player|
+              :Click OK;
+
+              |Game System|
+              :Close simple finish window;
+            endif
+
+            |Game System|
+            |File System|
+            :Read statistics from statistic file;
+            |Game System|
+            :Display Statistic Window\n(listbox with up to 10 lines:\nname, movements, time);
+          endif
+        else (no)
+          :Keep block within allowed constraints\n(no change applied);
+        endif
+
+      else (no)
+        if (Menu: Undo selected?) then (yes)
+          if (Previous movement exists?) then (yes)
+            :Restore block positions\nbefore last movement;
+            :Treat as a movement;
+            :Increment movement counter (+1);
+            :Record time delta since\nprevious recorded time;
+          else (no)
+            :Undo unavailable (no previous movement);
+          endif
+
+        else (no)
+          if (Menu: Redo selected?) then (yes)
+            if (Previous action was Undo?) then (yes)
+              :Restore block positions\nbefore last canceled movement;
+              :Treat as a movement;
+              :Increment movement counter (+1);
+              :Record time delta since\nprevious recorded time;
+            else (no)
+              :Redo unavailable (previous action not Undo);
+            endif
+
+          else (no)
+            if (Menu: Open game... selected?) then (yes)
+              :Open file chooser dialog;
+              |Player|
+              :Choose saved game file;
+              |Game System|
+              |File System|
+              :Read saved game data\n(block positions, history,\nmove count, elapsed time);
+              |Game System|
+              :Redraw board from file data;
+              :Set player statistics from file data;
+
+            else (no)
+              if (Menu: Save game selected?) then (yes)
+                if (Game never saved before?) then (yes)
+                  :Process as "Save game as...";
+                  :Open file chooser dialog;
+                  |Player|
+                  :Choose target save file;
+                  |Game System|
+                  |File System|
+                  :Write save data\n(current positions, previous positions,\nnumber of previous movements,\nelapsed time);
+                else (no)
+                  |File System|
+                  :Write save data to previous file\n(current positions,\nlast 10000 previous positions,\nnumber of previous movements,\nelapsed time);
+                endif
+
+              else (no)
+                if (Menu: Save game as... selected?) then (yes)
+                  :Open file chooser dialog;
+                  |Player|
+                  :Choose target save file;
+                  |Game System|
+                  |File System|
+                  :Write save data\n(current positions, previous positions,\nnumber of previous movements,\nelapsed time);
+
+                else (no)
+                  if (Menu: Statistics > Display selected?) then (yes)
+                    |File System|
+                    :Read statistics from statistic file;
+                    |Game System|
+                    :Display Statistic Window\n(listbox with up to 10 lines);
+
+                  else (no)
+                    if (Menu: Statistics > Erase selected?) then (yes)
+                      |File System|
+                      :Erase all data in statistic file;
+                      if (File correctly updated?) then (yes)
+                        |Game System|
+                        :No output;
+                      else (no)
+                        |Game System|
+                        :Display error message\n(e.g., wrong permissions, disk full);
+                      endif
+
+                    else (no)
+                      if (Menu: Help > About selected?) then (yes)
+                        :Display About Window\n("Qheadache 1.0 by Jean-Philippe Brossat\njp_brossat@yahoo.fr");
+
+                      else (no)
+                        if (Menu: Exit selected?) then (yes)
+                          if (Game not saved?) then (yes)
+                            :Display save confirmation dialog\n(Yes/No);
+                            |Player|
+                            if (Choose "Yes"?) then (yes)
+                              |Game System|
+                              :Process "Save game";
+                              if (Game never saved before?) then (yes)
+                                :Open file chooser dialog;
+                                |Player|
+                                :Choose target save file;
+                                |Game System|
+                                |File System|
+                                :Write save data;
+                              else (no)
+                                |File System|
+                                :Write save data to previous file;
+                              endif
+                              |Game System|
+                              :Hide main window;
+                            else (no)
+                              |Game System|
+                              :Hide main window;
+                            endif
+                          else (no)
+                            :Hide main window;
+                          endif
+                        else (no)
+                          :No recognized action;
+                        endif
+                      endif
+                    endif
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+
+endwhile (no)
+|Game System|
+stop
+@enduml

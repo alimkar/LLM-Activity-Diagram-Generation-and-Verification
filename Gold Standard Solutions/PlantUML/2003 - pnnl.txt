@@ -1,0 +1,70 @@
+@startuml
+title HVAC Automated Diagnostic Tool
+|User|
+start
+:Initiate HVAC Diagnostic System;
+
+if(Browse Diagnostics Operation?) then (Yes)
+    :Show Diagnostic Results;
+else (No)
+  if(is administrator?) then (Yes)
+    switch(Operation Type?)
+
+  case (Start Diagnostics)
+    :Initiate diagnosis process;
+    |HVAC System|
+
+    fork
+      :Acquire sensed data;
+
+      if (Data source?) then (Real-time)
+        :Receive data from\nacquisition hardware;
+      else (Post-acquisition)
+        :Retrieve stored data\nfrom acquisition\nhardware;
+      endif
+
+    fork again
+      :Retrieve fixed data from\npermanent storage;
+      end fork
+
+    :Reduce, filter &\nprepare sensed data;
+
+    :Apply averaging, trending\nor statistical analysis;
+
+    :Receive preprocessed\nsensed & fixed data;
+
+    :Execute fault detection\nalgorithms on\nHVAC subsystems;
+
+    if (Fault detected?) then (yes)
+      :Identify & enumerate\ndetected faults;
+    else (no)
+      :Record no-fault\nresult;
+    endif
+
+    :Display diagnostic results\nin graphical &\ntextual format;
+    fork
+      :Store diagnostic results\nto permanent storage;
+    fork again
+      |User|
+      :Display retrieved\nresults to user;
+    end fork
+
+  case(Configure Diagnostics)
+     if(Recall previous configuration?) then (Yes)
+       :Show current configuration;
+     else(No)
+     endif 
+     :Modify current diagnostics;
+     |HVAC System|
+     :Save modified configurations;
+
+   endswitch
+
+  else(No)
+    :Show Access Denied Error;
+  endif
+endif
+
+stop
+
+@enduml

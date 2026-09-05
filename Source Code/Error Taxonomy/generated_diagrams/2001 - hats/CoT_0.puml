@@ -1,0 +1,105 @@
+@startuml
+|User|
+start
+:Construct/use transformations;
+
+if (Manage application files/associations?) then (yes)
+  :Select application;
+  if (Create application?) then (yes)
+    :Create application directory/folder;
+    :Create related files;
+  else (no)
+    if (Modify application?) then (yes)
+      :Modify related files;
+    else (no)
+      if (Delete application?) then (yes)
+        :Delete related files;
+      endif
+    endif
+  endif
+  :Examine file associations;
+  :Modify file associations;
+endif
+
+if (Parse transformation program and/or target program?) then (yes)
+  :Select transformation language program file;
+  :Select target program file;
+
+  |HATS-GUI|
+  :Orchestrate parsing;
+
+  fork
+    :Invoke parser for transformation program;
+    :Translate text to SDT;
+    if (Save parsed transformation SDT?) then (yes)
+      :Save parsed transformation SDT as file;
+    endif
+  fork again
+    :Invoke parser for target program;
+    :Translate text to SDT;
+    if (Save parsed target SDT?) then (yes)
+      :Save parsed target SDT as file;
+    endif
+  end fork
+
+  :Associate saved parsed files with application;
+
+  |User|
+  if (Need parser generation?) then (yes)
+    :Provide lexical specification and grammar;
+    |HATS-SML|
+    :Generate parser program;
+    |HATS-GUI|
+    :Use generated parser for parsing;
+    |User|
+  endif
+endif
+
+if (Execute transformation language program?) then (yes)
+  |User|
+  :Select transformation language program to execute;
+
+  |HATS-GUI|
+  if (Transformation program parsed and saved as SDT?) then (yes)
+    :Proceed with execution;
+  else (no)
+    :Orchestrate parsing of transformation program;
+    |HATS-SML|
+    :Parse transformation program to SDT;
+    |HATS-GUI|
+    :Save transformation SDT;
+  endif
+
+  |HATS-SML|
+  :Execute transformation program;
+  :Read embedded input file names (target programs);
+  :Create output SDTs (transformed results);
+  :Write debugging/error outputs (optional);
+
+  |HATS-GUI|
+  :Capture output SDTs;
+  :Capture debugging/error streams;
+  :Make captured data available to user;
+endif
+
+if (Examine SDT / pretty-printed output?) then (yes)
+  |HATS-GUI|
+  :Associate saved datasets/files with application;
+  :Provide list of saved files;
+
+  |User|
+  :Select file/dataset for display;
+
+  |HATS-GUI|
+  :Display SDT and/or pretty-printed text;
+  :Display error messages from parsing/transformation;
+
+  |User|
+  while (Manipulate display?) is (yes)
+    :Choose portions of tree to display;
+    :Search for text strings and sub-trees;
+  endwhile (no)
+endif
+
+stop
+@enduml

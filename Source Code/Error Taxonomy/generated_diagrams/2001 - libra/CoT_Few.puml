@@ -1,0 +1,145 @@
+@startuml
+|User/Administrator|
+start
+:Select operation\n(Submit Job / View Job Status / Delete-Change Job);
+
+if (Submit Job?) then (yes)
+  :Provide user information\n(name, authentication id);
+  :Provide job information\n(job details + extra submission parameters);
+
+  |SGE Interface (Cluster Mgmt)|
+  :Check whether cluster is open\nfor job submissions;
+  if (Cluster accepting submissions?) then (no)
+    :Return "not accepting submissions";
+    |User/Administrator|
+    :Receive submission denied;
+    stop
+  else (yes)
+    :Verify user validity;
+    if (User verified?) then (no)
+      :Return "user not verified";
+      |User/Administrator|
+      :Receive authentication failure;
+      stop
+    else (yes)
+      :Accept submission in SGE;
+      :Assign Job Id;
+      :Forward Job Id + submitted job info\nto Libra scheduler;
+
+      |Libra Scheduler|
+      :Initialize Job;
+      :Retrieve job details;
+      :Set cluster/queue state variables;
+      :Pass parsed parameters to\nAccept/Reject module;
+
+      :Compute job priority\n(budget, deadline, exec time);
+      :Determine if job can finish\nby deadline given pending jobs;
+
+      if (Accept job?) then (no)
+        :Reject job;
+        :Suggest revised deadline/cost;
+        |SGE Interface (Cluster Mgmt)|
+        :Notify user of rejection\nand suggested deadline/cost;
+        |User/Administrator|
+        :Review suggestion;
+        stop
+      else (yes)
+        :Calculate Scheduling Information;
+        :Allocate tickets based on\nbudget/deadline and other jobs;
+        :Calculate stride and initial pass;
+
+        :Determine Execution Host;
+        :Sort hosts by current load (ascending);
+        :Select least-loaded host;
+        :Select appropriate queue\n(sequential/parallel, budget, ...);
+
+        :Dispatch Job;
+        |Execution Host/Queue|
+        :Insert job into selected host queue;
+
+        |Libra Scheduler|
+        :Update Cluster Status;
+        :Reserve required resources on node;
+        :Update execution host queue status;
+        |Master Host Info Store|
+        :Store updated cluster load/status;
+
+        |Execution Host/Queue|
+        while (Jobs left to run on queue?) is (yes)
+          |Libra Scheduler|
+          :Select job with minimum pass\n(FIFO tie-break on ties);
+          :Allot quantum (time-slice);
+          :Advance selected job pass by stride;
+          :Update cluster information\n(CPU load, node status,\nremaining pending time, available memory);
+        endwhile (no)
+
+        |User/Administrator|
+        :Job completes / results available;
+        stop
+      endif
+    endif
+  endif
+
+else (no)
+  if (View Job Status?) then (yes)
+    :Enter User Id and Password;
+
+    |SGE Interface (Cluster Mgmt)|
+    if (Credentials valid?) then (yes)
+      :Show submitted jobs;
+      :Show execution progress;
+      :Show available job options;
+      :Process selected viewing option;
+      |User/Administrator|
+      :Review job status details;
+    else (no)
+      :Notify invalid credentials;
+      |User/Administrator|
+      :Access denied;
+    endif
+    stop
+
+  else (no)
+    if (Delete/Change Job?) then (yes)
+      :Enter User Id and Password;
+
+      |SGE Interface (Cluster Mgmt)|
+      if (Credentials valid?) then (yes)
+        :Select job to modify;
+        :Choose Cancel or Change parameter;
+
+        if (Cancel job?) then (yes)
+          :Remove job from queue;
+        else (no)
+          :Specify requested change\n(e.g., output directory,\ndelayed deadline);
+          if (Change permitted?\n(non-crucial; not normally deadline/cost)) then (yes)
+            :Apply allowed parameter change;
+          else (no)
+            :Reject parameter change;
+          endif
+        endif
+
+        :Update cluster status (SGE);
+        |Libra Scheduler|
+        :Revise scheduling decisions about\nresource allocation to pending jobs\nand submission of new jobs;
+
+        |SGE Interface (Cluster Mgmt)|
+        :Provide updated cluster information\nand scheduling decision\n(CPU load, node status, queue length,\nquanta allocated, revised expected deadlines);
+
+        |User/Administrator|
+        :Review updated information;
+
+      else (no)
+        :Notify invalid credentials;
+        |User/Administrator|
+        :Access denied;
+      endif
+      stop
+
+    else (no)
+      :No operation selected;
+      stop
+    endif
+  endif
+endif
+@enduml

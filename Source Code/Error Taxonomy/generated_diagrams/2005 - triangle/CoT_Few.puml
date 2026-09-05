@@ -1,0 +1,37 @@
+@startuml
+|Player|
+start
+:Launch Triangular Games application;
+|System|
+:Initialize GUI (mouse/keyboard support);
+:Load built-in games\n(constructing, transforming, marking);
+:Scan for added games (plug-ins);
+:Populate game selection list in GUI;
+
+|Player|
+:Select a game from GUI;
+|System|
+if (Selected game supports\n2 players?) then (yes)
+  |Player|
+  :Choose play mode\n(solo or vs another person);
+else (no)
+  |Player|
+  :Play solo;
+endif
+
+|Player|
+:Play game using GUI\n(mouse and/or keyboard);
+|System|
+:Execute game rules and update GUI;
+
+if (Player exits game/application?) then (yes)
+  :Close application;
+  stop
+else (no)
+  |Player|
+  :Return to game selection;
+  |System|
+  :Show updated game list;
+  -> :Select a game from GUI;
+endif
+@enduml
