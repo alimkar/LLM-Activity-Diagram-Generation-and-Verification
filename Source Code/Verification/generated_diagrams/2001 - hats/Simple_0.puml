@@ -1,0 +1,41 @@
+@startuml
+|User|
+start
+:Manage application files;
+if (Create file?) then (yes)
+  :Create application file;
+elseif (Delete file?) then (yes)
+  :Delete application file;
+elseif (Modify file?) then (yes)
+  :Modify application file;
+endif
+
+:Examine file associations;
+if (Modify associations?) then (yes)
+  :Modify file associations;
+endif
+
+:Parse transformation program;
+:Parse target program;
+if (Save parsed versions?) then (yes)
+  :Save parsed files;
+endif
+
+:Execute transformation program;
+:Capture debug output;
+:Capture error output;
+
+:List saved files;
+:Select file for display;
+if (Display SDT?) then (yes)
+  :Display SDT;
+  :Choose tree portions;
+  :Search text strings;
+  :Search sub-trees;
+else (no)
+  :Display pretty-printed text;
+  :Search text strings;
+endif
+
+stop
+@enduml

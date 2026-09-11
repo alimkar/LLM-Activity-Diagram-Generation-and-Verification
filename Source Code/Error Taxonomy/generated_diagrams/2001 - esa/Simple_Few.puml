@@ -1,0 +1,78 @@
+@startuml
+|APAF System|
+start
+:Acquire telemetry data;
+
+|ESOC|
+:Provide ASPERA-3 telemetry;
+:Provide MEX orbit/attitude telemetry;
+
+|APAF System|
+if (Acquisition error?) then (yes)
+  :Handle error;
+endif
+
+|SwRI Archive|
+:Store telemetry data;
+
+|APAF System|
+if (Storage error?) then (yes)
+  :Handle error;
+endif
+
+if (Cleaned-up telemetry provided by ESOC?) then (yes)
+else (no)
+  :Generate cleaned-up telemetry intermediate files;
+  if (Intermediate generation error?) then (yes)
+    :Handle error;
+  endif
+  |SwRI Archive|
+  :Store cleaned-up telemetry intermediate files;
+  |APAF System|
+  if (Storage error?) then (yes)
+    :Handle error;
+  endif
+endif
+
+fork
+  :Process science data into IDFS data sets;
+  if (Processing error?) then (yes)
+    :Handle error;
+  endif
+fork again
+  :Process engineering and ancillary data into IDFS data sets;
+  if (Processing error?) then (yes)
+    :Handle error;
+  endif
+end fork
+
+|SwRI Archive|
+:Store IDFS data sets;
+
+|APAF System|
+if (Storage error?) then (yes)
+  :Handle error;
+endif
+
+fork
+  :Provide web displays of most current data;
+  if (Web display error?) then (yes)
+    :Handle error;
+  endif
+fork again
+  |ASPERA-3 Team|
+  :Define science analysis web displays;
+  |APAF System|
+  if (Data made public?) then (yes)
+    :Provide science analysis web displays;
+  else (no)
+    :Password protect science analysis web displays;
+    :Provide science analysis web displays;
+  endif
+  if (Web display error?) then (yes)
+    :Handle error;
+  endif
+end fork
+
+stop
+@enduml

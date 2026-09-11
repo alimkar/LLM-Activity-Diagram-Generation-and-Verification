@@ -1,0 +1,82 @@
+@startuml
+|Web Browser|
+start
+:Initiate HTTPS request;
+
+|Web Server|
+:Parse request;
+:Submit request to Service;
+
+|Service|
+:Pick up request;
+
+if (Request type?) then (Account)
+  if (Account action?) then (Register)
+    :Create account;
+    :Store profile;
+    :Configure contact info;
+    :Store payment info;
+    :Store address info;
+  elseif (Login)
+    :Log in;
+  elseif (Logout)
+    :Log out;
+  elseif (View history)
+    :View purchase history;
+  else (Confirm orders)
+    :Confirm orders;
+  endif
+elseif (Inventory)
+  :Browse categories;
+  :Browse products;
+elseif (Search)
+  :Receive search criteria;
+  :Find matching items;
+  :Return search results;
+elseif (Cart)
+  :Add product to cart;
+  :Display item count;
+  :Display total cost;
+  while (Modify cart?) is (yes)
+    if (Cart change?) then (Add)
+      :Add product to cart;
+    else (Remove)
+      :Remove product from cart;
+    endif
+    :Display item count;
+    :Display total cost;
+  endwhile (no)
+elseif (Checkout)
+  :Approve payment;
+  :Transfer payment;
+  :Review order;
+  if (Order correct?) then (yes)
+    :Confirm order;
+    :Send confirmation email;
+  else (no)
+    :Revise order;
+    :Update order;
+    :Review order;
+    :Confirm order;
+    :Send confirmation email;
+  endif
+else (Plug-in API)
+  :Submit request to Plug-in;
+  |Plug-in|
+  :Pick up request;
+  :Run tasks;
+  :Return results;
+  |Service|
+  :Validate results;
+endif
+
+:Return results;
+
+|Web Server|
+:Check completion;
+:Return results to Web Browser;
+
+|Web Browser|
+:Display results;
+stop
+@enduml

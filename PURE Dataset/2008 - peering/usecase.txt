@@ -1,0 +1,263 @@
+3.1  Service Registration
+
+This feature is associated with the registration of resource and service information of each CDN to its SR
+3.1.1 Actors
+
+WS: Publishes its resource and service information to the SR.
+
+SR: Registers available local resources at the CDN provider and updates them. Mediator: Collects up-to-date resource information from SR.
+3.1.2 Trigger
+
+Service registration is triggered when either one  of the following occurs: (a) resources are  available   as  a  provider   starts  operating;   (b)  previously   registered   resource information needs to be updated; (c) available local resource information is required in the event of traffic surges; and (d) local and delegated external resource information is to be encapsulated in an SR instance included in an established peering arrangement.
+
+3.1.3 Preconditions
+
+Available  local  resources  of a CDN  provider  are detected  along  with  their  service information  such  as CPU,  storage,  upload  and download  rate, etc. These  resources could be provisioned and reserved to satisfy SLAs.
+
+3.1.4 Postconditions
+
+Resources are registered in the service registry and being updated in a regular basis.
+ 
+
+3.1.5 Stimulus/Response  Sequences
+
+1. Each CDN Web server publishes resource and service information.
+
+2. If it is a new resource, its service information  is registered  in the SR with a new resource ID. Resource ID counter is incremented.
+
+3. Else, resource information in SR is updated in a regular basis.
+
+4. In the face of traffic surges,  information  on available  local resources  along with their IDs is supplied to the Mediator.
+
+5.  Local  and  delegated  external  resource  information  is  encapsulated  in  the  SR
+instance in the established peering arrangement.
+3.1.6 Exceptions
+
+If a resource  fails, its service information  is removed  from SR and the resource  ID
+counter is decremented.
+
+3.1.7 Functional Requirements
+
+REQ-1: The format for service information description is defined
+
+REQ-2: The interaction protocol between Web Server-SR, SR-mediator is defined. REQ-3: Resource provisioning, delegation and reservation policies are in place. REQ-4: There is an established norm that any resource failure will be reported REQ-5: The interaction protocol between Web Server-SR, SR-mediator is defined.
+
+3.2  Request Initiation to Trigger Peering
+
+This feature relates to the initialization  of peering between  CDNs.
+
+3.2.1 Actors
+
+End-user: Requests for content.
+
+Mediator: Receives initiation request from WS to trigger peering.
+
+3.2.2 Trigger
+
+It  is  invoked  when  a  (primary)  CDN  realizes  that  it  cannot  handle  a  part  of  the workload   on   its   WS(s).   The   triggering   condition   considers   the   expected   and unexpected load increases in the initiating (primary) CDN.
+ 
+
+3.2.3 Preconditions
+
+Exceptional circumstances  such as flash crowds have occurred to place unanticipated load on CDN WSs.
+
+3.2.4 Postconditions
+
+An initialization request is sent to the mediator to trigger peering.
+
+3.2.5 Stimulus/Response  Sequences
+
+1. End users request for content from CDN WSs.
+
+2. Flash crowds occurred due to a sudden burst in traffic.
+
+3. Hotspot is generated and provider is unable to handle excess load on its WSs.
+
+4. WS sends initialization request to the mediator to trigger peering.
+
+3.2.6 Exceptions
+
+If  the  user  requests  experience   service  timeout  (threshold),   initiation  request  is cancelled.
+
+3.2.7 Functional Requirements
+
+REQ-1: Malicious requests are detected and rejected.
+
+REQ-2: Web servers have already replicated necessary content.
+
+REQ-3: Both anticipated and unanticipated user requests (traffic) are considered. REQ-4: The format of the initiation request is defined.
+
+3.3  Mediator Invokes Creation of Negotiated Relationship
+
+On receipt of the initialization  request to trigger peering, the mediator of the primary CDN invokes negotiation.
+
+3.3.1 Actors
+
+SR: Sends resource and access information.
+
+PR: Sends policy information for establishing negotiated relationships.
+ 
+
+PA: Receives service requirements from the mediator.
+
+3.3.2 Trigger
+
+Upon  receiving  the  initialization  request  to trigger  peering,  the  mediator  generates service requirements and passes it to local PA.
+
+3.3.3 Preconditions
+
+Initialization request is received.
+
+3.3.4 Postconditions
+
+Service requirements are generated and they are sent to the local PA.
+
+3.3.5 Stimulus/Response  Sequences
+
+1. An initialization request to activate peering is received by the mediator.
+
+2. The mediator  instance  obtains  resource  and access  information  from the SR and policy information from PR to establish negotiation.
+
+3. The mediator generates service requirements.
+
+4.  If  the  service  requirements  are  acceptable  according  to  the  provider’s  policy, mediator passes it to the local PA.
+
+5. Else, reject user requests.
+
+3.3.6 Exceptions
+
+If  the  user  requests  can  not  be  accepted  according  the  provider  policies,  service requirements are not passed to the local PA.
+
+3.3.7 Functional Requirements
+
+REQ-1: The format of service requirements is defined.
+
+REQ-2: Mediator-SR, mediator-PR, mediator-PA interaction protocols are defined. REQ-3: Mediator works in conjunction with the PA to establish negotiation.
+
+3.4  Resource Discovery through PA
+
+The  PA  of a given  primary  CDN  negotiates  with  PAs  of the peers  to perform  external  resource discovery. 
+
+3.4.1 Actors
+
+External PA: Negotiates with the PA of the primary CDN. PR: Receives negotiated policies from the local PA.
+3.4.2 Trigger
+
+Local PA communicates with the PAs of peers to discover external resources.
+
+3.4.3 Preconditions
+
+Service requirements are received from the mediator.
+
+3.4.4 Postconditions
+
+Negotiation  is performed  and a peering arrangement  is established  through inter-PA
+communications.
+
+3.4.5 Stimulus/Response  Sequences
+
+1. Local PA receives service requirements from the mediator.
+ 
+
+2.  If  any  peering  policies  exist,  they  are  returned  to  establish  long-term  peering arrangement.
+
+3. Else, short-term negotiation is performed.
+
+4. Local  PA  in conjunction  with  the  mediator  interacts  with  external  PAs  through inter-PA communication protocol.
+
+5. External resources are discovered and negotiation is performed with selected CDN
+peers.
+
+6. If sufficient resources are acquired, a peering arrangement is established
+
+7.  Else,  mediator  re-evaluates  service  requirements  and  sends  to  the  local  PA  to perform re-negotiation
+
+3.4.6 Exceptions
+
+If  the  user  requests  can  not  be  accepted  according  the  provider  policies,  service requirements are not passed to the local PA.
+
+3.4.7 Functional Requirements
+
+REQ-1: Interaction protocols between PAs are identified. REQ-2: Malicious requests are identified and acted upon.
+REQ-3: There are existing policies for long-term peering arrangement. REQ-4: There is procedure to perform short-term negotiation.
+
+3.5  Operational Management
+
+This feature is responsible  for the inter-CDN  protocol configuration,  resource initialization  and for ensuring effective operations of the established peering arrangement.
+
+3.5.1 Actors
+
+External PA: Exchanges configurations and content availability information, and accepts requests to an optimal peer.
+
+PR: Assists in enforcing negotiated policies.
+
+3.5.2 Trigger
+
+Once policies  are negotiated  and a peering  arrangement  is established,  PAs interact each other in the execution of common goal(s).
+
+3.5.3 Preconditions
+
+A peering arrangement is established.
+
+3.5.4 Postconditions
+
+Necessary functions policies are deployed and administration for effective operations.
+
+3.5.5 Stimulus/Response  Sequences
+
+1. Once a peering arrangement is established, the initiating primary CDN through its local PA advertise configuration information to technically support the negotiated relationships between enlisted CDNs.
+
+2. PAs exchange content availability and load information to identify an optimal peer to handle user requests.
+
+3. Request is redirected to an optimal peer’s Web server.
+
+4.  PAs  exchange  accounting  information  to  perform  billing  based  on  negotiated relationships.
+
+5. The policy repository instance in the established peering arrangement assists in the deployment, administration and enforcement of the functional policies.
+ 
+
+If a peered CDN provider refuses to accept user requests, a given peering arrangement ceases.
+
+3.5.7 Functional Requirements
+
+REQ-1: Negotiation is established between selected CDN peers.
+
+REQ-2: Primary CDN has already acquired sufficient external resources. REQ-3: Malicious requests are identified and acted upon.
+REQ-3: Functional policies are identified and deployed.
+
+REQ-4: Effective content delivery is ensured through SLA satisfaction.
+
+3.6  Disband or Re-arrangement
+
+There could be circumstances  under which a given peering arrangement  may need to disband or re- arranges itself.
+
+3.6.1 Actors
+
+External PA: Interactions with local PA of the primary CDN.
+
+3.6.2 Trigger
+
+Any of the termination condition holds.
+
+3.6.3 Preconditions
+
+There is an established peering arrangement.
+
+3.6.4 Postconditions
+
+A given peering arrangement is disband or it is re-arranged.
+
+3.6.5 Stimulus/Response  Sequences
+
+1. A given peering arrangement is currently in operation and peers are cooperating for effective content delivery.
+
+2. If any of the termination condition holds, the local PA disbands or re-arranges the peering arrangement.
+
+3.6.6 Exceptions
+
+If there are exceptional circumstances such as natural disaster, theft, etc. for which any peer is unable to honor the negotiated relationships, a given peering arrangement is not disband or re-arranged and SLA conditions are bypassed.
+
+3.6.7 Functional Requirements
+
+REQ-1: Policies identifying the consequences of SLA violation are defined. REQ-2: Policies are in place to perform renegotiation for problem resolution.
+REQ-3: Administrative policies are deployed for operations in a peering arrangement.

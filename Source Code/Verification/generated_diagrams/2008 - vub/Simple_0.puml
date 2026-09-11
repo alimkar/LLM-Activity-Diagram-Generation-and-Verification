@@ -1,0 +1,448 @@
+@startuml
+|User|
+start
+if (Connected to VUB-network?) then (yes)
+  if (Logged in?) then (yes)
+    if (User level?) then (Member)
+      repeat
+        if (Select function?) then (Change account details)
+          :Change account details;
+          if (Request account upgrade?) then (yes)
+            :Send upgrade request;
+          else (no)
+          endif
+        elseif (Select function?) then (Search)
+          :Enter keywords;
+          :Enter authors;
+          :Enter date range;
+          :Submit search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Advanced search)
+          :Enter additional keywords;
+          :Specify referring publications;
+          :Submit advanced search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Log off)
+          :Log off;
+          :Redirect to search page;
+        else (Exit)
+        endif
+      repeat while (Perform another function?) is (yes)
+    elseif (User level?) then (Publisher)
+      repeat
+        if (Select function?) then (Change account details)
+          :Change account details;
+          if (Request account upgrade?) then (yes)
+            :Send upgrade request;
+          else (no)
+          endif
+        elseif (Select function?) then (Search)
+          :Enter keywords;
+          :Enter authors;
+          :Enter date range;
+          :Submit search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Advanced search)
+          :Enter additional keywords;
+          :Specify referring publications;
+          :Submit advanced search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Upload publication)
+          :Upload publication file;
+          if (Valid format (RIS/bibTEX/pdf/ps)?) then (yes)
+            fork
+              :Retrieve bibliographic info;
+            fork again
+              :Specify author equivalences;
+            fork again
+              :Specify institute equivalences;
+            end fork
+            if (Correct info manually?) then (yes)
+              :Correct bibliographic info;
+            else (no)
+            endif
+          else (no)
+          endif
+        elseif (Select function?) then (Edit own publication)
+          if (Has uploaded publication?) then (yes)
+            :Edit own publication;
+          else (no)
+          endif
+        elseif (Select function?) then (Bulk upload)
+          :Upload bulk file;
+          if (Valid format (RIS/bibTEX)?) then (yes)
+            :Import publications;
+          else (no)
+          endif
+        elseif (Select function?) then (Log off)
+          :Log off;
+          :Redirect to search page;
+        else (Exit)
+        endif
+      repeat while (Perform another function?) is (yes)
+    elseif (User level?) then (Moderator)
+      repeat
+        if (Select function?) then (Manage user levels)
+          if (Belongs to specified department?) then (yes)
+            if (Upgrade member to publisher?) then (yes)
+              :Upgrade member to publisher;
+            else (no)
+              :Downgrade publisher to member;
+            endif
+          else (no)
+          endif
+        elseif (Select function?) then (Manage group permissions)
+          if (Responsible for group?) then (yes)
+            :Change group permissions;
+          else (no)
+          endif
+        elseif (Select function?) then (Edit authors)
+          :Edit author info;
+        elseif (Select function?) then (Change account details)
+          :Change account details;
+          if (Request account upgrade?) then (yes)
+            :Send upgrade request;
+          else (no)
+          endif
+        elseif (Select function?) then (Search)
+          :Enter keywords;
+          :Enter authors;
+          :Enter date range;
+          :Submit search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Advanced search)
+          :Enter additional keywords;
+          :Specify referring publications;
+          :Submit advanced search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Upload publication)
+          :Upload publication file;
+          if (Valid format (RIS/bibTEX/pdf/ps)?) then (yes)
+            fork
+              :Retrieve bibliographic info;
+            fork again
+              :Specify author equivalences;
+            fork again
+              :Specify institute equivalences;
+            end fork
+            if (Correct info manually?) then (yes)
+              :Correct bibliographic info;
+            else (no)
+            endif
+          else (no)
+          endif
+        elseif (Select function?) then (Edit own publication)
+          if (Has uploaded publication?) then (yes)
+            :Edit own publication;
+          else (no)
+          endif
+        elseif (Select function?) then (Bulk upload)
+          :Upload bulk file;
+          if (Valid format (RIS/bibTEX)?) then (yes)
+            :Import publications;
+          else (no)
+          endif
+        elseif (Select function?) then (Edit departmental publications)
+          if (Belongs to specified department?) then (yes)
+            :Edit departmental publications;
+          else (no)
+          endif
+        elseif (Select function?) then (Log off)
+          :Log off;
+          :Redirect to search page;
+        else (Exit)
+        endif
+      repeat while (Perform another function?) is (yes)
+    else (Administrator)
+      repeat
+        if (Select function?) then (Access control panel)
+          :Access control panel;
+          if (Select control action?) then (Edit user accounts)
+            :Upgrade user account;
+            :Downgrade user account;
+            :Delete user account;
+          else (Back)
+          endif
+        elseif (Select function?) then (Create/delete users)
+          if (Create user?) then (yes)
+            :Create user;
+          else (no)
+            :Delete user;
+          endif
+        elseif (Select function?) then (Create/delete groups)
+          if (Create group?) then (yes)
+            :Create group;
+          else (no)
+            :Delete group;
+          endif
+        elseif (Select function?) then (Manage user level)
+          :Change user level;
+        elseif (Select function?) then (Edit all publications)
+          :Edit all publications;
+        elseif (Select function?) then (Manage user levels)
+          if (Belongs to specified department?) then (yes)
+            if (Upgrade member to publisher?) then (yes)
+              :Upgrade member to publisher;
+            else (no)
+              :Downgrade publisher to member;
+            endif
+          else (no)
+          endif
+        elseif (Select function?) then (Manage group permissions)
+          if (Responsible for group?) then (yes)
+            :Change group permissions;
+          else (no)
+          endif
+        elseif (Select function?) then (Edit authors)
+          :Edit author info;
+        elseif (Select function?) then (Change account details)
+          :Change account details;
+          if (Request account upgrade?) then (yes)
+            :Send upgrade request;
+          else (no)
+          endif
+        elseif (Select function?) then (Search)
+          :Enter keywords;
+          :Enter authors;
+          :Enter date range;
+          :Submit search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Advanced search)
+          :Enter additional keywords;
+          :Specify referring publications;
+          :Submit advanced search query;
+          if (Valid search query?) then (yes)
+            :View results;
+            repeat
+              if (Select result function?) then (Order results)
+                :Order results;
+              elseif (Select result function?) then (Export and download results)
+                :Select results;
+                :Select export format (html/pdf/ps);
+                :Export and download results;
+              elseif (Select result function?) then (Search on similarity)
+                :Search similar publications;
+              else (Back)
+              endif
+            repeat while (More result actions?) is (yes)
+          else (no)
+          endif
+        elseif (Select function?) then (Upload publication)
+          :Upload publication file;
+          if (Valid format (RIS/bibTEX/pdf/ps)?) then (yes)
+            fork
+              :Retrieve bibliographic info;
+            fork again
+              :Specify author equivalences;
+            fork again
+              :Specify institute equivalences;
+            end fork
+            if (Correct info manually?) then (yes)
+              :Correct bibliographic info;
+            else (no)
+            endif
+          else (no)
+          endif
+        elseif (Select function?) then (Edit own publication)
+          if (Has uploaded publication?) then (yes)
+            :Edit own publication;
+          else (no)
+          endif
+        elseif (Select function?) then (Bulk upload)
+          :Upload bulk file;
+          if (Valid format (RIS/bibTEX)?) then (yes)
+            :Import publications;
+          else (no)
+          endif
+        elseif (Select function?) then (Edit departmental publications)
+          if (Belongs to specified department?) then (yes)
+            :Edit departmental publications;
+          else (no)
+          endif
+        elseif (Select function?) then (Log off)
+          :Log off;
+          :Redirect to search page;
+        else (Exit)
+        endif
+      repeat while (Perform another function?) is (yes)
+    endif
+  else (no)
+    repeat
+      if (Select function?) then (Register account)
+        :Fill registration form;
+        :Receive validation mail;
+        :Validate new account;
+      elseif (Select function?) then (Validate new account)
+        :Validate new account;
+      elseif (Select function?) then (Log in)
+        :Log in;
+      elseif (Select function?) then (Retrieve password)
+        :Retrieve password;
+      elseif (Select function?) then (Search)
+        :Enter keywords;
+        :Enter authors;
+        :Enter date range;
+        :Submit search query;
+        if (Valid search query?) then (yes)
+          :View results;
+          repeat
+            if (Select result function?) then (Order results)
+              :Order results;
+            elseif (Select result function?) then (Export and download results)
+              :Select results;
+              :Select export format (html/pdf/ps);
+              :Export and download results;
+            elseif (Select result function?) then (Search on similarity)
+              :Search similar publications;
+            else (Back)
+            endif
+          repeat while (More result actions?) is (yes)
+        else (no)
+        endif
+      elseif (Select function?) then (Advanced search)
+        :Enter additional keywords;
+        :Specify referring publications;
+        :Submit advanced search query;
+        if (Valid search query?) then (yes)
+          :View results;
+          repeat
+            if (Select result function?) then (Order results)
+              :Order results;
+            elseif (Select result function?) then (Export and download results)
+              :Select results;
+              :Select export format (html/pdf/ps);
+              :Export and download results;
+            elseif (Select result function?) then (Search on similarity)
+              :Search similar publications;
+            else (Back)
+            endif
+          repeat while (More result actions?) is (yes)
+        else (no)
+        endif
+      else (Exit)
+      endif
+    repeat while (Perform another function?) is (yes)
+  endif
+else (no)
+  repeat
+    if (Select function?) then (Register account)
+      :Fill registration form;
+      :Receive validation mail;
+      :Validate new account;
+    elseif (Select function?) then (Validate new account)
+      :Validate new account;
+    elseif (Select function?) then (Log in)
+      :Log in;
+    elseif (Select function?) then (Retrieve password)
+      :Retrieve password;
+    else (Exit)
+    endif
+  repeat while (Perform another function?) is (yes)
+endif
+stop
+@enduml

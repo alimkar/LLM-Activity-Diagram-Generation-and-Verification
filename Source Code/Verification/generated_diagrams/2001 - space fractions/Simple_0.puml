@@ -1,0 +1,92 @@
+@startuml
+|User|
+start
+:Access web component;
+
+if (Select Space Fractions?) then (yes)
+|System|
+:Play introductory movie;
+:Display movie;
+
+|User|
+if (Click mouse to skip?) then (yes)
+|System|
+:Stop movie;
+else (no)
+|System|
+:Complete movie playback;
+endif
+
+:Show main menu;
+
+|User|
+if (Select help?) then (yes)
+|System|
+:Display help section;
+|User|
+:Return to main menu;
+else (no)
+endif
+
+if (Open team web page?) then (yes)
+|System|
+:Open Denominators web page;
+|User|
+:Return to main menu;
+else (no)
+endif
+
+:Start game;
+
+repeat
+|System|
+:Display fraction question;
+|User|
+:Select answer;
+
+|System|
+if (Answer correct?) then (yes)
+  :Display correct message;
+  if (Critical question?) then (yes)
+    :Select plot direction;
+  else (no)
+  endif
+  :Update score;
+else (no)
+  :Display incorrect message;
+  :Mark question incorrect for score;
+  |User|
+  :Select answer again;
+  |System|
+  if (Critical question?) then (yes)
+    :Select plot direction;
+  else (no)
+  endif
+endif
+repeat while (More questions?) is (yes)
+
+|System|
+fork
+:Calculate score;
+fork again
+:Determine plot conclusion;
+end fork
+
+:Display ending scene;
+:Show score;
+:Show plot conclusion;
+
+|User|
+if (Try again?) then (yes)
+|System|
+:Show main menu;
+else (no)
+|System|
+:Exit game;
+endif
+stop
+
+else (no)
+endif
+stop
+@enduml

@@ -1,0 +1,133 @@
+UC -  001      The user starts the application
+Description: This is a system initiation process.
+Pre-condition: The System has been correctly installed in the computer.
+Post-condition: The System is running and shows a graphical interface to the user. The user is able to use the system.
+Normal Sequence: 
+The user activates the application.
+The System starts and shows the graphical interface to the user. The user is able to use the system.
+Exceptions:
+1.
+Condition: There is a problem in loading a game or an artificial intelligence.
+Action: The system informs the user about the error.
+Ending: The program is terminated.
+
+UC -  002      User starts a new game
+Description: This use case describes the steps that are required to start a new game.
+Precondition: The System is running and is not busy.
+Post-condition: A new game, a starting position and an artificial intelligence has been selected in the game menu.
+Normal Sequence: 
+The user starts a new game with the menu. The system shows a list of games available. The user selects one of these games.
+The system offers the user the possibility of select a
+starting position.
+If the user accepts, the UC-003 is executed. Otherwise, a random starting position is selected.
+The system offers the user the possibility of select an artificial intelligence for each player of the game.
+If the user accepts, the UC-004 is executed. If not, human player is selected for the first player, and the random artificial intelligence is selected for the second. The system loads the selected game.
+Exceptions:
+1.
+Condition: There is no game available.
+Action: The System shows an empty list. No possibility except canceling to run a game.
+Ending: The use case terminates.
+
+UC - 003      The user selects an opening starting position with the menu
+Description: The user is required to select an opening position from the menu before starting any game.
+Precondition: A game has been selected.
+Post-condition: The Game starts with the selected opening position.
+Normal Sequence: The user starts a new game.
+The System displays a list with the opening position available, and the random opening position.
+The Game User selects one of them.
+The new opening position is selected as current opening position.
+
+UC - 004    The System requires the user to select the nature of a player in the current game.
+Description: The user selects the nature of the players for the current game so that the game can be played by having both players as human or both players as computers or one player computer and the other human.
+Precondition:	-
+Post-condition: 	The nature of the players has been changed.
+Normal Sequence:	
+The System offers the Game User to select between a human player or an artificial intelligence.
+If the user selects artificial intelligence, the UC-005 is executed. If not, human is selected as nature of the player.
+
+UC - 005    The user selects an artificial intelligence
+Description: The system must always provide the artificial intelligence that can play using random moves.
+Precondition:	-
+Post-condition: 	An artificial intelligence has been selected.
+Normal Sequence:
+The System offers the user a list with all the different artificial intelligences available.
+The Game User selects one from the list.
+Exceptions:
+1. 
+Condition: No external artificial intelligence could be found.
+Action: The random artificial intelligence is always available. It will be the only option of the list.
+Ending: The user selects the random AI.
+
+UC - 006      The user changes the nature of the player during a game.
+Description: If during the game a player wishes to leave, there should be the possibility to assign an AI to take over from that position.
+Precondition: A game is already running.
+Post-condition: The nature of the player has been changed.
+Normal
+Sequence: The user wants to change the nature of the players in the current game with a menu.
+The System shows a list of all the players that can support the substitution.
+One of the players is selected. UC-005 is executed.
+Comments:
+1. In a solitaire game, only one player can be changed. In a two player game, both players can be changed.
+
+UC - 007    The AI Developer develop and add a new AI
+Description: All the new artificial intelligences will be placed in their respective files. The system will load these files and show the available artificial intelligences when the user is selecting the types of player.
+Precondition:	-
+Post-condition:	 A new AI has been added.
+Normal Sequence:
+The AI Developer designs a new AI for a game.
+The AI Developer installs the AI in the System, as described in the manual.
+The user starts a new game.
+The system loads the new AI from the implemented file.
+Comments:
+1. This Use Case is a general one with a high level of abstraction.
+2. See UC-002 and UC-006 for more details
+
+UC - 008       A new game is specified in a file
+Description: The system loads all the different types of games from separate files.
+Precondition:	-
+Post-condition:  A new game has been added
+Normal Sequence:
+The user defines a new game in a file.
+The file is placed within the system to be used. The System loads the new game from the file.
+Comments:
+1. This Use Case is a general one with a high level of abstraction.
+2. See UC-002, UC-003, UC-007 and UC-010 for more details
+Exception:
+Condition: The necessary attributes are not found or are not defined properly.
+Action: The system informs the user about the problem
+Ending: The use case aborts
+
+UC - 009    All the games end on a pre-defined condition
+Description: When the winning condition of a game is achieved, the game ends and the scores of the players are displayed.
+Precondition: A game is being played.
+Post-condition: The current game is finished and is not playable anymore.
+Normal Sequence:
+One player makes a move that carries out the ending condition, or is the last possible.
+The system reports the user about the end of the game. The Game User can not play the game anymore.
+Exception:
+1. If the ending condition has not been defined, the game may never end.
+
+UC - 010    The Game User saves a game
+Description: The system must have the capability to save the current state of the game being played.
+Precondition: A game is currently being played
+Post-condition: The game has been saved in a file.
+Normal Sequence:
+The user selects the save option from the menu.
+The system opens a dialog window where the user can specify the game’s name and the location where it can be saved to.
+The user makes the necessary choices. 
+The System saves the game in a file.
+
+UC - 011    The Game User loads a game
+Description: The system must be able to load a game from a file.
+Precondition: A game has already been saved to a file.
+Post-condition:	The game has been loaded from a file, and is currently being played.
+Normal Sequence:
+The user selects the load option from the menu.
+The system opens a dialog window for the user to choose a file to load.
+The user makes the necessary choices.
+The System loads the game from the file.
+Exceptions:
+1.
+Condition: No saved file already exists.
+Action: The user clicks on cancel.
+Ending: The use case aborts.

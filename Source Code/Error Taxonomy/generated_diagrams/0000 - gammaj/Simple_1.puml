@@ -1,0 +1,261 @@
+@startuml
+|Customer|
+start
+:Initiate HTTPS request;
+
+|Web Server|
+:Parse request;
+:Submit request to service;
+
+|Service|
+:Pick up request;
+:Run task;
+:Return results;
+
+|Web Server|
+:Check completion;
+:Return results;
+
+|Customer|
+:Display results;
+
+if (Manage account?) then (yes)
+  if (Register?) then (yes)
+    :Enter profile information;
+    :Configure contact information;
+    :Store payment information;
+    :Store address information;
+    |Web Server|
+    :Parse request;
+    :Submit request to service;
+    |Service|
+    :Pick up request;
+    :Run task;
+    :Return results;
+    |Web Server|
+    :Check completion;
+    :Return results;
+    |Customer|
+    :Display results;
+  else (no)
+    if (Log in?) then (yes)
+      :Enter credentials;
+      |Web Server|
+      :Parse request;
+      :Submit request to service;
+      |Service|
+      :Pick up request;
+      :Run task;
+      :Return results;
+      |Web Server|
+      :Check completion;
+      :Return results;
+      |Customer|
+      :Display results;
+    else (no)
+      if (Edit account?) then (yes)
+        :Update profile information;
+        :Update contact information;
+        :Update payment information;
+        :Update address information;
+        |Web Server|
+        :Parse request;
+        :Submit request to service;
+        |Service|
+        :Pick up request;
+        :Run task;
+        :Return results;
+        |Web Server|
+        :Check completion;
+        :Return results;
+        |Customer|
+        :Display results;
+      else (no)
+        if (View purchase history?) then (yes)
+          :View purchase history;
+          |Web Server|
+          :Parse request;
+          :Submit request to service;
+          |Service|
+          :Pick up request;
+          :Run task;
+          :Return results;
+          |Web Server|
+          :Check completion;
+          :Return results;
+          |Customer|
+          :Display results;
+        else (no)
+          if (Log out?) then (yes)
+            :Log out;
+            |Web Server|
+            :Parse request;
+            :Submit request to service;
+            |Service|
+            :Pick up request;
+            :Run task;
+            :Return results;
+            |Web Server|
+            :Check completion;
+            :Return results;
+            |Customer|
+            :Display results;
+          endif
+        endif
+      endif
+    endif
+  endif
+else (no)
+endif
+
+if (Browse categories/products?) then (yes)
+  :Browse categories;
+  :Browse products;
+  |Web Server|
+  :Parse request;
+  :Submit request to service;
+  |Service|
+  :Pick up request;
+  :Run task;
+  :Return results;
+  |Web Server|
+  :Check completion;
+  :Return results;
+  |Customer|
+  :Display results;
+else (no)
+endif
+
+if (Search products?) then (yes)
+  :Enter search criteria;
+  |Web Server|
+  :Parse request;
+  :Submit request to service;
+  |Service|
+  :Pick up request;
+  :Run task;
+  :Return results;
+  |Web Server|
+  :Check completion;
+  :Return results;
+  |Customer|
+  :View search results;
+else (no)
+endif
+
+if (Manage shopping cart?) then (yes)
+  repeat
+    if (Add product to cart?) then (yes)
+      :Add product to cart;
+    else (no)
+      if (Remove product from cart?) then (yes)
+        :Remove product from cart;
+      else (no)
+        :View cart item count;
+        :View cart total cost;
+      endif
+    endif
+    |Web Server|
+    :Parse request;
+    :Submit request to service;
+    |Service|
+    :Pick up request;
+    :Run task;
+    :Return results;
+    |Web Server|
+    :Check completion;
+    :Return results;
+    |Customer|
+    :Display results;
+  repeat while (Continue cart updates?) is (yes)
+else (no)
+endif
+
+if (Checkout?) then (yes)
+  :Proceed to checkout;
+
+  if (Approve and transfer payment?) then (yes)
+    :Submit payment;
+    |Web Server|
+    :Parse request;
+    :Submit request to service;
+    |Service|
+    :Pick up request;
+    :Run task;
+    :Return results;
+    |Web Server|
+    :Check completion;
+    :Return results;
+    |Customer|
+    :Display results;
+
+    :Review order;
+    if (Order correct?) then (yes)
+      :Confirm order;
+      |Web Server|
+      :Parse request;
+      :Submit request to service;
+      |Service|
+      :Pick up request;
+      :Run task;
+      :Return results;
+      |Web Server|
+      :Check completion;
+      :Return results;
+      |Customer|
+      :Display results;
+
+      |Service|
+      :Send confirmation email;
+    else (no)
+      :Revise order;
+      :Update order;
+      |Web Server|
+      :Parse request;
+      :Submit request to service;
+      |Service|
+      :Pick up request;
+      :Run task;
+      :Return results;
+      |Web Server|
+      :Check completion;
+      :Return results;
+      |Customer|
+      :Display results;
+    endif
+  else (no)
+  endif
+else (no)
+endif
+
+if (Use plug-in API?) then (yes)
+  :Initiate HTTPS request;
+
+  |Web Server|
+  :Parse request;
+  :Submit request to API service;
+
+  |API Service|
+  :Pick up request;
+  :Submit request to plug-in;
+
+  |Plug-in|
+  :Pick up request;
+  :Run tasks;
+  :Return results;
+
+  |API Service|
+  :Validate results;
+  :Return results;
+
+  |Web Server|
+  :Check completion;
+  :Return results;
+
+  |Customer|
+  :Display results;
+else (no)
+endif
+
+stop
+@enduml

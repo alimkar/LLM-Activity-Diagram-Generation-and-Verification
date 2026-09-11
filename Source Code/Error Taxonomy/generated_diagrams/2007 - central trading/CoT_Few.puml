@@ -1,0 +1,56 @@
+@startuml
+|Trade Client Serve|
+start
+:Send trading instruction to CTS;
+
+|Central Trading System (CTS)|
+:Receive instruction;
+:Analyze instruction;
+:Classify into instruction type;
+
+if (Instruction valid?) then (yes)
+  :Apply matching prescripts;
+  :Match instruction with counter-instructions;
+  :Generate result messages;
+
+  fork
+    |Network Message Promulgating|
+    :Receive messages from CTS;
+    :Promulgate messages to other modules;
+  fork again
+    |Central Trading System (CTS)|
+    :Update internal trading state/information;
+  end fork
+else (no)
+  :Reject/mark instruction as invalid;
+  :Generate error/notification message;
+  |Network Message Promulgating|
+  :Receive error/notification message;
+  :Promulgate error/notification;
+endif
+
+|System Manager|
+:Request access to CTS information;
+
+|Central Trading System (CTS)|
+if (Manager authorized?) then (yes)
+  :Provide requested CTS information;
+else (no)
+  :Deny access;
+endif
+
+|Maintainer|
+:Monitor CTS operation;
+
+while (CTS crashed or overloaded?) is (yes)
+  :Diagnose cause (crash/overhead);
+  :Fix issue / apply strategy to recover;
+  if (New requirements to support?) then (yes)
+    :Modify CTS program to fit new requirements;
+  else (no)
+    :Restore CTS to stable operation;
+  endif
+endwhile (no)
+
+stop
+@enduml

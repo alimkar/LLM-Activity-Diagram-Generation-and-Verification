@@ -1,0 +1,149 @@
+@startuml
+|User|
+start
+:Access Math Umbrella;
+|System|
+:Display topic links;
+
+|User|
+if (Select Space Fractions?) then (yes)
+  |System|
+  :Play intro movie;
+  |User|
+  if (Mouse click?) then (yes)
+    |System|
+    :Skip movie;
+  else (no)
+    |System|
+    :Complete movie;
+  endif
+
+  |System|
+  :Display main menu;
+  :Display help section;
+
+  |User|
+  if (Begin game?) then (yes)
+    |System|
+    while (More questions?) is (yes)
+      :Display question;
+      repeat
+        |User|
+        :Select answer;
+        |System|
+        if (Answer correct?) then (yes)
+          :Display correct message;
+          break
+        else (no)
+          :Display incorrect message;
+          :Do not count question as correct;
+        endif
+      repeat while (Answer correct?) is (no)
+
+      if (Critical point?) then (yes)
+        if (Answered correctly?) then (yes)
+          :Choose plot direction A;
+        else (no)
+          :Choose plot direction B;
+        endif
+      else (no)
+      endif
+    endwhile (no)
+
+    |System|
+    :Calculate score;
+    :Rank score;
+    :Display score;
+    :Display plot conclusion;
+
+    |User|
+    if (Quit game?) then (yes)
+      stop
+    else (no)
+      |System|
+      :Display main menu;
+      :Display help section;
+      |User|
+      if (Begin game?) then (yes)
+        |System|
+        while (More questions?) is (yes)
+          :Display question;
+          repeat
+            |User|
+            :Select answer;
+            |System|
+            if (Answer correct?) then (yes)
+              :Display correct message;
+              break
+            else (no)
+              :Display incorrect message;
+              :Do not count question as correct;
+            endif
+          repeat while (Answer correct?) is (no)
+
+          if (Critical point?) then (yes)
+            if (Answered correctly?) then (yes)
+              :Choose plot direction A;
+            else (no)
+              :Choose plot direction B;
+            endif
+          else (no)
+          endif
+        endwhile (no)
+
+        |System|
+        :Calculate score;
+        :Rank score;
+        :Display score;
+        :Display plot conclusion;
+
+        |User|
+        if (Quit game?) then (yes)
+          stop
+        else (no)
+          |System|
+          :Display main menu;
+          :Display help section;
+          stop
+        endif
+      else (no)
+        |System|
+        :Open Denominators web page;
+        stop
+      endif
+    endif
+
+  else (no)
+    |System|
+    :Open Denominators web page;
+    stop
+  endif
+
+else (no)
+  |User|
+  if (Select Question Updater?) then (yes)
+    |Game Administrator|
+    while (More questions to update?) is (yes)
+      :Enter question data;
+      :Submit question update;
+      |System|
+      if (Input complete and sensible?) then (yes)
+        :Generate text file;
+      else (no)
+        |Game Administrator|
+        :Revise question data;
+      endif
+    endwhile (no)
+    stop
+  else (no)
+    |User|
+    while (Click a link?) is (yes)
+      :Select link;
+      |System|
+      :Open S2S product in separate window;
+      |User|
+    endwhile (no)
+    stop
+  endif
+endif
+@enduml

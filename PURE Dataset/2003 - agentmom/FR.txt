@@ -1,0 +1,7 @@
+2.2.1 Enable agents to broadcast a message to all the agents within the same local network.
+2.2.2 Enable agents to multicast a message to all the agents within the same multicast address.
+2.2.3 Enable agents to unicast a message to other agents within organization. 
+2.2.4 Allow agents to choose among unicast, multicast and broadcast communication.
+2.2.5 Allow agents to join and leave multicast group.
+2.2.6 Provide message encryption and decryption techniques for secured communication.
+2.2.7 Allow agents to choose to encrypt or not to encrypt message

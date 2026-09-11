@@ -1,0 +1,54 @@
+@startuml
+|User|
+start
+
+if (Manage applications?) then (yes)
+  :Create application files;
+  :Modify application files;
+  :Delete application files;
+  :Examine file associations;
+  :Modify file associations;
+endif
+
+if (Parse files?) then (yes)
+  |HATS-GUI|
+  :Orchestrate parsing;
+  fork
+    :Parse transformation program;
+  fork again
+    :Parse target program;
+  end fork
+  if (Save parsed versions?) then (yes)
+    :Save parsed files as SDT;
+  endif
+endif
+
+if (Execute transformation program?) then (yes)
+  |HATS-GUI|
+  :Orchestrate execution;
+  :Execute transformation program;
+  :Capture debug output;
+  :Capture error output;
+  :Make stream data available;
+endif
+
+if (Examine outputs?) then (yes)
+  |HATS-GUI|
+  :Associate saved files with application;
+  :List saved files;
+  |User|
+  :Select file for display;
+  |HATS-GUI|
+  :Display SDT output;
+  :Display pretty-printed output;
+  :Display error messages;
+  |User|
+  repeat
+    :Choose tree portion;
+    :Search text strings;
+    :Search sub-trees;
+  repeat while (Continue manipulating display?) is (yes)
+endif
+
+stop
+@enduml

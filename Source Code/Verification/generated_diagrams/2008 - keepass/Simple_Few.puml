@@ -1,0 +1,236 @@
+@startuml
+|User|
+start
+if (Start with file path?) then (yes)
+  :Launch with file path;
+  |System|
+  :Open database file at startup;
+else (no)
+  :Launch application;
+endif
+
+|User|
+if (Create new database?) then (yes)
+  :Create new database;
+  :Create master key;
+  |System|
+  :Lock database with master key;
+else (no)
+  :Select database file;
+  :Open database;
+  :Enter master key sources;
+  |System|
+  if (All key sources provided?) then (yes)
+    :Unlock database;
+  else (no)
+    :Deny database access;
+    stop
+  endif
+endif
+
+while (Continue using database?) is (yes)
+  |User|
+  :Select operation;
+
+  if (Database operation?) then (yes)
+    if (Save database?) then (yes)
+      :Save changes;
+    else (no)
+      if (Close database?) then (yes)
+        :Close database;
+      else (no)
+        if (Print database?) then (yes)
+          :Print data;
+        else (no)
+          if (Search database?) then (yes)
+            :Enter search keywords;
+            |System|
+            :Search database;
+          else (no)
+            if (Import data?) then (yes)
+              :Select import source;
+              |System|
+              :Import data;
+            else (no)
+              if (Export data?) then (yes)
+                :Select export target;
+                |System|
+                :Export data;
+              else (no)
+                :Open database;
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+
+  else (no)
+    if (Group/Subgroup operation?) then (yes)
+      if (Add group/subgroup?) then (yes)
+        :Add group/subgroup;
+      else (no)
+        if (Modify group/subgroup?) then (yes)
+          :Modify group/subgroup;
+        else (no)
+          if (Delete group/subgroup?) then (yes)
+            :Delete group/subgroup;
+          else (no)
+            :Enter group search keywords;
+            |System|
+            :Find in group;
+          endif
+        endif
+      endif
+
+    else (no)
+      if (Entry operation?) then (yes)
+        if (Add entry?) then (yes)
+          :Select group/subgroup;
+          :Enter entry fields;
+          |System|
+          :Create entry;
+        else (no)
+          if (View/Edit entry?) then (yes)
+            :Select entry;
+            :View/Edit entry;
+          else (no)
+            if (Duplicate entry?) then (yes)
+              :Select entry;
+              |System|
+              :Duplicate entry;
+            else (no)
+              :Select entry;
+              :Delete entry;
+            endif
+          endif
+        endif
+
+      else (no)
+        if (Generate password?) then (yes)
+          :Select generation method;
+          if (Character set?) then (yes)
+            :Set character set;
+          else (no)
+            :Set pattern;
+          endif
+          :Set generation rules;
+          :Set security-reducing options;
+          |System|
+          :Generate password;
+
+        else (no)
+          if (Configure auto-generate for new entries?) then (yes)
+            :Set auto-generate settings;
+            |System|
+            :Apply auto-generate settings;
+
+          else (no)
+            if (Use stored passwords?) then (yes)
+              :Select usage method;
+              if (Copy password?) then (yes)
+                |System|
+                :Copy password;
+              else (no)
+                if (Drag and drop?) then (yes)
+                  |System|
+                  :Drag and drop credentials;
+                else (no)
+                  if (Auto-Type?) then (yes)
+                    :Select keypress sequence;
+                    :Select target window;
+                    |System|
+                    :Send keypress sequence;
+                  else (no)
+                    |System|
+                    :Use KeeForm;
+                  endif
+                endif
+              endif
+
+            else (no)
+              if (Execute URL field?) then (yes)
+                :Select entry;
+                |System|
+                :Replace placeholders;
+                :Execute URL or command line;
+
+              else (no)
+                if (Enable secure edit controls?) then (yes)
+                  :Turn on secure edit controls;
+                  |System|
+                  :Mask fields with asterisks;
+
+                else (no)
+                  if (Change language?) then (yes)
+                    :Download translation;
+                    :Apply language;
+
+                  else (no)
+                    if (Create TAN?) then (yes)
+                      :Open TAN wizard;
+                      |System|
+                      :Generate one-time TAN;
+
+                    else (no)
+                      if (Restore main window?) then (yes)
+                        |System|
+                        :Restore main window via hot key;
+
+                      else (no)
+                        if (Limit to single instance?) then (yes)
+                          |System|
+                          :Run single instance;
+
+                        else (no)
+                          if (Lock workspace?) then (yes)
+                            :Lock workspace;
+                            |System|
+                            :Require master key;
+                            |User|
+                            :Enter master key sources;
+                            |System|
+                            if (All key sources provided?) then (yes)
+                              :Unlock database;
+                            else (no)
+                              :Deny database access;
+                              stop
+                            endif
+                          else (no)
+                            :Minimize application;
+                            |System|
+                            if (Lock on minimize enabled?) then (yes)
+                              :Lock database;
+                              :Require master key;
+                              |User|
+                              :Enter master key sources;
+                              |System|
+                              if (All key sources provided?) then (yes)
+                                :Unlock database;
+                              else (no)
+                                :Deny database access;
+                                stop
+                              endif
+                            else (no)
+                              :Keep database unlocked;
+                            endif
+                          endif
+                        endif
+                      endif
+                    endif
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+
+endwhile (no)
+
+|User|
+:Close database;
+stop
+@enduml

@@ -1,0 +1,45 @@
+2.1 Product Perspective
+As mentioned earlier, Libra forms part of a larger system comprising the Sun Grid Engine cluster management system that runs on a Linux-based cluster. SGE is responsible for receiving the jobs submitted by the user and delegating them to Libra for scheduling and placing on appropriate workstations or execution hosts. Libra communicates its decision regarding workstation allocation to the resource manager, which then dispatches the job to the chosen workstation. Once assignment to a workstation has occurred, Libra is responsible for implementing the scheduling policy on the jobs executing at the workstations. No modifications to the Linux kernel are required. The details of various interfaces have been provided in Section 3.9.
+
+
+2.2 Product Functions
+The main purpose of the Libra scheduler is to maximize user utility. Thus the job details submitted by the user will include job prioritization criteria: the allocated budget and the deadline required by the user, enabling the scheduler to maximize CPU utilization while remaining within the constraints imposed by the need to optimize QoS.
+
+The scheduler will allocate jobs based on the job parameters, which are job specifications submitted by the user with the job, including:
+
+• Location of the executable and input data sets
+
+• Where standard output is to be placed
+
+• System type
+
+• Maximum length of run (execution time)
+
+• Whether the job is sequential or embarrassingly parallel
+ 
+However, the Libra scheduler will be QoS driven: it will aim to optimize resource utilization within user-imposed constraints: thus, user satisfaction is the primary concern, as opposed to maximizing CPU utilization. Thus, the two job parameters most relevant to the scheduling decisions will be:
+
+• Budget allocated by the user to the process
+
+• Deadline
+
+With support from the Sun Grid Engine, the Libra scheduler should embody the following features and functions:
+
+• Should be able to enforce resource allocations according to user-centric priorities
+
+•	Should be dynamic, and not static, which is a necessary implication of the user- centric approach, so that users who need their jobs completed in emergency and are willing to pay a high price for it, are able to get their job done through dynamic reallocation of resources even if the job is submitted later than other jobs or the system is heavily loaded. Hence, the scheduler should be able to change resource limits, priorities, privileges and execution order of the submitted jobs.
+
+•	Should be scalable, which means that its performance should not degrade with the addition of nodes and jobs to the cluster
+
+•	Should be configurable, and allow for various scheduling policies that can be modified to incorporate QoS parameters
+
+• Should be separable from the cluster management system
+
+• Should provide administrative security
+
+• Should provide at least a basic level of job accounting, to aid in scheduling policies
+
+•	Should ideally provide a GUI for all components, such as for users to submit jobs and for administrators to oversee scheduling
+
+
+A market-based economic model for computational economy needs to be developed for the Libra scheduler, which would be responsible for the pricing and allocation of resources according to user constraints. The model is the bid-based proportional resource- sharing model, which will allocate computational time to jobs according to their share determined by the priority of their jobs according to deadline and budget considerations. To ensure that the actual resource allocation reflects the overall job share, the proportional stride-scheduling algorithm will be used.

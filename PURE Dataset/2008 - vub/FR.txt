@@ -1,0 +1,244 @@
+2.3 Product functions
+This subsection of the SRS provides a summary of the major functions that the PMS will
+provide and for whom these functions will be available. These functions will be build up
+using a hierarchical user structure, where the following user (the child) inherits all of the
+available functions of the preceding one.
+The hierarchical user structure will be as follows:
+• Guest
+• VUB-Network User
+• Member
+• Publisher
+• Moderator
+• Administrator
+In this structure an Administrator has more functions than a Moderator, a Moderator
+more than a Member,. . .
+
+2.3.1 Guest
+A Guest is a person that is not connected to the VUB-network nor logged into the PMS.
+User Functions
+• Register an account
+Description: A Guest can register an account on the PMS by filling in a form.
+Prerequisites: none
+• Log into the PMS
+Description: This function allows the user to log into their account ( Member, Publisher,
+Moderator, Administrator).
+Prerequisites: The user has to have a valid account.
+• Validate a new account
+Description: To be able to complete the registration of a new account, it has to be
+validated by the requesting user.
+Prerequisites: The user first has to fill in the registration form and receive a validation
+mail.
+• Retrieve Password
+Description: This allows a user to retrieve his/her password.
+Prerequisites: The user has to have a valid account and is not logged in.
+Search Functions
+A Guest cannot search for publications.
+Result Functions
+A Guest cannot get results for search queries.
+Upload/Edit Functions
+A Guest cannot upload or edit publications.
+
+2.3.2 VUB-Network User
+A VUB-Network User is a person that is connected to the VUB-network, but is not logged in.
+Because of his connection to the VUB-network the PMS will recognize him by the IP-address
+and let this person access the PMS . This user will have the choice among the following
+functions:
+User Functions
+see section 2.3.1
+Search Functions
+• Search
+Description: The user can search for a publication by means of a form that contains
+multiple text input fields:
+– Keyword(s): The user can search for a publication, by typing in certain keywords
+using logical expressions(e.g. AND, OR, NOT,. . . ) and certain symbols (e.g.”, ’
+,. . . ).
+– Author(s): The user can search for a publication, by typing in the text input field
+the name(s) of the author(s), ranked by importance.
+– Dates between: by filling in these fields of the form one can specify between which
+dates the publication they’re searching for was published .
+Prerequisites: The user has to be connected to the VUB-Network.
+• Advanced Search
+Description: A user can extend his Search by filling in an additional form, where they
+can specify one (or more) keyword(s) of the Publication and/or by specifying the Pub-
+lications that refer to it.
+Prerequisites: The user has to be connected to the VUB-Network.
+Result Functions
+Whenever a search is completed by the PMS the results will be shown and there will also be
+some functions available here.
+• Order Results
+Description: This function allows you to order the results by title, author(s) and year
+of publication.
+Prerequisites: The user has to be connected to the VUB-Network and has done a valid
+search query.
+• Export and Download Results
+Description: This function allows the user to export (and download) one or more of the
+obtained results. It will be possible to export publications to html, pdf and ps.
+Prerequisites: The user has to be connected to the VUB-Network and has done a valid
+search query.
+• Searching Publications on Similarity
+Description: The user can search for publications by the same author(s), publications
+that are mentioned in one of the results or publications by the same institute.
+Prerequisites: The user has to be connected to the VUB-Network and has done a valid
+search query.
+Upload/Edit Functions
+A VUB-Network User cannot upload or edit publications.
+2.3.3 Member
+A Member is a logged in user that has the following set of available functions.
+User Functions
+The set of available User Functions of a VUB-Network User (see section 2.3.2) is extended
+with:
+• Change Account Details
+Description: The user can change his account information (e.g. password, e-mail ad-
+dress,. . . ). He/She can also send a request for an upgrade of his account to an Admin-
+istrator
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+• Log off the PMS
+Description: This function allows the user to log off their account. If the user is con-
+nected to the VUB network, then he/she should be redirected to the search page when
+he logs off. Otherwise he should be redirected to the login page.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+Search Functions
+see section 2.3.2
+Result Functions
+see section 2.3.2
+Upload/Edit Functions
+see section 2.3.22.3.
+2.3.4 Publisher
+A Publisher is a logged in user that has the following set of available functions.
+User Functions
+see section 2.3.3
+Search Functions
+see section 2.3.3
+Result Functions
+see section 2.3.3
+Upload/Edit Functions
+The set of available Upload/Edit Functions of a Member (see section 2.3.3) is extended with:
+• Uploading a Publication
+Description: The user will be able to upload a publication (pdf, ps) following the
+bibTEXor RIS-format. The PMS will be able to automatically retrieve bibliographical
+information (e.g. author, title, ) out of the complete text (or the abstract) of a publica-
+tion and will provide the possibility to correct this manually, if the obtained information
+is incorrect or insufficient. Also will the user be able to specify that ’D. Vermeir’ and
+’Dirk Vermeir’ refer to the same author and that ’VUB’ or ’Vrije Universiteit Brussel’
+refer to the same institute.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+The provided document has to follow the before mentioned formats (RIS,bibTEX).
+• Edit your own publication
+Description: The user will only be able to edit the publication that he/she uploaded.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+To be able to edit a publication, they will first have to upload one.
+• Bulk Uploading
+Description: This function will allow the user to import many publications(or abstracts)
+at once (e.g. through bibTEXfiles).
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+The provided document has to follow the before mentioned formats (RIS, bibTEX).20 CHAPTER 2. OVERALL DESCRIPTION
+2.3.5 Moderator
+A Moderator is a logged in user that has the following set of available functions.
+User Functions
+The set of available User Functions of a Publisher (see section 2.3.4) is extended with:
+• Manage User Level(s)
+Description: A Moderator can decide to upgrade a Member (of his own department)
+to become a Publisher. He can also downgrade a Publisher (of his own department) to
+become a Member.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+He/She should be part of/belong to the specified department
+• Manage Group Permissions
+Description: A moderator can change the Group Permissions of any group that falls
+under his jurisdiction.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+He/She has to be a Moderator and has to have the responsibility for that specific group.
+• Edit Author(s)
+Description: A moderator can change the information about the Author(s)
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+He/She has to be a Moderator.
+Search Functions
+see section 2.3.4
+Result Functions
+see section 2.3.4
+Upload/Edit Functions
+The set of available Upload/Edit Functions of a Publisher (see section 2.3.4) is extended with:
+• Edit Departmental Publication(s)
+Description: A moderator can change or overwrite the bibliographical details of every
+publication owned by the department of group he/she is connected to.
+Prerequisites: The user has to have a valid account and has to be logged into his/her
+account. He/She has to be a Moderator and should be part of/belong to the
+specified department.2.3.
+2.3.6 Administrator
+User Functions:
+The set of available user functions of a Moderator (see section 2.3.5) is extended with:
+• Access to Control Panel
+Description: The user will have access to the Control Panel, from which he will be able
+to for example edit the user accounts (upgrade, downgrade or delete user accounts). A
+more complete set of possibilities of the Control Panel will be implemented later.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+He/She has to be an Administrator.
+• Create/Delete User(s)
+Description: An Administrator can create and delete any user of the PMS.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+He/She has to be an Administrator.
+• Create/Delete Group(s)
+Description: An Administrator can create and delete any Group of the PMS.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+He/She has to be an Administrator.
+• Manage User Level (extended version)
+Description: An Administrator can change the User Level of every user into any other
+User Level. Prerequisites: The user has to have a valid account and has to be logged
+into his account. He/She has to be an Administrator.
+Search Functions:
+see section 2.3.5
+Result Functions:
+see section 2.3.5
+Upload/Edit Functions:
+The set of available Upload/Edit Functions of a Moderator (see section 2.3.5) is extended
+with:
+• Edit All Publication(s)
+Description: This function allows the user to change the bibliographical details of (or
+overwrite) any publication.
+Prerequisites: The user has to have a valid account and has to be logged into his account.
+He/She also has to be at least an Administrator.22 
+2.3.7 Optional Functions
+The following functions are possible (future) expansions of the PMS .
+• Further extending of the supported formats (e.g. MS WORD).
+• The possibility to view in the result page a list of documents that refer to this publication.
+• Make the PMS able to automatically to recognize that ‘D. Vermeir’ and ‘Dirk Vermeir’
+refer to the same author and that ‘VUB’ or ‘Vrije Universiteit Brussel’ refer to the same
+institute.
+• If a bibTEX-file with only abstracts and referring URL-fields is uploaded, the PMS would
+be able to get the full texts through those URL’s.
+• Expand the modular PMS system to make it able to also upload audio and video files
+(e.g. mp3, mpeg) that are recognized automatically.
+2.4 User characteristics
+The users of the PMS are expected to be academic personnel and students with various
+technical backgrounds. All the users should have a basic knowledge of the internet.
+2.5 Constraints
+• The design of the PMS should be modular to simplify the design and implementation
+of expansions and replacements.
+• The PMS must be able to run on Linux, more specifically the Wilma web server.
+(http://wilma.vub.ac.be)
+• The web interface will be attractive, simple and standard (W3C XHTML [3])
+• All functions and options of the PMS should be available in the least amount of clicks,
+while maintaining a certain amount of structure.
+• The used programming language will be ruby.
+• The code will be documented using RDoc.
+• Git will be used for configuration management.
+• The use of frameworks is not allowed.
+• The PMS web interface will comply with the W3C XHTML 1.0 Transitional standard
+[3].
+• Only free software can be used for the tools and for the end product. The use of certain
+libraries and aids is justified in the SCMP.
+• The PMS should be easily installable by using:
+TBD2.6. ASSUMPTIONS AND DEPENDENCIES 23
+2.6 Assumptions and dependencies
+• The users must have a web browser that supports W3C XHTML [3] and have a TCP/IP
+connection to the web server.
+• The http traffic must be possible on the network connection between server and client.
+• Command line users have access to the server shell. Therefore they also have all the
+Administrator privileges.
+2.7 Apportioning of requirements
+Following the demand of the customer(s) to have an early prototype available, the first iter-
+ation of the PMS will include the basic functions. Afterwards, in the second iteration, more
+functions will be added to the PMS and the previous ones will be enhanced. For this purpose
+the different functions will be marked in section 3 as:
+• Critical (C) (i.e. needed for the first iteration)
+• Sufficient (S) (i.e. needed for the second iteration to have an adequate end product)
+• Optional (O) (i.e. implemented if there’s enough time left)

@@ -1,0 +1,33 @@
+@startuml
+|Agent|
+start
+:Choose Communication Mode;
+if (Mode = Broadcast?) then (yes)
+  :Broadcast Message;
+elseif (Mode = Multicast?) then (yes)
+  if (Join Multicast Group?) then (yes)
+    :Join Multicast Group;
+  else (no)
+    :Leave Multicast Group;
+  endif
+  :Multicast Message;
+else (no)
+  :Unicast Message;
+endif
+
+if (Encrypt Message?) then (yes)
+  |System|
+  :Encrypt Message;
+  |Agent|
+else (no)
+endif
+
+|System|
+:Transmit Message;
+
+if (Encrypted Message?) then (yes)
+  :Decrypt Message;
+else (no)
+endif
+stop
+@enduml

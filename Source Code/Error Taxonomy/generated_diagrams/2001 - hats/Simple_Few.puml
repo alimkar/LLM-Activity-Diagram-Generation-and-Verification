@@ -1,0 +1,103 @@
+@startuml
+|User|
+start
+:Select activity;
+
+if (Manage applications?) then (yes)
+  :Select application operation;
+  if (Create files?) then (yes)
+    :Create application files;
+  else (no)
+    if (Delete files?) then (yes)
+      :Delete application files;
+    else (no)
+      :Modify application files;
+    endif
+  endif
+
+  :Examine file associations;
+  if (Modify associations?) then (yes)
+    :Modify file associations;
+  else (no)
+  endif
+
+else (no)
+  if (Parse programs?) then (yes)
+    :Select file type to parse;
+    if (Transformation program?) then (yes)
+      :Select transformation language program;
+    else (no)
+      :Select target program;
+    endif
+
+    |HATS-GUI|
+    :Orchestrate parsing;
+
+    |Parser Program|
+    :Parse text file to SDT;
+
+    |HATS-GUI|
+    if (Save parsed version?) then (yes)
+      :Save parsed file as SDT;
+    else (no)
+    endif
+
+    :Capture parse outputs;
+    |User|
+    :View output and error messages;
+
+  else (no)
+    if (Execute transformation?) then (yes)
+      |User|
+      :Select transformation language program;
+
+      |HATS-GUI|
+      :Orchestrate execution;
+
+      if (Program parsed and saved as SDT?) then (yes)
+        |HATS-SML|
+        :Execute transformation program;
+        :Create output SDTs;
+        :Write debug and error outputs;
+
+        |HATS-GUI|
+        :Capture debug and error streams;
+
+        |User|
+        :View output and error messages;
+      else (no)
+        |User|
+        :View output and error messages;
+      endif
+
+    else (no)
+      if (Examine SDT or pretty-printed output?) then (yes)
+        |HATS-GUI|
+        :List associated files;
+
+        |User|
+        :Select file for display;
+
+        |HATS-GUI|
+        :Display SDT or pretty-printed text;
+
+        while (Manipulate display?) is (yes)
+          |User|
+          if (Choose tree portions?) then (yes)
+            :Choose tree portions;
+          else (no)
+          endif
+          if (Search strings or sub-trees?) then (yes)
+            :Search strings or sub-trees;
+          else (no)
+          endif
+        endwhile (no)
+
+      else (no)
+      endif
+    endif
+  endif
+endif
+
+stop
+@enduml

@@ -1,0 +1,169 @@
+@startuml
+skinparam swimlaneWidth 220
+skinparam activityFontSize 10
+skinparam Padding 2
+scale 0.75
+title gammaj web store
+|User|
+start
+:Access Web Store;
+
+if (Has Account?) then (no)
+  :Proceed for Registeration;
+  :Enter required details;
+|System|
+  :Validate & create account;
+|User|
+else (yes)
+  :Enter credentials;
+|System|
+  :Validate credentials;
+  if (Valid?) then (no)
+    :Resend login details via email;
+  else (yes)
+  endif
+endif
+|User|
+:Log in;
+|System|
+:Create session cookie;
+:Display store interface;
+switch(User Type?)
+case (Customer)
+|Customer|
+  fork
+    :Browse categories & subcategories;
+    :View product details;
+  fork again
+    :Enter search criteria;
+    :Search product;
+    :Display search results;
+  end fork
+  :Select product;
+  :Add product to cart;
+|System|
+  :Display cart\n(items, total cost);
+|Customer|
+  repeat
+    if (Modify cart?) then (yes)
+      if (Add more items?) then (yes)
+        :Add item to cart;
+      else (remove)
+        :Remove item from cart;
+      endif
+    endif
+  repeat while (Proceed to checkout?) is (no) not (yes)
+|System|
+  :Display account and\npayment details;
+|Customer|
+  if (Order correct?) then (no)
+    :Revise & update order;
+  else (yes)
+  endif
+  :Confirm order;
+|System|
+  :Store order confirmation;
+  :Send confirmation email;
+|Customer|
+  fork
+    :Proceed for payment;
+|System|
+    :Validate credit card;
+fork again
+    :Update inventory;
+end fork
+  :Display order confirmation;
+  stop
+case (Administrator)
+|Administrator|
+  if(Operation Type User?) then (Yes)
+    switch(User Operation Type?)
+    case(Add User)
+     :Add user details;
+|System|
+     :Validate new user information;
+     :Create new user account;
+    case(Remove User)
+|Administrator|
+     :Select user to remove;
+     :Confirm user removal;
+|System|
+     :Remove User;
+    case(Edit User)
+|Administrator|
+     :Select user to edit;
+|System|
+     :Display user details;
+|Administrator|
+     :Alter user properties;
+|System|
+     :Update User;
+    endswitch
+    stop
+   elseif (Operation type Plug-in?) then (Yes)
+    switch(Plug-in Operation Type?)
+    case(Install plug-in)
+|System|
+     :Prompt for module upload;
+|Administrator|
+     :Select plug-in to install;
+|System|
+     :Install plug-in and/nvalidate changes;
+    case(Remove plug-in)
+|System|
+     :Prompt for plug-in selection;
+|Administrator|
+     :Select plug-in to remove;
+|System|
+     :Remove plug-in;
+    case(Manage plug-in)
+|System|
+     :Prompt for plug-in selection;
+|Administrator|
+     :Select plug-in to manage;
+|System|
+     :Show plug-in options;
+|Administrator|
+     :Make changes to plug-in;
+|System|
+     :Confirm plug-in changes;
+    endswitch
+    stop
+   else(Patch process installation)
+|Administrator|
+     :Initiate patching process;
+|System|
+     :Prompt for patch upload;
+     :Install patch and reinitialize software;
+     stop
+  endif
+case (Sales Personnel)
+|Sales Personnel|
+  switch(Product Operation Type?)
+    case(Add Product)
+     :Enter product information;
+|System|
+     :Validate product information;
+     :Create new product page;
+    case(Remove Product)
+     :Prompt for product selection;
+|Sales Personnel|
+     :Select product to remove;
+|System|
+     :Validate product information;
+     :Remove product page;
+    case(Update product attributes)
+     :Prompt for product selection;
+|Sales Personnel|
+     :Select product to manage;
+|System|
+     :Show product information;
+|Sales Personnel|
+     :Modify product information;
+|System|
+     :Validate product information;
+     :Update product page;
+    endswitch
+stop
+endswitch
+@enduml

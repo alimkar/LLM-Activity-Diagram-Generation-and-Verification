@@ -1,0 +1,33 @@
+Torrent Search
+
+REQ-1: Torrent search will share the same search bar with the streaming search. REQ-2: Database of torrent sites can be updated via the internet.
+REQ-3: There will be a tick box to allow the user to choose to include torrent searching in the search.
+
+REQ-4: Query will retrieve the no. of seed and peers, size of the file, date posted and a link to the webpage itself.
+
+REQ-5: If no results are found on a search it will display a message “No results were found for this search.”
+
+REQ-6: Results will be arranged in size/date/alphabetical order by clicking on the column headers.
+
+REQ-7: There will be page button for the user to navigate the results.
+
+Video Stream Search
+
+REQ-1: Streaming search will share the same search bar with the torrent search. REQ-2: Database of video hosting and video linking sites can be updated via the
+internet.
+
+REQ-3: There will be a tick box to allow the user to choose to include video host searching in the search.
+ 
+
+
+REQ-4: There will be a tick box to allow the user to choose to include video link searching in the search.
+
+REQ-5: Query to video hosting sites will retrieve full video name, length, date posted and a link to the video itself.
+
+REQ-6: Query to video link sites will retrieve the show’s name, episode name and a link to the webpage itself.
+
+REQ-7: If no results are found on a search it will display a message “No results were found for this search.”
+
+REQ-8: Results will be arranged in length/date/alphabetical order by clicking on the column headers.
+
+REQ-9: There will be page button for the user to navigate the results.

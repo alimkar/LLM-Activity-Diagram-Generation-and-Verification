@@ -1,0 +1,11 @@
+APAF-FR-01: The APAF system shall acquire from ESOC the telemetry data of the ASPERA-3 Experiment and Mars Express Orbit/Attitude.
+APAF-FR-02: The APAF system shall process all ASPERA-3 science data into IDFS data sets.
+APAF-FR-03: The APAF system shall process the engineering and ancillary information necessary for calibration and science validation into IDFS data sets.
+APAF-FR-04: Intermediate files of cleaned-up ASPERA-3 and MEX OA telemetry shall be generated in the event that cleaned-up telemetry is not provided by ESOC.
+APAF-FR-05: The ASPERA-3 and MEX OA telemetry data shall be stored on a local SwRI archive.
+APAF-FR-06: The ASPERA-3 and MEX OA IDFS data sets shall be stored on a local SwRI archive.
+APAF-FR-06a: Any APAF-generated intermediate files of ASPERA-3 and MEX OA cleaned-up telemetry shall be stored on a local SwRI archive.
+APAF-FR-07: Web-based displays of the most current ASPERA-3 data shall be provided for public view.
+APAF-FR-08: Web-based displays defined by the ASPERA-3 team shall be provided where any available ASPERA-3 data (as opposed to just the most current) can be used for science analysis.
+APAF-FR-08a: The web-based displays defined by the ASPERA-3 team to be used for science analysis shall be password protected until the ASPERA-3 data is made public.
+APAF-FR-09: The APAF ground data system shall have built-in error handling.

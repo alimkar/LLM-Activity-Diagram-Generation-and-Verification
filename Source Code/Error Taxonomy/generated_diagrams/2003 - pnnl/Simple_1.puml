@@ -1,0 +1,33 @@
+@startuml
+|Data Acquisition Device|
+start
+:Measure sensed data;
+:Store sensed data;
+
+|Automated Diagnostic Tool|
+:Obtain sensed data;
+:Obtain fixed data;
+
+:Reduce data;
+:Filter data;
+:Prepare data;
+:Average data;
+:Trend data;
+:Perform statistical analysis;
+
+:Detect faults;
+:Identify faults;
+
+|User|
+:View diagnostic results;
+
+|Automated Diagnostic Tool|
+:Display results;
+:Record results;
+:Store results;
+
+|User|
+:Retrieve stored results;
+:Analyze stored results;
+stop
+@enduml

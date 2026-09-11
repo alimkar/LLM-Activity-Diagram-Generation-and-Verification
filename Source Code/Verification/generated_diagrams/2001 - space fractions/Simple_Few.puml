@@ -1,0 +1,107 @@
+@startuml
+|User|
+start
+:Access Math Umbrella;
+|System|
+:Display topic links;
+
+repeat
+  |User|
+  :Click link;
+  |System|
+  :Open linked document in separate window;
+repeat while (Follow another link?) is (yes)
+
+|User|
+if (Launch Space Fractions?) then (yes)
+  |System|
+  :Play introductory movie;
+  if (Mouse click received?) then (yes)
+    :Skip movie;
+  else (no)
+    :Complete movie;
+  endif
+
+  :Display main menu;
+  :Display brief help;
+  |User|
+  repeat
+    :Select menu option;
+    if (Begin game?) then (yes)
+      break
+    else (no)
+      if (Open Denominators page?) then (yes)
+        |System|
+        :Display Denominators web page;
+      endif
+    endif
+  repeat while (Select another option?) is (yes)
+
+  |System|
+  :Start game sequence;
+
+  repeat
+    :Display fraction question;
+    |User|
+    :Select answer;
+    |System|
+    if (Answer correct?) then (yes)
+      :Display correct message;
+    else (no)
+      :Display incorrect message;
+      :Do not count as correct;
+      |User|
+      :Select answer again;
+      |System|
+      :Display feedback;
+    endif
+
+    if (Critical point?) then (yes)
+      if (Answered correctly at critical point?) then (yes)
+        :Follow plot direction A;
+      else (no)
+        :Follow plot direction B;
+      endif
+    endif
+  repeat while (More questions?) is (yes)
+
+  :Display ending scene;
+  :Calculate score;
+  :Rank score;
+  :Display score;
+  :Display plot conclusion;
+
+  |User|
+  if (Exit game?) then (yes)
+    stop
+  else (no)
+    :Return to main menu;
+    |System|
+    :Display main menu;
+    stop
+  endif
+else (no)
+  stop
+endif
+
+|Game Administrator|
+start
+|System|
+:Display question updater page;
+
+repeat
+  |Game Administrator|
+  :Enter question data;
+  :Submit question update;
+  |System|
+  if (Input complete and sensible?) then (yes)
+    :Generate question text file;
+    |Game Administrator|
+    :Go to next question page;
+  else (no)
+    :Reject input;
+  endif
+repeat while (More questions to update?) is (yes)
+
+stop
+@enduml

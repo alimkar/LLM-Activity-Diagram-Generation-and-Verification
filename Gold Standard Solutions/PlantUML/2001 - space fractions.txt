@@ -1,0 +1,127 @@
+@startuml
+title Space Fractions
+
+|User|
+start
+
+:Launch Space Fractions\nvia web browser;
+
+if (Access type?) then (Admin)
+
+  |Admin|
+  :Navigate to Question Updater;
+  :Enter password;
+
+  |System|
+  :Validate password;
+
+  if (Password correct?) then (no)
+    :Deny access;
+    stop
+  else (yes)
+    :Display question update form;
+  endif
+
+  repeat
+    |Admin|
+    :Input question data\n(pulldown menus & text fields);
+    :Click submit button;
+
+    |System|
+    :Validate input data;
+
+    if (Data valid?) then (no)
+      :Show validation error;
+    else (yes)
+      :Save question data;
+    endif
+
+  repeat while (More questions\nto update?) is (yes)
+  -> no;
+
+  :Generate updated question\ntext file on server;
+  stop
+
+else (Student)
+  |User|
+  if(Access Math Umbrella?) then (no)
+  |System|
+  :Play introductory movie;
+
+  if (Mouse clicked?) then (yes)
+    :Stop movie;
+  else (no)
+    :Play movie to completion;
+  endif
+
+  :Display main menu;
+
+  |User|
+  :Select option;
+
+  if (Option selected?) then (Denominators web page)
+    |System|
+    :Open Denominators web page;
+    stop
+  else (Start Game)
+
+    |System|
+    :Load question data from server;
+
+    repeat
+
+      repeat
+
+        :Display fraction question;
+
+        |User|
+        :Click answer choice;
+
+        |System|
+        if (Answer correct?) then (yes)
+          :Show correct answer message;
+          :Update score;
+        else (no)
+          :Inform user of incorrect answer;
+
+          repeat
+            |User|
+            :Click answer again;
+            |System|
+            :Accept retry answer\n(score not updated);
+          repeat while (Answer correct?) is (no)
+          -> yes;
+
+        endif
+
+        if (Critical point question?) then (yes)
+          :Record plot direction\nbased on answer;
+        else (no)
+        endif
+
+      repeat while (All questions complete?) is (no)
+      -> yes;
+
+      :Display ending scene\n(plot conclusion + final score);
+
+      |User|
+      :Select exit or try again;
+
+    repeat while (Try again?) is (yes)
+    -> no;
+
+  endif
+  else (yes)
+|System|
+  :Provide links to matured S2S projects;
+|User|
+  :Click a link to World Wide Web documents;
+|System|
+  :Open specified S2S project in separate window;
+  endif
+
+endif
+
+stop
+
+@enduml

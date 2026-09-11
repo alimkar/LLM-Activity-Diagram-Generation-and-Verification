@@ -1,0 +1,25 @@
+@startuml
+|Trade Client Serve|
+start
+:Send instruction to CTS;
+
+|Central Trading System|
+:Receive instruction;
+:Analyze instruction;
+:Classify instruction;
+:Match instructions;
+
+:Produce new message;
+:Send message to Network Message Promulgating;
+
+|Trading System Manage|
+:Access CTS information;
+
+|Maintainer|
+:Find crash cause;
+:Fix system;
+:Modify program for new requirements;
+:Overcome system crash under overload;
+
+stop
+@enduml

@@ -1,0 +1,264 @@
+@startuml
+|Guest|
+start
+:Access PMS web interface;
+
+if (Connected to VUB-Network?) then (yes)
+  |System|
+  :Recognize user by IP address;
+  |VUB-Network User|
+  :Use PMS as VUB-Network User (not logged in);
+else (no)
+  |Guest|
+  :Use PMS as Guest (not logged in);
+endif
+
+|Guest|
+if (Choose action?) then (Register account)
+  :Fill in registration form;
+  |System|
+  :Create pending account;
+  :Send validation email;
+  |Guest|
+  :Open validation email;
+  :Validate new account;
+  |System|
+  :Activate account;
+elseif (Choose action?) then (Retrieve password)
+  :Request password retrieval;
+  |System|
+  if (Valid account exists?) then (yes)
+    :Send password retrieval email/instructions;
+  else (no)
+    :Notify invalid account;
+  endif
+elseif (Choose action?) then (Log in)
+  :Enter credentials;
+  |System|
+  if (Credentials valid?) then (yes)
+    :Establish session;
+    :Determine user level (Member/Publisher/Moderator/Administrator);
+  else (no)
+    :Notify invalid credentials;
+    stop
+  endif
+else (Browse without login)
+  :Continue without login;
+endif
+
+|System|
+if (Logged in?) then (no)
+  if (Connected to VUB-Network?) then (yes)
+    |VUB-Network User|
+    :Enter search criteria (keywords/authors/date range);
+    |System|
+    :Validate search query;
+    if (Valid search query?) then (yes)
+      :Execute search;
+      :Show results;
+      |VUB-Network User|
+      if (Choose result action?) then (Order results)
+        :Select ordering (title/author/year);
+        |System|
+        :Order and display results;
+      elseif (Choose result action?) then (Export/Download)
+        :Select one or more results;
+        :Select export format (html/pdf/ps);
+        |System|
+        :Generate export;
+        :Provide download;
+      elseif (Choose result action?) then (Search by similarity)
+        :Select similarity option (same author/mentioned/same institute);
+        |System|
+        :Search related publications;
+        :Show results;
+      else (No result action)
+        |VUB-Network User|
+        :End browsing;
+      endif
+    else (no)
+      :Notify invalid search query;
+    endif
+  else (no)
+    |Guest|
+    :Search not available for Guest;
+  endif
+  stop
+endif
+
+|System|
+:User is logged in (at least Member);
+
+|Member|
+:Select operation;
+
+if (Operation?) then (Change account details)
+  :Edit account information (e.g., password/email);
+  if (Request account upgrade?) then (yes)
+    :Send upgrade request to Administrator;
+    |System|
+    :Record upgrade request;
+  else (no)
+  endif
+  |System|
+  :Save account changes;
+
+elseif (Operation?) then (Search / Advanced Search)
+  if (Connected to VUB-Network?) then (yes)
+    :Show search form;
+    |Member|
+    :Enter search criteria;
+    |System|
+    :Validate search query;
+    if (Valid search query?) then (yes)
+      :Execute search;
+      :Show results;
+      |Member|
+      if (Choose result action?) then (Order results)
+        :Select ordering (title/author/year);
+        |System|
+        :Order and display results;
+      elseif (Choose result action?) then (Export/Download)
+        :Select one or more results;
+        :Select export format (html/pdf/ps);
+        |System|
+        :Generate export;
+        :Provide download;
+      elseif (Choose result action?) then (Search by similarity)
+        :Select similarity option (same author/mentioned/same institute);
+        |System|
+        :Search related publications;
+        :Show results;
+      else (No result action)
+      endif
+    else (no)
+      :Notify invalid search query;
+    endif
+  else (no)
+    |System|
+    :Search requires VUB-Network connection;
+  endif
+
+elseif (Operation?) then (Upload/Edit publications)
+  |System|
+  if (User level >= Publisher?) then (yes)
+    |Publisher|
+    if (Choose upload/edit?) then (Upload publication)
+      :Provide publication file (pdf/ps) + RIS/bibTEX metadata;
+      |System|
+      if (Format valid (RIS/bibTEX)?) then (yes)
+        :Extract bibliographical info from text/abstract;
+        :Show extracted info for correction;
+        |Publisher|
+        :Correct/complete bibliographical info (if needed);
+        :Specify equivalent author/institute names (optional);
+        |System|
+        :Store publication and metadata;
+      else (no)
+        :Reject upload (invalid format);
+      endif
+
+    elseif (Choose upload/edit?) then (Bulk upload)
+      :Provide bulk import file(s) (e.g., bibTEX);
+      |System|
+      if (Format valid (RIS/bibTEX)?) then (yes)
+        :Import multiple publications/abstracts;
+        :Store imported publications;
+      else (no)
+        :Reject bulk upload (invalid format);
+      endif
+
+    else (Edit own publication)
+      :Select own uploaded publication;
+      |System|
+      if (Publication exists?) then (yes)
+        :Load publication details;
+        |Publisher|
+        :Edit bibliographical details;
+        |System|
+        :Save changes;
+      else (no)
+        :Notify no publication to edit;
+      endif
+    endif
+
+    |System|
+    if (User level >= Moderator?) then (yes)
+      |Moderator|
+      if (Moderator operation?) then (Manage user levels in department)
+        :Select Member/Publisher in own department;
+        :Choose upgrade/downgrade;
+        |System|
+        :Apply level change (Member <-> Publisher);
+      elseif (Moderator operation?) then (Manage group permissions)
+        :Select group under jurisdiction;
+        :Change group permissions;
+        |System|
+        :Save group permissions;
+      elseif (Moderator operation?) then (Edit authors)
+        :Select author(s);
+        :Edit author information;
+        |System|
+        :Save author changes;
+      else (Edit departmental publications)
+        :Select departmental publication;
+        |System|
+        :Load publication details;
+        |Moderator|
+        :Overwrite/change bibliographical details;
+        |System|
+        :Save changes;
+      endif
+    else (no)
+    endif
+
+    |System|
+    if (User level >= Administrator?) then (yes)
+      |Administrator|
+      if (Admin operation?) then (Access control panel)
+        :Open control panel;
+        :Edit user accounts (upgrade/downgrade/delete);
+        |System|
+        :Persist account changes;
+      elseif (Admin operation?) then (Create/Delete users)
+        :Create or delete user;
+        |System|
+        :Persist user changes;
+      elseif (Admin operation?) then (Create/Delete groups)
+        :Create or delete group;
+        |System|
+        :Persist group changes;
+      elseif (Admin operation?) then (Manage user level - extended)
+        :Select any user;
+        :Change user level to any other level;
+        |System|
+        :Persist level change;
+      else (Edit all publications)
+        :Select any publication;
+        |System|
+        :Load publication details;
+        |Administrator|
+        :Overwrite/change bibliographical details;
+        |System|
+        :Save changes;
+      endif
+    else (no)
+    endif
+
+  else (no)
+    :Upload/Edit not available for Member;
+  endif
+
+else (Log off)
+  :Log off;
+  |System|
+  :Terminate session;
+  if (Connected to VUB-Network?) then (yes)
+    :Redirect to search page;
+  else (no)
+    :Redirect to login page;
+  endif
+endif
+
+stop
+@enduml

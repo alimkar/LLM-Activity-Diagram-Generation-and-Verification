@@ -1,0 +1,113 @@
+@startuml
+|User/Administrator|
+start
+:Select feature;
+
+if (Submit job?) then (yes)
+  :Enter user information;
+  :Enter job information;
+
+  |SGE Interface|
+  :Check submission open;
+  if (Cluster accepting submissions?) then (yes)
+    :Verify user;
+    if (User verified?) then (yes)
+      :Assign job id;
+
+      |Libra Scheduler|
+      :Retrieve job details;
+      :Set job state variables;
+      :Pass parameters to scheduling module;
+
+      :Compute job priority;
+      :Check deadline feasibility;
+      if (Job accepted?) then (yes)
+        |User/Administrator|
+        :Receive acceptance;
+        :Receive suggested deadline or cost;
+
+        |Libra Scheduler|
+        :Allocate tickets;
+        :Calculate stride and pass;
+        :Sort hosts by load;
+        :Select execution host;
+        :Select execution queue;
+        :Send job to queue;
+
+        :Reserve node resources;
+        :Update queue status;
+        |Cluster Info Store|
+        :Store load update;
+
+        |Libra Scheduler|
+        while (Jobs left in queue?) is (yes)
+          :Select minimum pass job;
+          if (Pass tie?) then (yes)
+            :Apply FIFO ordering;
+          endif
+          :Allot quantum;
+          :Advance pass by stride;
+          :Update cluster information;
+        endwhile (no)
+
+      else (no)
+        |User/Administrator|
+        :Receive rejection;
+        :Receive suggested deadline or cost;
+      endif
+
+    else (no)
+      |User/Administrator|
+      :Receive verification failure;
+    endif
+  else (no)
+    |User/Administrator|
+    :Receive submission closed notice;
+  endif
+
+elseif (View job status?) then (yes)
+  :Enter user id and password;
+
+  |SGE Interface|
+  :Validate credentials;
+  if (Credentials valid?) then (yes)
+    :Show job options;
+    :Show job progress;
+    while (More options selected?) is (yes)
+      :Process selected option;
+    endwhile (no)
+    |User/Administrator|
+    :View job options;
+  else (no)
+    |User/Administrator|
+    :Receive authentication failure;
+  endif
+
+elseif (Delete/change job?) then (yes)
+  :Enter user id and password;
+
+  |SGE Interface|
+  :Validate credentials;
+  if (Credentials valid?) then (yes)
+    :Remove job from queue;
+
+    |Libra Scheduler|
+    :Update queue status;
+    :Revise resource allocation decisions;
+
+    |Cluster Info Store|
+    :Store load update;
+
+    |SGE Interface|
+    :Provide updated cluster information;
+  else (no)
+    |User/Administrator|
+    :Receive authentication failure;
+  endif
+
+else (no)
+  :End session;
+endif
+
+stop
+@enduml

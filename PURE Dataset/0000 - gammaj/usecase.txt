@@ -1,0 +1,682 @@
+Customer Use Cases
+Register Customer
+
+Goal:
+Register a new customer account with the system.
+
+Actors: Customer Weborder System
+
+Preconditions:
+Customer must be able to access the web order system via a web browser with HTTPS.
+
+Triggers:
+Customer clicks button or link to "Register"
+
+Basic Scenario:
+1. Customer first clicks on the button or link to initiate registration process.
+2. System prompts the customer to fill out his/her first name, last name, billing address, shipping address, email address, and their password.
+3. Customer enters fields.
+4. System validates the customer's information.
+5. System creates a new account for the Customer.
+6. System creates a session cookie.
+7. System displays an account home page to Customer.
+
+Alternative Scenario:
+A1. System recognizes Customer's cookie. A2. Go to Step 7 (Basic Scenario).
+
+Postconditions:
+The Customer registers and creates a new customer account with the system.
+
+Login Customer
+
+Goal:
+Login to a customer account with the system.
+
+Actors: Customer Weborder System
+
+Preconditions:
+Customer account must already be registered.
+
+Triggers:
+Customer clicks button or link to "Login"
+ 
+1. Customer clicks on the button or link to initiate the login process.
+2. System prompts the customer for his/her email and password.
+3. System verifies the information.
+4. System creates session cookie.
+5. System displays account home page to the Customer
+
+Alternative Scenario:
+A1. System recognizes the Customer's cookie
+A2. Go to Step 5 (Basic Scenario).
+B1. Customer enters incorrect login information.
+B2. System prompts the Customer to resend login details to the email account. B3. Customer confirms.
+B4. System sends an email to the registered email address. B5. Go to Step 1 (Basic Scenario).
+
+Postconditions:
+The Customer is logged into the system.
+
+Edit Customer Details
+
+Goal:
+Edit the customer account details.
+
+Actors: Customer Weborder System
+
+Preconditions:
+Customer must be logged-in on the system.
+
+Triggers:
+Customer clicks on the button or link to "Edit Account"
+
+Basic Scenario:
+1. Customer clicks the button or link to initiate the process to edit the account.
+2. System displays the account home page to the Customer.
+3. Customer clicks the button or link in order to edit the account details.
+4. System verifies the changes.
+5. System stores new account information.
+
+Alternative Scenario: None
+
+Postcoditions:
+The Customer has changed the account details.
+
+Logout Customer
+
+Goal:
+Logout the customer account on the system.
+ 
+Customer
+Weborder System
+
+Preconditions:
+Customer must be logged-in on the system.
+
+Triggers:
+Customer clicks on the button or link to "Logout"
+
+Basic Scenario:
+1. Customer clicks the button or link in order to initiate logout process.
+2. System terminates the session cookie.
+3. System displays the home page.
+
+Alternative Scenario: None
+
+Postconditions:
+The Customer is logged out of the system.
+
+Add Item To Cart
+
+Goal:
+Customer adds item(s) in the cart
+
+Actors: Customer System
+
+Preconditions:
+The customer must be logged-in on the system. Triggers:
+Customer clicks the button or link to "Add To Cart".
+
+Basic Scenario:
+1. Customer clicks the button or link in order to add to the cart with specified quantity.
+2. System adds the item(s) to the cart.
+3. System prompts the Customer to edit the quantity or remove the item from cart.
+4. Customer confirms the items in the cart.
+5. System stores cookie with cart details.
+6. Customer returns to product listings.
+
+Alternative Scenario:
+A1. Customer terminates the web browser window after adding item(s) to cart. A2. Customer returns to weborder interface.
+A3. System recognizes cookie and goes to step 6 (Basic Scenario) with existing items in cart.
+
+Postconditions:
+The customer has added item(s) to the shopping cart.
+ 
+Checkout An Order
+Goal:
+Customer places and confirms an order for the checkout process.
+
+Actors: Customer Weborder System
+
+Preconditions:
+1. Customer must be logged-in on the system.
+2. Customer must have item(s) in the shopping cart.
+
+Triggers:
+Customer clicks button or link to "Ckeckout"
+
+Basic Scenario:
+1. Customer clicks the button or link to initiate the checkout process.
+2. System calculates order of items in the shopping cart.
+3. System appends cookie with flag for checkout process.
+4. System presents the customer with the account details and payment methods.
+5. Customer confirms account details and payment methods.
+6. Customer confirms order.
+7. System stores order confirmation and order details.
+8. System sends email confirmation to the Customer.
+9. System appends cookie with flag for completed checkout process.
+
+Alternative Scenario:
+A1. Customer terminates order web browser during order the checkout process. A2. Customer returns to weborder interface.
+A3. System recognizes cookie and goes to step 4 (Basic Scenario).
+
+Postconditions:
+The Customer has placed and confirmed an order.
+
+
+
+
+Administrator Use Cases
+Login Administrator
+
+Goal:
+Login to an Administrator account with the system.
+
+Actors: Administrator Weborder System
+
+Preconditions:
+Administrator account must already be registered.
+
+Triggers:
+Administrator clicks button or link to "Login"
+
+Basic Scenario:
+1. Administrator clicks button or link to initiate login process.
+2. System prompts the Administrator for email and password.
+3. System verifies information.
+4. System creates session cookie.
+5. System displays account home page to Administrator
+
+Alternative Scenario:
+A1. System recognizes Administrator 's cookie
+A2. Go to Step 5 (Basic Scenario).
+B1. Administrator enters incorrect login information.
+B2. System prompts Administrator to resend login details to email account. B3. Administrator confirms.
+B4. System sends email to registered email address. B5. Go to Step 1 (Basic Scenario).
+
+Postconditions:
+The Administrator is logged into the system.
+
+Logout Administrator
+
+Goal:
+Logout the Administrator account on the system.
+
+Actors: Administrator Weborder System
+
+Preconditions:
+Administrator must be logged-in on the system.
+
+Triggers:
+Administrator clicks button or link to "Logout"
+
+Basic Scenario:
+1. Administrator clicks button or link to initiate logout process.
+2. System terminates the session cookie.
+3. System displays home page.
+
+Alternative Scenario: None
+
+Postconditions:
+The Administrator is logged out of the system.
+
+Add User
+
+Goal:
+ Register a new customer, sales person, or administrator account with the system.
+
+Actors:
+Administrator
+Weborder System
+
+Preconditions:
+Administrator must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Administrator clicks button or link to "Add Users"
+
+Basic Scenario:
+1. Administrator clicks the button or link to initiate Add user process.
+2. System prompts the Administrator to fill out first name, last name, username, email address, password, and privileges of the user.
+3. System validates new user information.
+4. System creates a new account for the new user with desired privileges.
+5. System displays account home page to Administrator.
+
+Postconditions:
+A new customer account is created within the system.
+
+Remove User
+
+Goal:
+Remove a user from the system.
+
+Actors: Administrator Weborder System
+
+Preconditions:
+Administrator must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Administrator clicks button or link to “Remove User"
+
+Basic Scenario:
+1. Administrator clicks button or link to initiate the remove user process.
+2. System prompts the Administrator to select a user by searching or viewing a list of users.
+3. System displays user information.
+4. System confirms deletion of selected user.
+5. System displays account home page to Administrator.
+
+Postconditions:
+An account has been deleted within the system.
+
+Change User Properties
+
+Goal:
+Alter properties such as passwords and privileges of the user.
+
+Actors:
+Administrator
+
+Weborder System
+
+Preconditions:
+Administrator must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Administrator clicks button or link to “Change User Properties"
+
+Basic Scenario:
+1. Administrator clicks the button or link to initiate change user properties process.
+2. System prompts the Administrator to select a user by searching or viewing a list of users.
+3. System displays the user information.
+4. System alters the user properties.
+5. System displays the account home page to Administrator.
+
+Postconditions:
+An account has been altered within the system.
+
+Install Plug-ins
+
+Goal:
+Install a new plug-in to the application.
+
+Actors: Administrator Weborder System
+
+Preconditions:
+Administrator must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Administrator clicks the button or link to "Install Plug-ins "
+
+Basic Scenario:
+1. Administrator clicks the button or link to initiate Plug-in installation process.
+2. System prompts the Administrator to upload the Plug-in module.
+3. System installs plug-in and validates changes.
+4. System displays plug-in options to the Administrator.
+
+
+Postconditions:
+A new plug-in is installed in the application.
+
+Remove Plug-ins
+
+Goal:
+Remove a plug-in from the application.
+
+Actors: Administrator Weborder System
+ 
+Preconditions:
+Administrator must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Administrator clicks the button or link to "Install Plug-ins "
+
+Basic Scenario:
+1. Administrator clicks the button or link to initiate Plug-in deletion process.
+2. System prompts the Administrator to select the desired Plug-in module.
+3. System removes the plug-in and validates changes.
+
+
+Postconditions:
+A plug-in is removed from the application.
+
+Manage Plug-in Options
+
+Goal:
+Make changes to an installed plug-in.
+
+Actors: Administrator Weborder System
+
+Preconditions:
+Administrator must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Administrator clicks button or link to "Manage Plug-ins "
+
+Basic Scenario:
+1. Administrator clicks the button or link to initiate Plug-in Options process.
+2. System prompts the Administrator to select the desired Plug-in module.
+3. System displays all plug-in options to the Administrator.
+4. System confirms changes with the Administrator.
+
+
+Postconditions:
+A plug-in’s options have successfully been changed.
+
+
+Install patch process
+
+Goal:
+Install patches or software updates to the web store.
+
+Actors: Administrator Weborder System
+
+Preconditions:
+Administrator must be able to access the web order system via a web browser with HTTPS.
+
+Triggers:
+Administrator clicks the button or link to "Install Patch"
+
+Basic Scenario:
+1. Administrator clicks the button or link to initiate Patching process.
+2. System prompts the Administrator to upload the patch.
+3. System automatically installs patches and reinitializes software.
+4. System confirms that patch has been successfully installed.
+
+
+Postconditions:
+The web store was successfully updated.
+
+
+Sales Person Use Cases
+Login Sales Person
+
+Goal:
+Login to an account with the system.
+
+Actors:
+Sales Person
+Weborder System
+
+Preconditions:
+Sales Person account must already be registered.
+
+Triggers:
+Sales Person clicks button or link to "Login"
+
+Basic Scenario:
+1. Sales Person clicks the button or link to initiate login process.
+2. System prompts the Sales Person for email and password.
+3. System verifies the information.
+4. System creates session cookie.
+5. System displays the account home page to Sales Person
+
+Alternative Scenario:
+A1. System recognizes Sales Person's cookie
+A2. Go to Step 5 (Basic Scenario).
+B1. Sales Person enters incorrect login information.
+B2. System prompts the Sales Person to resend login details to email account. B3. Sales Person confirms.
+B4. System sends email to registered email address. B5. Go to Step 1 (Basic Scenario).
+
+Postconditions:
+The Sales Person is logged into the system.
+
+Logout Sales Person
+Goal:
+Logout the Sales Person account on the system.
+
+Actors:
+Sales Person
+Weborder System
+
+Preconditions:
+Sales Person must be logged-in on the system.
+
+Triggers:
+Sales Person clicks the button or link to "Logout"
+
+Basic Scenario:
+1. Sales Person clicks the button or link to initiate logout process.
+2. System terminates the session cookie.
+3. System displays home page.
+
+Alternative Scenario: None
+
+Postconditions:
+The Sales Person is logged out of the system.
+
+Add Product
+
+Goal:
+Add a product to the system.
+
+Actors:
+Sales Person
+Weborder System
+
+Preconditions:
+Sales Person must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Sales Person clicks the button or link to "Add Product"
+
+Basic Scenario:
+1. Sales Person clicks the button or link to initiate Add Product process.
+2. System prompts the Sales Person to fill out product name, product id, product description, product price, upload a product image, number of items in inventory, and availability of product.
+3. System validates the new product information.
+4. System creates a new product page for the new product.
+5. System displays the newly created product page.
+
+Postconditions:
+A new product is created within the system.
+
+Remove Product
+Goal:
+Remove a product from the system.
+
+Actors:
+Sales Person
+Weborder System
+
+Preconditions:
+Sales Person must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Sales Person clicks the button or link to "Remove Product"
+
+Basic Scenario:
+1. Sales Person clicks the button or link to initiate Remove Product process.
+2. System prompts the Sales Person to select a product by searching or viewing a list of products.
+3. System validates the product information.
+4. System removes the product page and product information from the system.
+5. System displays the newly created product page.
+
+Postconditions:
+A product is deleted from the system.
+
+
+Update Product Attributes
+
+Goal:
+Update Product attributes within the system.
+
+Actors:
+Sales Person
+Weborder System
+
+Preconditions:
+Sales Person must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Sales Person clicks the button or link to "Update Product Attributes"
+
+Basic Scenario:
+1. Sales Person clicks the button or link to initiate Update Product Attributes process.
+2. System prompts the Sales Person to select a product by searching or viewing a list of products.
+3. System displays all of the product attributes and allows Sales Person to update the product name, product id, product description, product price, update the product image, product availability, and/or the number of items in the inventory.
+4. System validates the product information.
+5. System updates the product page and product information within the system.
+6. System displays the newly updated product page.
+
+Postconditions:
+The product attributes have been changed.
+
+Register Customer
+
+Goal:
+Register a new customer account with the system.
+
+Actors: Customer Weborder System
+
+Preconditions:
+Customer must be able to access the weborder system via a web browser with HTTPS.
+
+Triggers:
+Customer clicks the button or link to "Register"
+
+Basic Scenario:
+1. Customer clicks the button or link to initiate registration process.
+2. System prompts the customer to fill out first name, last name, billing address, shipping address, email address, and password.
+3. Customer enters fields.
+4. System validates customer's information.
+5. System creates a new account for the Customer.
+6. System creates session cookie.
+7. System displays account home page to Customer.
+
+Alternative Scenario:
+A1. System recognizes Customer's cookie. A2. Go to Step 7 (Basic Scenario).
+
+Postconditions:
+The Customer registers and creates a new customer account with the system.
+
+Login Customer
+
+Goal:
+Login to a customer account with the system.
+
+Actors: Customer Weborder System
+
+Preconditions:
+Customer account must already be registered.
+
+Triggers:
+Customer clicks the button or link to "Login" 
+Basic Scenario:
+1. Customer clicks the button or link to initiate login process.
+2. System prompts the customer for email and password.
+3. System verifies the information.
+4. System creates session cookie.
+5. System displays account home page to Customer
+
+Alternative Scenario:
+A1. System recognizes Customer's cookie
+A2. Go to Step 5 (Basic Scenario).
+B1. Customer enters incorrect login information.
+B2. System prompts Customer to resend login details to email account. B3. Customer confirms.
+B4. System sends email to registered email address. B5. Go to Step 1 (Basic Scenario).
+
+Postconditions:
+The Customer is logged into the system.
+
+Edit Customer Details
+
+Goal:
+Edit the customer account details.
+
+Actors: Customer Weborder System
+
+Preconditions:
+Customer must be logged-in on the system.
+
+Triggers:
+Customer clicks button or link to "Edit Account"
+
+Basic Scenario:
+1. Customer clicks button or link to initiate the process to edit the account.
+2. System displays account home page to Customer.
+3. Customer clicks button or link to edit the account details.
+4. System verifies the changes.
+5. System stores new account information.
+
+Alternative Scenario: None
+
+Postcoditions:
+The Customer has changed the account details.
+
+Logout Customer
+
+Goal:
+Logout the customer account on the system.
+ 
+Weborder System
+
+Preconditions:
+Customer must be logged-in on the system.
+
+Triggers:
+Customer clicks button or link to "Logout"
+
+Basic Scenario:
+1. Customer clicks button or link to initiate logout process.
+2. System terminates the session cookie.
+3. System displays home page.
+
+Alternative Scenario: None
+
+Postconditions:
+The Customer is logged out of the system.
+
+Add Item To Cart
+
+Goal:
+Customer adds item(s) in the cart
+
+Actors: Customer System
+
+Preconditions:
+The customer must be logged-in on the system. Triggers:
+Customer clicks button or link to "Add To Cart".
+
+Basic Scenario:
+1. Customer clicks the button or link to add  to the cart with specified quantity.
+2. System adds the item(s) to the cart.
+3. System prompt Customer to edit quantity or remove item from cart.
+4. Customer confirms items in cart.
+5. System stores cookie with cart details.
+6. Customer returns to product listings.
+
+Alternative Scenario:
+A1. Customer terminates the web browser window after adding item(s) to cart. A2. Customer returns to weborder interface.
+A3. System recognizes cookie and goes to step 6 (Basic Scenario) with existing items in cart.
+
+Postconditions:
+The customer has added itm(s) to the shopping cart.
+
+Checkout an order
+Goal:
+Customer places and confirms an order for the checkout process.
+
+Actors: Customer Weborder System
+
+Preconditions:
+1. Customer must be logged-in on the system.
+2. Customer must have item(s) in the shopping cart.
+
+Triggers:
+Customer clicks button or link to "Ckeckout"
+
+Basic Scenario:
+1. Customer clicks the button or link to initiate the checkout process.
+2. System calculates order of items in the shopping cart.
+3. System appends cookie with flag for checkout process.
+4. System presents customer with account details and payment methods.
+5. Customer confirms account details and payment methods.
+6. Customer confirms order.
+7. System stores order confirmation and order details.
+8. System sends email confirmation to the Customer.
+9. System appends cookie with flag for completed checkout process.
+
+Alternative Scenario:
+A1. Customer terminates order web browser during order the checkout process. A2. Customer returns to weborder interface.
+A3. System recognizes cookie and goes to step 4 (Basic Scenario).
+
+Postconditions:
+The Customer has placed and confirmed an order.

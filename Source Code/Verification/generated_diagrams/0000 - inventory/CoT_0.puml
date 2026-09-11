@@ -1,0 +1,231 @@
+@startuml
+title Asset Inventory System - Activity Diagram
+
+|User|
+start
+:Enter username & password;
+|System|
+:Authenticate user;
+if (Credentials valid?) then (yes)
+  :Load user roles & permissions;
+else (no)
+  :Show authentication error;
+  stop
+endif
+
+|User|
+:Select operation;
+
+if (Transfer assets?) then (yes)
+  |User|
+  :Enter transfer details (source/destination);
+  |System|
+  :Determine transfer scope;
+
+  if (Within same department?) then (yes)
+    |System|
+    :Update database directly (no request);
+    |User|
+    :View transfer confirmation;
+    stop
+  else (no)
+    |System|
+    :Create transfer request (pending);
+
+    if (Inter-departments?) then (yes)
+      |System|
+      if (Request came from higher level group?) then (yes)
+        :Route for higher-level approval only;
+      else (no)
+        :Route for DA group approval;
+        :Route for Faculty group approval;
+      endif
+    else (no)
+      if (Inter-faculties?) then (yes)
+        :Route for Faculty group (or higher) approval;
+      else (no)
+        :Route for University group approval (outside university);
+      endif
+    endif
+
+    |Admin/Approver|
+    :Display pending requests for this level;
+    :Approve / Reject request;
+
+    |System|
+    :Notify requester by email;
+    if (Approved?) then (yes)
+      :Add request to "Waiting for execution" list;
+      |Inventory User|
+      :Execute transfer / handover asset;
+      :Update inventory when user receives asset;
+      |User|
+      :Receive asset;
+    else (no)
+      :Mark request as rejected/closed;
+    endif
+    stop
+  endif
+
+elseif (Edit/Modify asset?) then (yes)
+  |User|
+  :Select asset to edit;
+  |System|
+  :Check asset ownership scope (dept/faculty/university);
+  :Check user authorization to modify;
+
+  if (Authorized for this asset scope?) then (yes)
+    |User|
+    if (Bulk entry file used?) then (yes)
+      :Upload bulk entry file for edits;
+      |System|
+      :Validate bulk file;
+      :Apply allowed modifications (all fields except IDs);
+    else (no)
+      :Edit asset fields (excluding IDs);
+      |System|
+      :Save changes;
+    endif
+    |User|
+    :View update confirmation;
+  else (no)
+    |System|
+    :Deny edit (insufficient permission);
+  endif
+  stop
+
+elseif (Add inventory assets?) then (yes)
+  |User|
+  :Choose add asset(s);
+  |System|
+  :Determine allowed add scope by role;
+
+  if (Bulk entry used?) then (yes)
+    |User|
+    :Upload bulk entry file for new assets;
+    |System|
+    :Validate bulk file;
+  else (no)
+    |User|
+    :Enter new asset details;
+  endif
+
+  |System|
+  if (DA member or authorized inventory member?) then (yes)
+    :Add asset owned by user's department;
+  else (no)
+    if (Faculty member?) then (yes)
+      :Add assets for all related departments in faculty;
+    else (no)
+      if (University group member?) then (yes)
+        :Add assets for entire university inventory;
+      else (no)
+        :Deny add (insufficient permission);
+        stop
+      endif
+    endif
+  endif
+  :Persist new asset(s);
+  |User|
+  :View add confirmation;
+  stop
+
+elseif (Create borrow request / reserve location?) then (yes)
+  |User|
+  :Enter request details (borrow asset or reserve location);
+  |System|
+  :Check user is authorized to request;
+  if (Authorized?) then (yes)
+    :Create request (pending);
+    :Route to appropriate administrative level approver;
+    |Admin/Approver|
+    :Display pending requests for this level;
+    :Approve / Reject request;
+    |System|
+    :Notify requester by email;
+    if (Approved?) then (yes)
+      :Add request to "Waiting for execution" list;
+      |Inventory User|
+      :Prepare/issue asset or confirm reservation;
+      :Update inventory when user receives requested asset;
+      |User|
+      :Receive asset / reservation confirmation;
+    else (no)
+      :Mark request as rejected/closed;
+    endif
+  else (no)
+    :Reject request creation (not authorized);
+  endif
+  stop
+
+elseif (Return asset?) then (yes)
+  |User|
+  :Return asset to inventory;
+  |Inventory User|
+  :Check returned asset;
+  :Update inventory status;
+  |System|
+  :Persist inventory update;
+  stop
+
+elseif (Create new location / modify floor structure?) then (yes)
+  |Admin/Approver|
+  :Send exception request to IT group;
+  |IT Staff|
+  :Receive exception request;
+  :Create new space and/or modify floor structure;
+  |System|
+  :Persist location/floor updates;
+  stop
+
+elseif (Approve requests?) then (yes)
+  |Admin/Approver|
+  :Display all pending requests for this level;
+  :Approve / Reject selected request(s);
+  |System|
+  :Notify requester by email;
+  if (Approved?) then (yes)
+    :Add request to "Waiting for execution" list;
+    |Inventory User|
+    :Execute request (issue asset / perform action);
+    :Update inventory when user receives requested asset;
+  else (no)
+    :Mark request as rejected/closed;
+  endif
+  stop
+
+elseif (Change permission / delegate actions?) then (yes)
+  |Admin/Approver|
+  :Select user to delegate to;
+  :Select actions to delegate (some or all);
+  |System|
+  :Grant delegated permissions;
+  :Assign role "Inventory Administrator" to delegated user;
+  |Admin/Approver|
+  :View delegation confirmation;
+  stop
+
+elseif (Output reports?) then (yes)
+  |User|
+  :Select report type;
+  |System|
+  if (Asset report by location?) then (yes)
+    :Generate asset-by-location report;
+  else (no)
+    if (Request report?) then (yes)
+      :Generate request report;
+    else (no)
+      :Generate user permission report;
+    endif
+  endif
+  |User|
+  :View/Download report;
+  stop
+
+else (no)
+  |User|
+  :Cancel / Exit;
+  stop
+endif
+
+@enduml

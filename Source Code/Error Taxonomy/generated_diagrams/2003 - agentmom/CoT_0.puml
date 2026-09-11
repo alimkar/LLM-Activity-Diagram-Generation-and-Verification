@@ -1,0 +1,50 @@
+@startuml
+|Agent|
+start
+:Compose message;
+:Select communication mode\n(Unicast / Multicast / Broadcast);
+
+if (Mode = Multicast?) then (yes)
+  if (Already member of multicast group?) then (yes)
+  else (no)
+    :Join multicast group;
+  endif
+endif
+
+:Select security option\n(Encrypt / No Encrypt);
+
+if (Encrypt message?) then (yes)
+  :Encrypt message;
+else (no)
+  :Keep message in plain text;
+endif
+
+if (Mode = Broadcast?) then (yes)
+  :Broadcast message to all agents\nin same local network;
+elseif (Mode = Multicast?) then (yes)
+  :Multicast message to all agents\nin same multicast address;
+else (Unicast)
+  :Select target agent within organization;
+  :Unicast message to selected agent;
+endif
+
+fork
+  |Receiving Agent(s)|
+  :Receive message;
+  if (Message encrypted?) then (yes)
+    :Decrypt message;
+  else (no)
+    :Process message as plain text;
+  endif
+fork again
+  |Agent|
+  if (Mode = Multicast?) then (yes)
+    if (Leave multicast group?) then (yes)
+      :Leave multicast group;
+    else (no)
+    endif
+  endif
+end fork
+
+stop
+@enduml

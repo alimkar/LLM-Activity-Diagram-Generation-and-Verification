@@ -1,0 +1,144 @@
+Role: You are an expert software engineer specialized in UML modeling and requirements analysis.
+
+Task: Generate a UML Activity Diagram in valid PlantUML format from the given requirements.
+
+Step 1: Identify Actors
+Extract all roles explicitly or implicitly mentioned in the requirements, such as User, Admin, Inventory User, System, or IT Staff.
+
+Step 2: Identify Main Activities
+Extract all key operations/actions in sequential order as performed by each actor.
+
+Step 3: Identify Decisions and Conditions
+Detect all conditions, including approvals, permissions, alternative flows, validation checks, and error conditions.
+
+Step 4: Identify Relationships
+Determine dependencies between processes, sequences, and possible parallel flows.
+
+Step 5: Construct Control Flow
+Organize activities into a logical sequence. Insert decision nodes, loops, and alternative flows where required.
+
+Step 6: Assign Swim lanes
+Map each activity to the correct actor.
+• For a single actor, generate a flat activity diagram.
+• For multiple actors, generate swim lanes.
+
+Step 7: PlantUML Generation
+Use the following rules:
+• Use swim lanes using |Actor| for multi-user scenarios.
+• Use if (...) then (yes/no) for decisions.
+• Use fork / fork again / end fork for parallel flows.
+• Use repeat / repeat while or while for loops.
+• The first swim lane must be added after @startuml and before start.
+
+Step 8: Optimize Diagram
+Merge redundant steps, keep the diagram readable, ensure logical consistency, and ensure every activity is traceable to the requirements.
+
+Example 1:
+
+Requirements:
+"A customer browses products and adds items to the cart. The system checks item availability. If available, the customer proceeds to checkout and makes payment. If payment is successful, the order is confirmed. Otherwise, the customer is asked to retry."
+
+PlantUML Output:
+@startuml
+|Customer|
+start
+:Browse Products;
+:Add Item to Cart;
+|System|
+if (Item Available?) then (yes)
+  |Customer|
+  :Proceed to Checkout;
+  :Make Payment;
+  |System|
+  if (Payment Successful?) then (yes)
+    :Confirm Order;
+  else (no)
+    |Customer|
+    :Retry Payment;
+  endif
+else (no)
+  :Notify Unavailability;
+endif
+stop
+@enduml
+
+Example 2:
+
+Requirements:
+"A student logs into the university portal and selects a course to register. The system checks if the student meets the prerequisites. If prerequisites are not met, the student is notified and registration is denied. If prerequisites are met, the system checks seat availability. If no seats are available, the student is added to a waitlist. If seats are available, the system checks for a timetable conflict with already registered courses. If a conflict exists, the student is notified and asked to select another course. If no conflict exists, the student confirms registration. The system registers the student, deducts one seat, sends a confirmation email, and updates the academic record. The registrar can at any time log in and view all registrations, approve or reject manual registration requests, and generate a registration report."
+
+PlantUML Output:
+@startuml
+
+|Student|
+start
+:Enter username and password;
+|System|
+if (Credentials valid?) then (yes)
+  |Student|
+  :Select course to register;
+  |System|
+  if (Prerequisites met?) then (no)
+    :Notify student - prerequisites not met;
+    |Student|
+    :Registration denied;
+  else (yes)
+    if (Seats available?) then (no)
+      :Add student to waitlist;
+      :Notify student - added to waitlist;
+    else (yes)
+      if (Timetable conflict?) then (yes)
+        :Notify student - timetable conflict;
+        |Student|
+        :Select another course;
+      else (no)
+        |Student|
+        :Confirm registration;
+        |System|
+        :Register student;
+        :Deduct one seat;
+        :Send confirmation email;
+        :Update academic record;
+      endif
+    endif
+  endif
+else (no)
+  :Notify student - invalid credentials;
+endif
+
+|Registrar|
+:Login to portal;
+|System|
+if (Registrar credentials valid?) then (yes)
+  |Registrar|
+  :Select operation;
+  if (View registrations?) then (yes)
+    |System|
+    :Display all registrations;
+  else (no)
+    if (Manual registration request?) then (yes)
+      |System|
+      :Display pending requests;
+      |Registrar|
+      if (Approve request?) then (yes)
+        |System|
+        :Approve and register student;
+      else (no)
+        :Reject request;
+        :Notify student of rejection;
+      endif
+    else (no)
+      :Generate registration report;
+    endif
+  endif
+else (no)
+  :Notify registrar - invalid credentials;
+endif
+
+stop
+@enduml
+
+Requirements: {requirements}
+
+Output:
+Generate only one PlantUML code block, beginning with @startuml and ending with @enduml

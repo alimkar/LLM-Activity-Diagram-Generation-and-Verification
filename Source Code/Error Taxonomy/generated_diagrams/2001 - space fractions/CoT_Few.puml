@@ -1,0 +1,141 @@
+@startuml
+|User|
+start
+:Open Math Umbrella (web page);
+
+|System|
+:Display topic links (fractions/decimals/percents);
+
+|User|
+:Click a link;
+
+|System|
+if (Link = Question Updater?) then (yes)
+  |Game Administrator|
+  :Open Question Updater tool;
+  :Select question to update (page);
+
+  repeat
+    :Enter/update question data\n(pulldowns, text fields);
+    :Click Submit;
+
+    |System|
+    :Validate completeness and\ncontext correctness;
+    if (Input valid?) then (yes)
+      :Persist updated question data;
+      :Move to next question page;
+    else (no)
+      :Show validation error message;
+      |Game Administrator|
+      :Correct input data;
+    endif
+  repeat while (More questions to update?) is (yes)
+
+  |System|
+  :Generate/update questions text file\non game server;
+  :Store file for Game Sequence dynamic loading;
+  stop
+
+else (no)
+  if (Link = Space Fractions game?) then (yes)
+    :Open Space Fractions game;
+
+    |System|
+    :Start Introductory Movie;
+    if (User clicks mouse to skip?) then (yes)
+      :Stop movie;
+    else (no)
+      :Play movie to completion;
+    endif
+
+    :Show Main Menu (+ brief help);
+
+    |User|
+    :Choose menu option;
+
+    |System|
+    if (Help selected?) then (yes)
+      :Display brief help section;
+      :Return to Main Menu;
+      |User|
+      :Choose menu option;
+    endif
+
+    if (Denominators' web page selected?) then (yes)
+      :Open Denominators' web page;
+      :Return to Main Menu;
+      |User|
+      :Choose menu option;
+    endif
+
+    if (Begin game selected?) then (yes)
+      |System|
+      :Load question data dynamically\nfrom server text file;
+      :Initialize score and critical-point state;
+
+      repeat
+        :Display next multiple-choice\nfraction question (plot-based);
+        |User|
+        :Click an answer choice;
+
+        |System|
+        :Check answer correctness;
+        if (Correct on first try?) then (yes)
+          :Display "Correct" feedback;
+          :Update score as correct;
+          :Record critical-point success\n(if applicable);
+        else (no)
+          :Display "Incorrect" feedback;
+          :Mark question as not scored correct;
+          |User|
+          :Try again (one more chance);
+          |System|
+          :Re-check answer;
+          if (Correct on retry?) then (yes)
+            :Display "Correct (after retry)" feedback;
+            :Do NOT count question as correct\nfor score;
+            :Record critical-point failure\n(if applicable);
+          else (no)
+            :Display "Incorrect" feedback;
+            :Record critical-point failure\n(if applicable);
+          endif
+        endif
+
+        if (Critical point question?) then (yes)
+          if (Answered correctly at critical point?) then (yes)
+            :Branch plot direction A;
+          else (no)
+            :Branch plot direction B;
+          endif
+        endif
+      repeat while (More questions in sequence?) is (yes)
+
+      :Go to Ending Scene;
+      :Calculate and rank score;
+      :Display overall score and\nplot conclusion (based on critical points);
+
+      |User|
+      :Select Quit or Return to Main Menu;
+
+      |System|
+      if (Return to Main Menu?) then (yes)
+        :Show Main Menu;
+        |User|
+        :Choose menu option;
+        -> if (Begin game selected?) then (yes)
+      else (no)
+        :Exit game;
+        stop
+      endif
+
+    else (no)
+      :Remain on Main Menu;
+      stop
+    endif
+
+  else (no)
+    :Open selected S2S product\nin a separate window;
+    stop
+  endif
+endif
+@enduml

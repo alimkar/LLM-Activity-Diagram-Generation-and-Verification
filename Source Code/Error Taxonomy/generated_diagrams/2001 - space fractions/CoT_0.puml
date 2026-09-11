@@ -1,0 +1,146 @@
+@startuml
+|User|
+start
+:Open Math Umbrella (web page);
+
+|Web System|
+:Display links to math projects\n(grouped by topic);
+
+|User|
+:Click "Space Fractions" link;
+
+|Web System|
+:Launch "Space Fractions" game;
+
+fork
+  |Web System|
+  :Enter Introductory Movie component;
+  :Play introductory movie;
+
+  |User|
+  if (Mouse click received?) then (yes)
+    |Web System|
+    :Skip/terminate movie;
+  else (no)
+    |Web System|
+    :Continue movie to completion;
+  endif
+
+  repeat
+    |Web System|
+    :Show Main Menu\n(includes brief help);
+
+    |User|
+    :Click a menu button;
+
+    if (Begin game selected?) then (yes)
+      |Web System|
+      :Load question data (dynamic)\nfrom server text file;
+      :Initialize score and plot state;
+
+      while (More questions?) is (yes)
+        |Web System|
+        :Display next multiple-choice\nfraction question;
+        |User|
+        :Select an answer;
+        |Web System|
+        :Evaluate answer;
+
+        if (Correct on first try?) then (yes)
+          :Display "Correct" feedback;
+          :Count question as correct for score;
+        else (no)
+          :Display "Incorrect" feedback;
+          :Do NOT count question as correct for score;
+          :Give another chance;
+
+          repeat
+            |User|
+            :Select another answer;
+            |Web System|
+            :Evaluate answer;
+          repeat while (Answer still incorrect?) is (yes)
+
+          |Web System|
+          :Display "Correct" feedback\n(after retry);
+        endif
+
+        if (Critical point question?) then (yes)
+          if (Counted as correct for score?) then (yes)
+            :Choose success plot direction;
+          else (no)
+            :Choose alternate plot direction;
+          endif
+        endif
+      endwhile (no)
+
+      |Web System|
+      :Enter Ending Scene component;
+      :Calculate overall score and rank;
+      :Display score + plot conclusion;
+
+      |User|
+      if (Exit game selected?) then (yes)
+        |Web System|
+        :Exit game session;
+        :Exit requested = yes;
+      else (no)
+        |Web System|
+        :Return to Main Menu;
+        :Exit requested = no;
+      endif
+
+    else (no)
+      if (Denominators' web page selected?) then (yes)
+        |Web System|
+        :Open Denominators' web page;
+        |External Web Page|
+        :Display Denominators content;
+        |User|
+        :Close/leave Denominators page;
+        |Web System|
+        :Return to Main Menu;
+        :Exit requested = no;
+      else (no)
+        |Web System|
+        :Wait for a valid selection;
+        :Exit requested = no;
+      endif
+    endif
+
+  repeat while (Exit requested?) is (no)
+
+fork again
+  |Game Administrator|
+  :Open Question Updater (web tool);
+
+  |Web System|
+  :Show question update page\n(pulldowns + text fields);
+
+  while (More questions to update?) is (yes)
+    |Game Administrator|
+    :Enter/update question data;
+    :Click Submit / Next;
+
+    |Web System|
+    :Validate data completeness and\n"makes sense" for the question;
+
+    if (Input valid?) then (yes)
+      |Game Server|
+      :Generate/update questions text file;
+      |Web System|
+      :Advance to next question page;
+    else (no)
+      |Web System|
+      :Display validation error message;
+      :Stay on current question page;
+    endif
+  endwhile (no)
+
+  |Web System|
+  :Updated text file is available\nfor dynamic loading by Game Sequence;
+end fork
+
+|Web System|
+stop
+@enduml

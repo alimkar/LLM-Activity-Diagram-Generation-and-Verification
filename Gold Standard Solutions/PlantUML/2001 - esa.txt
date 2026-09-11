@@ -1,0 +1,46 @@
+@startuml
+title APAF - Activity Diagram
+
+|APAF System|
+start
+
+:Acquire ASPERA-3 &\nMEX OA telemetry\nfrom ESOC;
+
+if (Cleaned-up telemetry\nfrom ESOC?) then (no)
+  :Generate cleaned-up\nintermediate files;
+  :Archive intermediate\nfiles at SwRI;
+else (yes)
+endif
+
+:Archive raw telemetry\nat SwRI;
+
+if (Transmission &\nprocessing error-free?) then (no)
+  :Trigger error handling;
+  :Log error &\nnotify operators;
+  stop
+else (yes)
+endif
+
+fork
+  :Process science data\ninto IDFS sets;
+fork again
+  :Process engineering &\nancillary data into\nIDFS sets;
+end fork
+
+:Archive IDFS data sets\nat SwRI;
+
+fork
+  :Publish current data\nto public web display;
+fork again
+  :Publish all available\ndata to science\nweb display;
+
+  if (Data made public?) then (no)
+    :Password protect\nscience web display;
+  else (yes)
+    :Open science\nweb display;
+  endif
+end fork
+
+stop
+
+@enduml

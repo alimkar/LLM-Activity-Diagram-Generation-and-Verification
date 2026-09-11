@@ -1,0 +1,33 @@
+2.1 Product Perspective
+Triangular Games is a stand-alone software application that is meant to realize games described in the article “Games on Triangulations” [1].
+2.2 Product Features
+The software makes it possible to play multiple triangulation games (see [1], for more information on triangular games). The games may be played alone or
+against another person, depending on the type of game. A graphical user interface will be shown to the user. This user interface is mainly mouse controlled
+but may also be used with a keyboard as well. By default, the system will be able to implement three different games, namely
+constructing, transforming and marking. New games may be added to the software easily without the need to modify the code of the original application.
+These added games will be automatically selectable through the application’s graphical user interface.
+2.3 User Classes and Characteristics
+The main user class is player. This is the most important user class and the user interface design will be geared towards serving the player. The software is
+however designed mostly for research oriented people coming from areas such as mathematics, social sciences and computer sciences.
+Although all research people have an academic background, the technical level of experience may vary greatly. This means that no assumptions about highly
+experienced users can be made. The user interface will be designed to serve the needs of inexperienced players.
+Since adding new games to the software will also be possible, one user class is the game developer. People from this user class will have experience in playing
+the games and the scientific background behind creating new games. This user class is not as important as the player class and users of this class are mostly
+interested in the ease of defining new games.
+2.4 Operating Environment
+The software will be implemented using the Java-platform. This makes it possible to run the application on multiple different environments without any modification
+to the code. The software requires a mouse or a keyboard, a graphical user environment (X window system, Windows, Mac, etc.), and Java-runtime
+environment (version 1.4 or later)[2].
+2.5 Design and Implementation Constraints
+The client has requested the use of the Java environment, so the platform has been chosen before design. Because of the cross-platform requirement, the
+software cannot be dependent on platform-specific libraries. The software should run well on any computer which has Java 2 (version 1.4 or
+later) Runtime Environment (JRE)[3] installed. Installation should be easy, so no external databases should be required.
+2.6 User Documentation
+Documentation about how to define new games will be provided to make it possible for non-developers to create new games for the system. There are
+going to be two end user documentations:
+- User manual, for end users. It will describe how to use the system for playing.
+- Maintenance manual, for end users and new developers. It will describe how to specify new games for the system. It will also contain the design
+documents and interfaces of the system, as well as the source code. If necessary, it will describe also how to implement a plug-in (such as an AI)
+for the system.
+2.7 Assumptions and Dependencies
+This software will be released under the GPL-license.

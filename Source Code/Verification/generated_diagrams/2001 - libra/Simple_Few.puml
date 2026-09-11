@@ -1,0 +1,110 @@
+@startuml
+|User/Administrator|
+start
+
+fork
+  |User/Administrator|
+  :Select cluster operation;
+
+  if (Submit job?) then (yes)
+    :Provide user information;
+    :Provide job information;
+    |SGE Interface|
+    :Check submission open;
+    if (Cluster accepting submissions?) then (yes)
+      :Verify user;
+      if (User verified?) then (yes)
+        :Submit job to cluster;
+        |Libra Scheduler|
+        :Retrieve job details;
+        :Set job state variables;
+        :Pass parameters to scheduling module;
+        :Compute job priority;
+        :Check deadline feasibility;
+        if (Job accepted?) then (yes)
+          :Allocate tickets;
+          :Calculate stride and pass;
+          :Sort hosts by load;
+          :Choose least-loaded host;
+          :Select execution queue;
+          :Send job to host queue;
+          :Reserve node resources;
+          :Update host queue status;
+          :Send queue and node load update;
+          |Master Host Store|
+          :Store cluster status;
+          |User/Administrator|
+        else (no)
+          |User/Administrator|
+          :Receive suggested deadline or cost;
+        endif
+      else (no)
+        :Receive user verification failure;
+      endif
+    else (no)
+      |User/Administrator|
+      :Receive submission closed status;
+    endif
+
+  else (no)
+    if (View job status?) then (yes)
+      :Enter user id and password;
+      |SGE Interface|
+      :Authenticate user;
+      |SGE Interface|
+      :Show job options and progress;
+      while (More options?) is (yes)
+        |User/Administrator|
+        :Select job option;
+        |SGE Interface|
+        :Process selected option;
+      end while
+
+    else (no)
+      if (Delete/change job?) then (yes)
+        |User/Administrator|
+        :Enter user id and password;
+        |SGE Interface|
+        :Authenticate user;
+        |SGE Interface|
+        :Remove job from queue;
+        |Libra Scheduler|
+        :Reserve node resources;
+        :Update host queue status;
+        :Send queue and node load update;
+        |Master Host Store|
+        :Store cluster status;
+        |Libra Scheduler|
+        :Revise resource allocation decisions;
+        :Revise pending job finish deadlines;
+        |User/Administrator|
+      endif
+    endif
+  endif
+
+fork again
+  |Libra Scheduler|
+  while (Jobs left to run on queue?) is (yes)
+    :Select minimum-pass job;
+    if (Pass tie?) then (yes)
+      :Apply FIFO ordering;
+    else (no)
+    endif
+    :Allot quantum;
+    :Advance pass by stride;
+    :Update cluster information;
+    if (Job finished?) then (yes)
+      :Remove job from cluster;
+      :Reserve node resources;
+      :Update host queue status;
+      :Send queue and node load update;
+      |Master Host Store|
+      :Store cluster status;
+      |Libra Scheduler|
+    else (no)
+    endif
+  end while
+end fork
+
+stop
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+|Player|
+start
+:Launch Triangular Games application;
+:View graphical user interface (mouse/keyboard);
+
+:Select game from GUI;
+
+if (Selected game available?) then (yes)
+  if (Game type supports two players?) then (yes)
+    :Choose play mode (alone / against another person);
+  else (no)
+    :Play mode = alone;
+  endif
+
+  :Play selected triangulation game;
+  :End game session;
+else (no)
+  |System|
+  :Show error / game not selectable;
+  |Player|
+endif
+
+|Game Developer|
+:Define new game (using provided documentation);
+:Package game as add-on (no modification to original application);
+
+|System|
+:Detect added game;
+:Register game for GUI selection;
+
+|Player|
+:New game appears in GUI and is selectable;
+
+stop
+@enduml

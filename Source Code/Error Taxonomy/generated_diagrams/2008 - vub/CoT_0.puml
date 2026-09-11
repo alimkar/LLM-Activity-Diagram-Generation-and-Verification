@@ -1,0 +1,239 @@
+@startuml
+title PMS - Main User Functions (Guest -> VUB-Network User -> Member -> Publisher -> Moderator -> Administrator)
+
+|User|
+start
+:Open PMS web interface;
+
+if (Connected to VUB-Network?) then (yes)
+  :PMS recognizes user by IP address;
+  :Access PMS as VUB-Network User (not logged in);
+else (no)
+  :Access PMS as Guest (not logged in);
+endif
+
+if (Choose "Register account"?) then (yes)
+  :Fill in registration form;
+  |PMS|
+  :Create pending account;
+  :Send validation mail;
+  |User|
+  :Open validation mail;
+  :Validate new account;
+  |PMS|
+  :Activate account;
+  |User|
+endif
+
+if (Choose "Retrieve password"?) then (yes)
+  :Provide account identifier (e.g., email);
+  |PMS|
+  :Process password retrieval;
+  |User|
+endif
+
+if (Choose "Log in"?) then (yes)
+  :Enter credentials;
+  |PMS|
+  if (Valid account & credentials?) then (yes)
+    :Authenticate user;
+    :Determine user level (Member/Publisher/Moderator/Administrator);
+  else (no)
+    :Reject login;
+    |User|
+    stop
+  endif
+else (no)
+  :Continue without login;
+endif
+
+|User|
+if (Logged in?) then (yes)
+  :Use Member functions (base for higher roles);
+  if (Change account details?) then (yes)
+    :Edit account info (password/email/...);
+    if (Request account upgrade?) then (yes)
+      :Send upgrade request to Administrator;
+    endif
+  endif
+endif
+
+|User|
+if (Connected to VUB-Network?) then (yes)
+  if (Perform search?) then (yes)
+    :Fill search form (keywords/authors/dates);
+    |PMS|
+    if (Valid search query?) then (yes)
+      :Execute search;
+      :Show results;
+
+      |User|
+      if (Order results?) then (yes)
+        :Order by title/author/year;
+        |PMS|
+        :Reorder displayed results;
+      endif
+
+      |User|
+      if (Export & download results?) then (yes)
+        :Select one or more results;
+        :Choose export format (html/pdf/ps);
+        |PMS|
+        :Generate export;
+        :Provide download;
+      endif
+
+      |User|
+      if (Search publications on similarity?) then (yes)
+        :Choose similarity type (same author / mentioned in result / same institute);
+        |PMS|
+        :Run similarity search;
+        :Show similarity results;
+      endif
+
+    else (no)
+      :Show search error / no results;
+    endif
+  endif
+
+  |User|
+  if (Advanced search?) then (yes)
+    :Fill additional advanced search form (extra keywords and/or referring publications);
+    |PMS|
+    if (Valid advanced query?) then (yes)
+      :Execute advanced search;
+      :Show results;
+    else (no)
+      :Show search error / no results;
+    endif
+  endif
+else (no)
+  :Search/results functions not available (Guest not connected);
+endif
+
+|User|
+if (Logged in?) then (yes)
+  if (User level >= Publisher?) then (yes)
+    if (Upload publication?) then (yes)
+      :Provide publication file (pdf/ps) + metadata file (RIS/bibTEX);
+      |PMS|
+      if (Document follows RIS/bibTEX?) then (yes)
+        :Extract bibliographical info from text/abstract;
+        |User|
+        :Manually correct extracted info if needed;
+        :Optionally define equivalences (author/institute name variants);
+        |PMS|
+        :Store publication and bibliographical details;
+      else (no)
+        :Reject upload (invalid format);
+      endif
+    endif
+
+    |User|
+    if (Bulk upload?) then (yes)
+      :Provide bulk import file(s) (e.g., bibTEX);
+      |PMS|
+      if (Document follows RIS/bibTEX?) then (yes)
+        :Import multiple publications/abstracts;
+      else (no)
+        :Reject bulk upload (invalid format);
+      endif
+    endif
+
+    |User|
+    if (Edit own publication?) then (yes)
+      if (Has uploaded at least one publication?) then (yes)
+        :Select own publication;
+        :Edit bibliographical details;
+        |PMS|
+        :Save changes;
+      else (no)
+        :Editing not possible (no uploaded publications);
+      endif
+    endif
+  else (no)
+    :Upload/Edit publications not available (below Publisher);
+  endif
+
+  |User|
+  if (User level >= Moderator?) then (yes)
+    if (Manage user levels in department?) then (yes)
+      :Select Member/Publisher in own department;
+      :Upgrade Member->Publisher OR Downgrade Publisher->Member;
+      |PMS|
+      :Apply user level change (department-scoped);
+    endif
+
+    |User|
+    if (Manage group permissions?) then (yes)
+      :Select group under moderator jurisdiction;
+      :Change group permissions;
+      |PMS|
+      :Save group permissions;
+    endif
+
+    |User|
+    if (Edit author information?) then (yes)
+      :Modify author details;
+      |PMS|
+      :Save author changes;
+    endif
+
+    |User|
+    if (Edit departmental publications?) then (yes)
+      :Select publication owned by moderator's department/group;
+      :Change/overwrite bibliographical details;
+      |PMS|
+      :Save publication changes;
+    endif
+  endif
+
+  |User|
+  if (User level >= Administrator?) then (yes)
+    :Access Control Panel;
+
+    if (Create/Delete user?) then (yes)
+      :Choose create or delete;
+      |PMS|
+      :Create user OR Delete user;
+    endif
+
+    |User|
+    if (Create/Delete group?) then (yes)
+      :Choose create or delete;
+      |PMS|
+      :Create group OR Delete group;
+    endif
+
+    |User|
+    if (Manage user level (any user -> any level)?) then (yes)
+      :Select any user;
+      :Set target level (Guest/VUB-Network User/Member/Publisher/Moderator/Administrator);
+      |PMS|
+      :Apply user level change;
+    endif
+
+    |User|
+    if (Edit all publications?) then (yes)
+      :Select any publication;
+      :Change/overwrite bibliographical details;
+      |PMS|
+      :Save publication changes;
+    endif
+  endif
+
+  |User|
+  if (Log off?) then (yes)
+    :Log off;
+    |PMS|
+    if (Connected to VUB-Network?) then (yes)
+      :Redirect to search page;
+    else (no)
+      :Redirect to login page;
+    endif
+  endif
+endif
+
+|User|
+stop
+@enduml

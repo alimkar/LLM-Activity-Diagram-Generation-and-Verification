@@ -1,0 +1,75 @@
+@startuml
+|Web Server|
+start
+:Detect load spike;
+if (Cannot handle workload?) then (yes)
+  :Send initialization request;
+  |Mediator|
+  :Obtain resource and access info;
+  :Obtain SLAs and policies;
+  :Generate service requirements;
+  |Policy Agent|
+  :Determine delegable resources;
+  |Mediator|
+  :Pass service requirements;
+  |Peering Agent|
+  :Discover external resources;
+  if (Preexisting peering arrangements?) then (yes)
+    :Return existing arrangements;
+  else (no)
+    :Negotiate with peer PAs;
+  endif
+  |Mediator|
+  :Configure peering protocols;
+  :Advertise CDN configurations;
+  :Exchange content availability;
+  :Redirect requests to optimal peer;
+  if (Sufficient resources acquired?) then (yes)
+    :Deploy functional policies;
+    :Exchange accounting information;
+    |SLA Allocator|
+    :Provision and reserve resources;
+    :Enforce SLA terms;
+    |Web Server|
+    fork
+      :Replicate content on-demand;
+    fork again
+      :Perform caching and routing;
+    end fork
+    |Mediator|
+    :Adapt to changing circumstances;
+    if (Disband or re-arrange needed?) then (yes)
+      :Disband or re-arrange peering;
+    else (no)
+    endif
+  else (no)
+    if (Any CDN interested in peering?) then (no)
+      :Tune negotiated relationships;
+      :Reconsider service requirements;
+      repeat
+        :Pass service requirements;
+        |Peering Agent|
+        :Discover external resources;
+        if (Preexisting peering arrangements?) then (yes)
+          :Return existing arrangements;
+        else (no)
+          :Negotiate with peer PAs;
+        endif
+        |Mediator|
+        if (Sufficient resources acquired?) then (yes)
+          break
+        else (no)
+          if (Any CDN interested in peering?) then (no)
+            :Tune negotiated relationships;
+            :Reconsider service requirements;
+          else (yes)
+          endif
+        endif
+      repeat while (Continue re-negotiation?) is (yes)
+    else (yes)
+    endif
+  endif
+else (no)
+endif
+stop
+@enduml

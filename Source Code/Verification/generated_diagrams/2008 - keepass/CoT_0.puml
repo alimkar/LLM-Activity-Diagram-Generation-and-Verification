@@ -1,0 +1,255 @@
+@startuml
+|User|
+start
+:Launch KeePass;
+
+if (Start with command line file path?) then (yes)
+  :Provide database file path;
+  |KeePass System|
+  :Open specified database file at startup;
+  |User|
+else (no)
+  :Choose Database action;
+endif
+
+if (Create new database?) then (yes)
+  :Create new database;
+  :Create Master Key (simple or composite);
+  note right
+    Composite Master Key may include:
+    - Password
+    - Key file
+    - Windows account details
+    All required to open later.
+    If lost, no recovery.
+  end note
+  |KeePass System|
+  :Initialize database structure;
+  |User|
+else (no)
+  :Open existing database;
+endif
+
+|KeePass System|
+:Prompt for Master Key sources;
+|User|
+:Enter required Master Key sources;
+
+|KeePass System|
+if (Master Key valid?) then (yes)
+  :Unlock database;
+else (no)
+  :Deny access (no recovery if key lost);
+  stop
+endif
+
+|User|
+:Work with unlocked database;
+
+repeat
+  :Select feature from menus;
+
+  if (Database operation?) then (yes)
+    if (New?) then (yes)
+      :Create new database;
+      :Create Master Key (simple or composite);
+      |KeePass System|
+      :Initialize database structure;
+      |User|
+    else (no)
+      if (Save?) then (yes)
+        :Save changes;
+      else (no)
+        if (Close?) then (yes)
+          :Close database;
+          break
+        else (no)
+          if (Print?) then (yes)
+            :Print all data;
+          else (no)
+            if (Search?) then (yes)
+              :Enter keywords;
+              |KeePass System|
+              :Search database via search engine;
+              |User|
+            else (no)
+              if (Import/Export?) then (yes)
+                :Choose Import or Export;
+                if (Import?) then (yes)
+                  :Select source (CSV/Code Wallet/Password Safe/Personal Vault/Internet);
+                  |KeePass System|
+                  :Import data into database;
+                  |User|
+                else (no)
+                  :Select destination (Internet);
+                  |KeePass System|
+                  :Export database/data;
+                  |User|
+                endif
+              else (no)
+                :Open database (if needed);
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+
+  else (no)
+    if (Group/Subgroup operation?) then (yes)
+      :Select target group/subgroup;
+      if (Add?) then (yes)
+        :Add group/subgroup;
+      else (no)
+        if (Modify?) then (yes)
+          :Modify group/subgroup;
+        else (no)
+          if (Delete?) then (yes)
+            :Delete group/subgroup;
+          else (no)
+            if (Find within one group?) then (yes)
+              :Enter keywords;
+              |KeePass System|
+              :Search within selected group;
+              |User|
+            else (no)
+              :No group action;
+            endif
+          endif
+        endif
+      endif
+
+    else (no)
+      if (Entry operation?) then (yes)
+        :Select group/subgroup;
+        if (Add entry?) then (yes)
+          :Enter fields (title/username/password/URL/notes);
+          note right
+            Not all fields are required.
+          end note
+          if (Auto-generate password for new entry?) then (yes)
+            :Choose generator settings (charset/pattern/rules);
+            if (Apply security-reducing options?) then (yes)
+              :Apply security-reducing options;
+            else (no)
+            endif
+            |KeePass System|
+            :Generate password;
+            |User|
+          else (no)
+          endif
+          :Save entry;
+        else (no)
+          if (View/Edit entry?) then (yes)
+            if (Secure edit controls enabled?) then (yes)
+              |KeePass System|
+              :Mask sensitive fields (asterisks) with secure edit controls;
+              |User|
+            else (no)
+            endif
+            :View/Edit entry fields;
+            :Save entry changes;
+          else (no)
+            if (Duplicate entry?) then (yes)
+              :Duplicate entry;
+            else (no)
+              if (Delete entry?) then (yes)
+                :Delete entry;
+              else (no)
+                :No entry action;
+              endif
+            endif
+          endif
+        endif
+
+      else (no)
+        if (Use stored passwords?) then (yes)
+          :Select entry;
+          fork
+            :Copy credentials to website/app/account;
+          fork again
+            :Drag and drop credentials;
+          fork again
+            :Use context-sensitive password list;
+          fork again
+            :Configure Auto-Type sequence;
+            |KeePass System|
+            :Send keypress sequence to target window/browser;
+            |User|
+          end fork
+
+        else (no)
+          if (TAN support?) then (yes)
+            :Open TANs wizard;
+            :Add TANs / generate one-time passwords (TAN);
+            note right
+              One-time use per transaction;
+              becomes useless after use.
+            end note
+
+          else (no)
+            if (Execute URL field?) then (yes)
+              :Select entry with URL;
+              |KeePass System|
+              :Resolve placeholders;
+              if (URL is command line?) then (yes)
+                :Execute command line;
+              else (no)
+                :Execute URL via protocol handler (incl. registered IE protocols);
+              endif
+              |User|
+
+            else (no)
+              if (Change language?) then (yes)
+                :Download translation from KeePass website;
+                :Apply language translation;
+
+              else (no)
+                if (Integration options?) then (yes)
+                  :Configure global hot key (restore main window);
+                  :Configure limit to single instance;
+
+                else (no)
+                  if (Lock workspace?) then (yes)
+                    if (Lock on minimize?) then (yes)
+                      :Minimize KeePass;
+                      |KeePass System|
+                      :Auto-lock database/workspace;
+                      |User|
+                    else (no)
+                      :Select "Lock Workspace" from File menu;
+                      |KeePass System|
+                      :Lock database/workspace;
+                      |User|
+                    endif
+
+                    |KeePass System|
+                    :Prompt for Master Key to unlock;
+                    |User|
+                    :Re-enter Master Key sources;
+                    |KeePass System|
+                    if (Master Key valid?) then (yes)
+                      :Unlock database;
+                      |User|
+                    else (no)
+                      :Deny access;
+                      stop
+                    endif
+
+                  else (no)
+                    :Configure application settings (configuration storage);
+                  endif
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
+
+repeat while (Continue using KeePass?) is (yes)
+
+:Close database (if open);
+stop
+@enduml

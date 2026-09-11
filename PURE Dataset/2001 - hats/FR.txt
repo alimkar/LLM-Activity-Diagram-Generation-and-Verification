@@ -1,0 +1,47 @@
+The HATS-GUI shall provide a user with the ability to construct and use transformations. The HATS-GUI shall facilitate the following activities:
+• management of applications;
+• parsing of transformation language programs and target programs;
+• execution of transformation language programs; and
+• examination of SDT and pretty-printed output from transformations.
+The subsections that follow provide an overview of each of the mentioned features. The flow of data between
+these functions is illustrated in the Data Flow Diagrams (DFD) given in Appendix B. The transition of states
+that the system will be in is illustrated in the State Transition Diagram given in Appendix C.
+
+2.1.1. Management Of Applications
+The HATS-GUI shall facilitate the creation, deletion, and modification of the files related to an application. As
+a practical matter, all files related to an application shall be stored in the same directory or folder. In addition,
+the HATS-GUI shall manage file associations within an application. File associations are relationships between
+files. For example, target files will be associated with the most recently used pretty-print style files. The HATS-
+GUI shall allow the user to examine and modify these associations.
+
+2.1.2. Parsing Of Transformation Language Programs and Target Files
+The HATS-GUI shall orchestrate the parsing of transformation language programs and target files. Parsing
+entails translating a human-readable text file into a syntax derivation tree. Parsing can be a time-consuming
+operation, particularly for multiple look-ahead grammars. In order to expedite execution of transformations,
+parsed versions of files can be saved.
+Two types of files must be parsed. A transformation language program is a text file describing a set of
+transformations to be applied to a target file. A target program is a text file containing the input string to be
+transformed. Parsing is done through the use of a parser program, which HATS-SML generates. Parser
+generation requires the lexical specification and the grammar as input.
+
+2.1.3. Execution of Transformation Language Programs
+The HATS-GUI shall orchestrate the execution of transformation language programs. In order for HATS-SML
+to execute a transformation program, the program must be parsed and saved as an SDT. The transformation
+language program specifies which target programs will be transformed. The user creating the transformation
+language program is responsible for correctly identifying the target program. Input file names are embedded in
+the transformation language program.
+During execution of a transformation language program, HATS-SML creates SDTs as output. These SDTs
+contain a parsed version of the transformed (output) string suitable for use as input to another transformation or
+as input to the pretty-print service. (The pretty-print service transforms a target SDT into a text string according
+to formatting rules contained in a pretty-print style file.) In addition to the output file, the transformation
+language program may specify that debugging and error outputs. The HATS-GUI shall capture data written to
+these streams and make that data available to the user.
+
+2.1.4. Examination of SDT and Pretty-Printed Output From Transformations
+The HATS-GUI shall facilitate the display of transformation output and error messages received from HATS-
+SML in response to parsing or transformation. There are several types of output that can be received from
+HATS-SML. During a given session, data sets may be created, saved as files, used as inputs, or deleted. The
+HATS-GUI will associate saved files with the application. The HATS-GUI will make a list of these files
+available to the user and allow the user to select files for display. The display of SDTs and pretty-printed text
+shall allow the user to manipulate the display by choosing portions of the tree to display and by allowing the
+user to search for text strings and sub-trees.

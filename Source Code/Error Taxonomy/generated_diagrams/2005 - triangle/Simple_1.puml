@@ -1,0 +1,22 @@
+@startuml
+|Player|
+start
+:View GUI;
+:Select Input Method;
+if (Mouse Control?) then (yes)
+  :Use Mouse;
+else (no)
+  :Use Keyboard;
+endif
+:Select Game;
+|System|
+:Provide Default Games;
+:Auto-Select Added Games;
+|Player|
+if (Play Alone?) then (yes)
+  :Play Game;
+else (no)
+  :Play Against Person;
+endif
+stop
+@enduml
