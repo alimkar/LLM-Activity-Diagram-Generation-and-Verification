@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use the artifacts in this repository, please cite the associated research paper."
+title: "LLM-Based Activity Diagram Generation and Verification"
+authors:
+  - family-names: "Tiwari"
+    given-names: "Saurabh"
+    email: "saurabh_t@dau.ac.in"
+  - family-names: "Limkar"
+    given-names: "Ankit"
+    email: "202421031@dau.ac.in"
+version: 1.0.0
+date-released: 2026-09-05
+repository-code: "https://github.com/alimkar/LLM-Activity-Diagram-Generation-and-Verification"
